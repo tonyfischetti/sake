@@ -44,11 +44,11 @@ setup(name=constants.NAME,
       author_email=constants.AUTHOR_EMAIL,
       url=constants.URL,
       packages=['sakelib'],
-      requires=['networkx (>=1.8)', 'PyYAML (>=3.0)],
+      requires=['networkx (>=1.8)', 'PyYAML (>=3.0)'],
       scripts=['sake']
      )
 
 
 
 if __name__ == '__main__':
-    print "not meant to be run directly"
+    print("I hope you enjoy using Sake!")

@@ -2,7 +2,7 @@
 
 ###########################################################
 ##                                                       ##
-##   sake.py                                             ##
+##   acts.py                                             ##
 ##                                                       ##
 ##                Author: Tony Fischetti                 ##
 ##                        tony.fischetti@gmail.com       ##
@@ -33,57 +33,46 @@
 #
 ###########################################################
 
-import argparse
-import sys
-import yaml
+"""
+Various actions that the main entry delegates to
+"""
 
-from sakelib import acts
+def print_help(sakefile):
+    """
+    Prints the help string of the Sakefile, prettily
 
+    Args:
+        A dictionary that is the parsed Sakefile (from sake.py)
+    """
+    print("I printed help")
 
-parser = argparse.ArgumentParser(description='Build from a Sakefile')
+def check_integrity(sakefile):
+    """
+    Checks the format of the sakefile dictionary
+    to ensure it conforms to specification
 
-# mandatory arguments (but default is provided)
-parser.add_argument("targets",
-                    help="targets to build (default=all)",
-                    metavar='targets', type=str, nargs='*',
-                    default="all")
+    Args:
+        A dictionary that is the parsed Sakefile (from sake.py)
+        A flag indicating verbosity
+    Returns:
+        True if the Sakefile is conformant
+        False if not
+    """
+    if verbose:
+        print("Call to check_integrity issued")
+    pass
 
-# optional arguments
-parser.add_argument('--verbose', '-v', action='store_true',
-                    help="Verbose output")
+def build_all(sakefile, verbose):
+    """
+    Builds all targets (all in "all" target, anyway)
 
-args = parser.parse_args()
+    Args:
+        A dictionary that is the parsed Sakefile (from sake.py)
+        A flag indicating verbosity
+    Returns:
+        True is successful, False otherwise
+    """
+    if verbose:
+        print("Call to build_all issued")
+    pass
 
-
-# parse sakefile
-sakefile = yaml.load(open("Sakefile.yaml", "r").read())
-
-
-# if 'help' is in one of the targets, none of the targets are run but
-# the help strings are printed for each target
-if len(args.targets) == 1:
-    if args.targets[0] == "help":
-        acts.print_help(sakefile)
-        sys.exit(0)
-elif 'help' in args.targets:
-    acts.print_help(sakefile)
-    sys.exit(0)
-
-
-# if 'all' is in one of the targets, nothing else matters
-if len(args.targets) == 1:
-    if args.targets[0] == "all":
-        if args.verbose:
-            print("Going to build all targets")
-        ret_val = acts.build_all(sakefile, args.verbose)
-        sys.exit(ret_val)
-elif 'all' in args.targets:
-    if args.verbose:
-        print("Going to build all targets")
-    ret_val = acts.build_all(sakefile, args.verbose)
-    sys.exit(ret_val)
-
-
-if args.verbose:
-    unformatted = "Going to build targets \n  - {}"
-    print(unformatted.format('\n  - '.join(args.targets)))

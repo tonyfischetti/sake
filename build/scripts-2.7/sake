@@ -1,0 +1,7 @@
+#!/usr/bin/python
+
+from sakelib import holder
+
+print "hi!"
+
+print holder.the_message

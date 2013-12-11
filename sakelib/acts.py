@@ -37,30 +37,42 @@
 Various actions that the main entry delegates to
 """
 
+import sys
+
+
 def print_help(sakefile):
     """
     Prints the help string of the Sakefile, prettily
 
     Args:
         A dictionary that is the parsed Sakefile (from sake.py)
-    """
-    print("I printed help")
 
-def check_integrity(sakefile):
-    """
-    Checks the format of the sakefile dictionary
-    to ensure it conforms to specification
-
-    Args:
-        A dictionary that is the parsed Sakefile (from sake.py)
-        A flag indicating verbosity
     Returns:
-        True if the Sakefile is conformant
-        False if not
+        0 if all targets have help messages to print,
+        1 otherwise
     """
-    if verbose:
-        print("Call to check_integrity issued")
-    pass
+    full_string = "\n"
+    errmes = "target '{}' is not allowed to not have help message\n"
+    for target in sakefile:
+        if target == "all":
+            # this doesn't have a help message
+            continue
+        if "formula" not in sakefile[target]:
+            # this means it's a meta-target
+            full_string += "{}:\n  - {}\n\n".format(target,
+                                                    sakefile[target]["help"])
+            for atom_target in sakefile[target]:
+                if atom_target == "help":
+                    continue
+                full_string += "    "
+                full_string += "{}:\n      -  {}\n".format(atom_target,
+                                       sakefile[target][atom_target]["help"])
+            full_string += "\n"
+        else:
+            full_string += "{}:\n  - {}\n\n".format(target,
+                                                    sakefile[target]["help"])
+    print(full_string)
+
 
 def build_all(sakefile, verbose):
     """

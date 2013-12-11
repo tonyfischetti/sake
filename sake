@@ -34,10 +34,12 @@
 ###########################################################
 
 import argparse
+import os.path
 import sys
 import yaml
 
 from sakelib import acts
+from sakelib import audit
 
 
 parser = argparse.ArgumentParser(description='Build from a Sakefile')
@@ -49,25 +51,37 @@ parser.add_argument("targets",
                     default="all")
 
 # optional arguments
-parser.add_argument('--verbose', '-v', action='store_true',
-                    help="Verbose output")
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help="verbose output")
 
 args = parser.parse_args()
 
 
 # parse sakefile
-sakefile = yaml.load(open("Sakefile.yaml", "r").read())
+if not os.path.isfile("Sakefile.yaml"):
+    sys.stderr.write("Error: there is no Sakefile to read\n")
+    sys.exit(1)
+try:
+    sakefile = yaml.load(open("Sakefile.yaml", "r").read())
+except:
+    sys.stderr.write("Error: Sakefile failed to parse as valid YAML\n")
+    sys.exit(1)
+if not audit.check_integrity(sakefile, args.verbose):
+    sys.stderr.write("Error: Sakefile isn't written to specification\n")
+    sys.exit(1)
+if args.verbose:
+    print("Sakefile passes integrity test")
 
 
 # if 'help' is in one of the targets, none of the targets are run but
 # the help strings are printed for each target
 if len(args.targets) == 1:
     if args.targets[0] == "help":
-        acts.print_help(sakefile)
-        sys.exit(0)
+        ret_val = acts.print_help(sakefile)
+        sys.exit(ret_val)
 elif 'help' in args.targets:
-    acts.print_help(sakefile)
-    sys.exit(0)
+    ret_val = acts.print_help(sakefile)
+    sys.exit(ret_val)
 
 
 # if 'all' is in one of the targets, nothing else matters

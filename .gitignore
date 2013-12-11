@@ -2,3 +2,4 @@
 notes.txt
 Sakefile.yaml
 build/
+*.pyc

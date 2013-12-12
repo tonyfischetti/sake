@@ -38,6 +38,7 @@ Various actions that the main entry delegates to
 """
 
 import sys
+import networkx as nx
 
 
 def print_help(sakefile):
@@ -74,6 +75,43 @@ def print_help(sakefile):
     print(full_string)
 
 
+
+
+def construct_graph(sakefile, verbose, G):
+    """
+    Takes the sakefile dictionary and builds a NetworkX graph
+
+    Args:
+        A dictionary that is the parsed Sakefile (from sake.py)
+        A flag indication verbosity
+        A NetworkX GiGraph object to populate
+
+    Returns:
+        A NetworkX graph
+    """
+    if verbose:
+        print("Going to construct Graph")
+    for target in sakefile:
+        if target == "all":
+            # we don't want this node
+            continue
+        if "output" not in sakefile[target]:
+            # that means this is a meta target
+            for atomtarget in sakefile[target]:
+                if atomtarget == "help":
+                    continue
+                if verbose:
+                    print("Adding '{}'".format(atomtarget))
+                G.add_node(atomtarget, sakefile[target][atomtarget])
+        else:
+            if verbose:
+                print("Adding '{}'".format(target))
+            G.add_node(target, sakefile[target])
+    if verbose:
+        print("Graph is built")
+    return G
+
+
 def build_all(sakefile, verbose):
     """
     Builds all targets (all in "all" target, anyway)
@@ -87,4 +125,32 @@ def build_all(sakefile, verbose):
     if verbose:
         print("Call to build_all issued")
     pass
+
+
+def visualize(sakefile, verbose):
+    """
+    Uses networkX's inteface with matplotlib 
+
+    Args:
+
+    Returns:
+
+    Raises:
+
+
+    """
+    pass
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -18,3 +18,7 @@ duplicates are a sign of a really really big bug
 docs man file
 
 
+?help and visual must be called on their own
+?no target may be names help or visual
+fix command line visual call
+make visual take file args

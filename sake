@@ -98,6 +98,21 @@ elif 'help' in args.targets:
 G = nx.DiGraph()
 G = acts.construct_graph(sakefile, args.verbose, G)
 
+# if 'visual' is one of the targets, nothing else matters
+##!!!actually, it does
+if len(args.targets) == 1:
+    if args.targets[0] == "visual":
+        if args.verbose:
+            print("Going to build all targets")
+        ret_val = acts.visualize(G, args.verbose)
+        sys.exit(ret_val)
+elif 'visual' in args.targets:
+    if args.verbose:
+        print("Going to build all targets")
+    ret_val = acts.visualize(G, args.verbose)
+    sys.exit(ret_val)
+
+
 # if 'all' is in one of the targets, nothing else matters
 if len(args.targets) == 1:
     if args.targets[0] == "all":

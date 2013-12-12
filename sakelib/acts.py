@@ -75,6 +75,28 @@ def print_help(sakefile):
     print(full_string)
 
 
+def check_for_dep_in_outputs(dep, verbose, G):
+    """
+    Function to help construct_graph() identify dependencies
+
+    Args:
+        A dependency
+        A flag indication verbosity
+        A (populated) NetworkX DiGraph
+
+    Returns:
+        A list of targets that build given dependency
+
+    """
+    if verbose:
+        print "checking dep {}".format(dep)
+    ret_list = []
+    for node in G.nodes(data=True):
+        if "output" not in node[1]:
+            continue
+        if dep in node[1]['output']:
+            ret_list.append(node[0])
+    return ret_list
 
 
 def construct_graph(sakefile, verbose, G):
@@ -108,7 +130,24 @@ def construct_graph(sakefile, verbose, G):
                 print("Adding '{}'".format(target))
             G.add_node(target, sakefile[target])
     if verbose:
-        print("Graph is built")
+        print("Nodes are built\nBuilding connections")
+    for node in G.nodes(data=True):
+        if verbose:
+            print "checking node {} for dependencies".format(node[0])
+        if "dependencies" not in node[1]:
+            continue
+        if verbose:
+            print "it has dependencies"
+        connects = []
+        for dep in node[1]['dependencies']:
+            matches = check_for_dep_in_outputs(dep, verbose, G)
+            if not matches:
+                continue
+            for match in matches:
+                connects.append(match)
+        if connects:
+            for connect in connects:
+                G.add_edge(connect, node[0])
     return G
 
 
@@ -119,6 +158,7 @@ def build_all(sakefile, verbose):
     Args:
         A dictionary that is the parsed Sakefile (from sake.py)
         A flag indicating verbosity
+
     Returns:
         True is successful, False otherwise
     """
@@ -127,30 +167,28 @@ def build_all(sakefile, verbose):
     pass
 
 
-def visualize(sakefile, verbose):
+def visualize(G, verbose, filename="dependencies.png"):
     """
-    Uses networkX's inteface with matplotlib 
+    Uses networkX's inteface with matplotlib to draw
 
     Args:
+        a NetworkX DiGraph
 
     Returns:
-
-    Raises:
-
-
+        0 if everything worked
+        1 if otherwise
     """
-    pass
-
-
-
-
-
-
-
-
-
-
-
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        sys.stderr.write("Matplotlib required for visualization\n")
+        return 1
+    except RuntimeError:
+        sys.stderr.write("Matplotlib had a runtime error\n")
+        return 1
+    nx.draw(G, node_color="pink", node_size=1000, font_size=8)
+    plt.savefig("dependency-visualization.png", dpi=1000)
+    return 0
 
 
 

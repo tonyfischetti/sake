@@ -56,6 +56,8 @@ parser.add_argument("targets",
 # optional arguments
 parser.add_argument('-v', '--verbose', action='store_true',
                     help="verbose output")
+parser.add_argument('-f', '--file', action="store", dest="outfile",
+                    help="filename to place visualization")
 
 args = parser.parse_args()
 
@@ -100,18 +102,29 @@ elif 'help' in args.targets:
 G = nx.DiGraph()
 G = acts.construct_graph(sakefile, args.verbose, G)
 
+
+if args.outfile:
+    if args.outfile[-4:] == ".png":
+        outfile = args.outfile
+    else:
+        outfile = args.outfile + ".png"
+else:
+    outfile = "dependencies.png"
+
+print(outfile)
+
 # if 'visual' is one of the targets, nothing else matters
 ##!!!actually, it does
 if len(args.targets) == 1:
     if args.targets[0] == "visual":
         if args.verbose:
             print("Going to build all targets")
-        ret_val = acts.visualize(G, args.verbose)
+        ret_val = acts.visualize(G, args.verbose, filename=outfile)
         sys.exit(ret_val)
 elif 'visual' in args.targets:
     if args.verbose:
         print("Going to build all targets")
-    ret_val = acts.visualize(G, args.verbose)
+    ret_val = acts.visualize(G, args.verbose, filename=outfile)
     sys.exit(ret_val)
 
 

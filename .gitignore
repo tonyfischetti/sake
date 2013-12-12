@@ -5,3 +5,4 @@ Sakefile.yml
 Sakefile
 build/
 *.pyc
+dependencies.png

@@ -190,7 +190,7 @@ def visualize(G, verbose, filename="dependencies.png"):
         sys.stderr.write("Matplotlib had a runtime error\n")
         return 1
     nx.draw(G, node_color="pink", node_size=1000, font_size=8)
-    plt.savefig("dependency-visualization.png", dpi=1000)
+    plt.savefig(filename, dpi=1000)
     return 0
 
 

@@ -9,7 +9,6 @@ forgot yaml as dependency
 if no formula then its meta
 a help message is mandatory
 check if metatarget has atomtargets
-allow for alternate sakefilenames
 meta-targets should have nothing but help and atom targets
 check if all has unrecognized target
 issue warning if target all is missing

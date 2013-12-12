@@ -58,14 +58,23 @@ args = parser.parse_args()
 
 
 # parse sakefile
-if not os.path.isfile("Sakefile.yaml"):
+fname = ""
+for name in ["Sakefile", "Sakefile.yaml", "Sakefile.yml"]:
+    if os.path.isfile(name):
+        fname = name
+        break
+if not fname:
     sys.stderr.write("Error: there is no Sakefile to read\n")
     sys.exit(1)
+
 try:
-    sakefile = yaml.load(open("Sakefile.yaml", "r").read())
-except:
+    sakefile = yaml.load(file(fname, "r"))
+except yaml.YAMLError, exc:
     sys.stderr.write("Error: Sakefile failed to parse as valid YAML\n")
-    sys.exit(1)
+    if hasattr(exc, 'problem_mark'):
+        mark = exc.problem_mark
+        print "Error position: (%s:%s)" % (mark.line+1, mark.column+1)
+        sys.exit(1)
 if not audit.check_integrity(sakefile, args.verbose):
     sys.stderr.write("Error: Sakefile isn't written to specification\n")
     sys.exit(1)

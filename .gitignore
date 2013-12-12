@@ -1,5 +1,7 @@
 .DS_Store
 notes.txt
 Sakefile.yaml
+Sakefile.yml
+Sakefile
 build/
 *.pyc

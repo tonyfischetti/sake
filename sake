@@ -48,9 +48,9 @@ from sakelib import build
 parser = argparse.ArgumentParser(description='Build from a Sakefile')
 
 # mandatory arguments (but default is provided)
-parser.add_argument("targets",
+parser.add_argument("target",
                     help="targets to build (default=all)",
-                    metavar='targets', type=str, nargs='*',
+                    metavar='target', type=str, nargs='?',
                     default="all")
 
 # optional arguments
@@ -87,13 +87,8 @@ if args.verbose:
     print("Sakefile passes integrity test")
 
 
-# if 'help' is in one of the targets, none of the targets are run but
-# the help strings are printed for each target
-if len(args.targets) == 1:
-    if args.targets[0] == "help":
-        ret_val = acts.print_help(sakefile)
-        sys.exit(ret_val)
-elif 'help' in args.targets:
+# if target is help
+if args.target == "help":
     ret_val = acts.print_help(sakefile)
     sys.exit(ret_val)
 
@@ -101,7 +96,6 @@ elif 'help' in args.targets:
 # get the graph representation
 G = nx.DiGraph()
 G = acts.construct_graph(sakefile, args.verbose, G)
-
 
 if args.outfile:
     if args.outfile[-4:] == ".png":
@@ -111,51 +105,35 @@ if args.outfile:
 else:
     outfile = "dependencies.png"
 
-# if 'visual' is one of the targets, nothing else matters
-##!!!actually, it does
-if len(args.targets) == 1:
-    if args.targets[0] == "visual":
-        if args.verbose:
-            print("Going to build all targets")
-        ret_val = acts.visualize(G, args.verbose, filename=outfile)
-        sys.exit(ret_val)
-elif 'visual' in args.targets:
+
+# if target is "visual"
+if args.target ==  'visual':
     if args.verbose:
-        print("Going to build all targets")
+        print("Going to generate dependency graph image")
     ret_val = acts.visualize(G, args.verbose, filename=outfile)
     sys.exit(ret_val)
 
 
-# build all
-nodes_in_subgraph = []
-for node in G.nodes(data=True):
-    if node[0] in sakefile["all"]:
-        nodes_in_subgraph.append(node[0])
-    elif "parent" in node[1] and node[1]["parent"] in sakefile["all"]:
-        nodes_in_subgraph.append(node[0])
-g = G.subgraph(nodes_in_subgraph)
-for node in g.nodes():
-    print node
-build.build_this_graph(g, args.verbose)
+# if target is "all"
+if args.target == 'all':
+    if args.verbose:
+        print("Going to build target all")
+    # if "all" isn't a target in the sakefile, we
+    # just run everything
+    if "all" not in sakefile:
+        retval = build.build_this_graph(G, args.verbose)
+        sys.exit(retval)
+    # ok, "all" is a listed target in the sakefile
+    # lets make a subgraph with only the targets in "all"
+    nodes_in_subgraph = []
+    for node in G.nodes(data=True):
+        if node[0] in sakefile["all"]:
+            nodes_in_subgraph.append(node[0])
+        elif "parent" in node[1] and node[1]["parent"] in sakefile["all"]:
+            nodes_in_subgraph.append(node[0])
+    subgraph = G.subgraph(nodes_in_subgraph)
+    retval = build.build_this_graph(subgraph, args.verbose)
+    sys.exit(retval)
 
 sys.exit(0)
 
-
-
-# if 'all' is in one of the targets, nothing else matters
-if len(args.targets) == 1:
-    if args.targets[0] == "all":
-        if args.verbose:
-            print("Going to build all targets")
-        ret_val = build.build_all(sakefile, G, args.verbose)
-        sys.exit(ret_val)
-elif 'all' in args.targets:
-    if args.verbose:
-        print("Going to build all targets")
-    ret_val = build.build_all(sakefile, G, args.verbose)
-    sys.exit(ret_val)
-
-
-if args.verbose:
-    unformatted = "Going to build targets \n  - {}"
-    print(unformatted.format('\n  - '.join(args.targets)))

@@ -1,0 +1,52 @@
+State	DUI Arrests (2012)	Population Size
+Alabama	14,991	4,802,740
+Alaska	5,538	722,718
+Arizona	39,746	6,482,505
+Arkansas	11,707	2,937,979
+California	214,828	37,691,912
+Colorado	28,198	5,116,769
+Connecticut	8,235	3,580,709
+Delaware	215	907,135
+District of Columbia	32	617,996
+Florida	61,852	19,057,542
+Georgia	25,421	9,815,210
+Hawaii	5,812	1,374,810
+Idaho	11,850	1,584,985
+Illinois	4,909	12,869,257
+Indiana	23,475	6,516,922
+Iowa	14,147	3,062,309
+Kansas	13,080	2,871,238
+Kentucky	2,363	4,369,356
+Louisiana	7,977	4,574,836
+Maine	7,270	1,328,188
+Maryland	23,714	5,828,289
+Massachusetts	12,941	6,587,536
+Michigan	35,534	9,876,187
+Minnesota	29,832	5,344,861
+Mississippi	11,629	2,978,512
+Missouri	34,004	6,010,688
+Montana	4,240	998,199
+Nebraska	13,692	1,842,641
+Nevada	14,445	2,723,322
+New Hampshire	4,571	1,318,194
+New Jersey	24,313	8,821,155
+New Mexico	9,741	2,082,224
+New York	25,169	19,465,197
+North Carolina	49,599	9,656,401
+North Dakota	4,003	683,932
+Ohio	19,088	11,544,951
+Oklahoma	18,980	3,791,508
+Oregon	17,015	3,871,859
+Pennsylvania	53,319	12,742,886
+Rhode Island	2,778	1,051,302
+South Carolina	14,742	4,679,230
+South Dakota	6,190	824,082
+Tennessee	26,322	6,403,353
+Texas	90,066	25,674,681
+Utah	6,894	2,817,222
+Vermont	2,647	626,431
+Virginia	27,732	8,096,604
+Washington	34,952	6,830,038
+West Virginia	4,429	1,855,364
+Wisconsin	40,549	5,711,767
+Wyoming	7,159	568,158

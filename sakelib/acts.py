@@ -147,10 +147,12 @@ def construct_graph(sakefile, verbose, G):
             if not matches:
                 continue
             for match in matches:
-                connects.append(match)
+                if verbose:
+                    print("Appending {} to matches".format(match))
+                connects.append((match, dep))
         if connects:
             for connect in connects:
-                G.add_edge(connect, node[0])
+                G.add_edge(connect[0], node[0], {"label": connect[1]})
     return G
 
 
@@ -189,9 +191,11 @@ def visualize(G, verbose, filename="dependencies.png"):
     except RuntimeError:
         sys.stderr.write("Matplotlib had a runtime error\n")
         return 1
-    nx.draw(G, node_color="pink", node_size=1000, font_size=8)
-    plt.savefig(filename, dpi=1000)
+    pos = nx.spring_layout(G)
+    nx.draw(G, pos, node_color="pink", node_size=1000, font_size=8)
+    # edge_labels = dict([((u, v,), d['label']) 
+    #                      for u, v, d in G.edges(data=True)])
+    # nx.draw_networkx_edge_labels(G, pos, font_size=5, edge_labels=edge_labels)
+    plt.savefig(filename)
     return 0
-
-
 

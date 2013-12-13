@@ -6,3 +6,4 @@ Sakefile
 build/
 *.pyc
 dependencies.png
+.shastore

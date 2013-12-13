@@ -43,7 +43,7 @@ import yaml
 
 from sakelib import acts
 from sakelib import audit
-
+from sakelib import build
 
 parser = argparse.ArgumentParser(description='Build from a Sakefile')
 
@@ -111,8 +111,6 @@ if args.outfile:
 else:
     outfile = "dependencies.png"
 
-print(outfile)
-
 # if 'visual' is one of the targets, nothing else matters
 ##!!!actually, it does
 if len(args.targets) == 1:
@@ -133,12 +131,12 @@ if len(args.targets) == 1:
     if args.targets[0] == "all":
         if args.verbose:
             print("Going to build all targets")
-        ret_val = acts.build_all(sakefile, args.verbose)
+        ret_val = build.build_all(sakefile, G, args.verbose)
         sys.exit(ret_val)
 elif 'all' in args.targets:
     if args.verbose:
         print("Going to build all targets")
-    ret_val = acts.build_all(sakefile, args.verbose)
+    ret_val = build.build_all(sakefile, G, args.verbose)
     sys.exit(ret_val)
 
 

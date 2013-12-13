@@ -22,3 +22,4 @@ docs man file
 ?no target may be names help or visual
 fix command line visual call
 make visual take file args
+Sakefiles need globbing support

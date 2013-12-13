@@ -1,0 +1,45 @@
+
+def run_commands()
+
+check_integrity
+
+output_help()
+
+
+TARGETS (they are all phony)
+
+#take_digest() # only of 
+
+non-heirarchical
+
+
+--------
+
+if not in_mem_shas:
+    make_persistent_sha_store()
+
+in_mem_shas = read_persistent_store(filepath)
+
+
+
+#take sha1 of all dependencies
+in_mem_shas = {}
+all_deps = []
+for target in all:
+    all_deps.append(target['dependencies'])
+    for dep in all_deps:
+        a_sha = sha1(dep)
+        in_mem_shas['deps'] = a_sha
+
+for each target in all:
+    # determine if it needs to be run
+    for each dependency in target['dependency']:
+        current_sha1 = sha1(dependency)
+        if current_sha1 != in_mem_store['dependency']:
+            run it(target) ###
+            resha1outputs()
+        else:
+            continue
+    
+
+i need a sakefile

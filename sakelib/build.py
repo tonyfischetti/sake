@@ -102,7 +102,7 @@ def take_shas_of_all_dependencies(sakefile, verbose):
         print("No dependencies")
 
 
-def needs_to_run(sakefile, target, in_mem_shas, from_store):
+def needs_to_run(sakefile, target, in_mem_shas, from_store, verbose):
     """
     Determines if a target needs to run. This can happen in two ways:
     (a) If a dependency of the target has changed
@@ -113,6 +113,7 @@ def needs_to_run(sakefile, target, in_mem_shas, from_store):
         The name of the target
         The dictionary of the current shas held in memory
         The dictionary of the shas from the shastore
+        A flag indication verbosity
 
     Returns:
         True if the target needs to be run
@@ -157,11 +158,15 @@ def needs_to_run(sakefile, target, in_mem_shas, from_store):
     return False
 
 
-def run_commands(commands):
+def run_commands(commands, verbose):
     """
     Runs the commands supplied as an argument
     It will exit the program if the commands return a 
     non-zero code
+
+    Args:
+        the commands to run
+        A flag indicating verbosity
     """
     commands = commands.rstrip()
     if verbose:
@@ -173,7 +178,7 @@ def run_commands(commands):
         sys.exit("Command failed to run")
 
 
-def run_the_target(sakefile, target):
+def run_the_target(sakefile, target, verbose):
     """
     Wrapper function that sends to commands in a target's 'formula'
     to run_commands()
@@ -181,10 +186,11 @@ def run_the_target(sakefile, target):
     Args:
         The sakefile object
         The target to run
+        A flag indicating verbosity
     """
     if verbose:
         print("Running target {}".format(target))
-    run_commands(sakefile[target]['formula'])
+    run_commands(sakefile[target]['formula'], verbose)
 
 
 
@@ -197,11 +203,12 @@ def build_all(sakefile, G, verbose):
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
     from_store = yaml.load(file(".shastore", "r"))
-
     for target in nx.topological_sort(G):
-        print "checking is target '{}' needs to run".format(target)
-        if needs_to_run(sakefile, target, in_mem_shas, from_store):
-            run_the_target(sakefile, target)
+        if verbose:
+            outstr = "Checking if target '{}' needs to be run"
+            print(outstr.format(target))
+        if needs_to_run(sakefile, target, in_mem_shas, from_store, verbose):
+            run_the_target(sakefile, target, verbose)
             if "output" in sakefile[target]:
                 for output in sakefile[target]["output"]:
                     if output in from_store:

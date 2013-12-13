@@ -48,6 +48,8 @@ import yaml
 
 from subprocess import Popen, PIPE
 
+import pudb
+
 
 def get_sha(a_file):
     """
@@ -194,9 +196,19 @@ def run_the_target(sakefile, target, verbose):
 
 
 
+
+def build_this_graph(G, sakefile, verbose):
+    # does it need the sakefile?!
+    print "going to build this subgraph"
+    print nx.topological_sort(G)
+
+
+
 def build_all(sakefile, G, verbose):
     """
     """
+    print nx.topological_sort(G)
+    #pudb.set_trace()
     in_mem_shas = take_shas_of_all_dependencies(sakefile, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):

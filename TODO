@@ -23,3 +23,5 @@ docs man file
 fix command line visual call
 make visual take file args
 Sakefiles need globbing support
+get rid of the stupid labels
+what to do if meta target

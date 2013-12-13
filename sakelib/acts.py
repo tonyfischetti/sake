@@ -127,7 +127,9 @@ def construct_graph(sakefile, verbose, G):
                     continue
                 if verbose:
                     print("Adding '{}'".format(atomtarget))
-                G.add_node(atomtarget, sakefile[target][atomtarget])
+                data_dict = sakefile[target][atomtarget]
+                data_dict["parent"] = target
+                G.add_node(atomtarget, data_dict)
         else:
             if verbose:
                 print("Adding '{}'".format(target))
@@ -149,10 +151,10 @@ def construct_graph(sakefile, verbose, G):
             for match in matches:
                 if verbose:
                     print("Appending {} to matches".format(match))
-                connects.append((match, dep))
+                connects.append(match)
         if connects:
             for connect in connects:
-                G.add_edge(connect[0], node[0], {"label": connect[1]})
+                G.add_edge(connect, node[0])
     return G
 
 
@@ -193,9 +195,6 @@ def visualize(G, verbose, filename="dependencies.png"):
         return 1
     pos = nx.spring_layout(G)
     nx.draw(G, pos, node_color="pink", node_size=1000, font_size=8)
-    # edge_labels = dict([((u, v,), d['label']) 
-    #                      for u, v, d in G.edges(data=True)])
-    # nx.draw_networkx_edge_labels(G, pos, font_size=5, edge_labels=edge_labels)
     plt.savefig(filename)
     return 0
 

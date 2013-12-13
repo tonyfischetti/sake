@@ -126,6 +126,23 @@ elif 'visual' in args.targets:
     sys.exit(ret_val)
 
 
+# build all
+nodes_in_subgraph = []
+for node in G.nodes(data=True):
+    if node[0] in sakefile["all"]:
+        nodes_in_subgraph.append(node[0])
+    elif "parent" in node[1] and node[1]["parent"] in sakefile["all"]:
+        nodes_in_subgraph.append(node[0])
+g = G.subgraph(nodes_in_subgraph)
+for node in g.nodes():
+    print node
+build.build_this_graph(g, sakefile, args.verbose)
+    
+
+sys.exit(0)
+
+
+
 # if 'all' is in one of the targets, nothing else matters
 if len(args.targets) == 1:
     if args.targets[0] == "all":

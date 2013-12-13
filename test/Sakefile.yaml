@@ -41,8 +41,7 @@ find correlates:
         - lmcoeffs.txt
  
 all:
-    - format dui stats
+    - formatting
     - fetch teen stats
-    - convert teen stats to csv
     - find correlates
 ...

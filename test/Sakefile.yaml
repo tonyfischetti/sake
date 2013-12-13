@@ -1,0 +1,48 @@
+---
+fetch teen stats:
+    help: fetches various teen statstics from the web
+    # no dependencies
+    formula: >
+        curl -o teenstats.xls http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls;
+    output:
+        - teenstats.xls
+ 
+formatting:
+    help: formatting and conversion steps
+    convert teen stats to csv:
+        help: uses gnumerics ssconvert to convert ugly xls to csv and cleans it
+        dependencies:
+            - teenstats.xls
+            - convert.sh
+        formula: >
+            ./convert.sh;
+        output:
+            - teenstats.csv
+    format dui stats:
+        help: format raw (copy and pasted) dui/state data using perl
+        dependencies:
+            - rawdata.txt
+        formula: >
+            perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+            rawdata.txt | sed 's/,//g' > duistats.tsv;
+        output:
+            - duistats.tsv
+ 
+find correlates:
+    help: calls R script that finds correlated of DUI arrest in various teen statistics
+    dependencies:
+        - duistats.tsv
+        - teenstats.csv
+    formula: >
+        ./dui-correlates.R
+    output:
+        - Rplots.pdf
+        - correlation.png
+        - lmcoeffs.txt
+ 
+all:
+    - format dui stats
+    - fetch teen stats
+    - convert teen stats to csv
+    - find correlates
+...

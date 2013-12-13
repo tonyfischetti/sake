@@ -33,6 +33,7 @@ find correlates:
     dependencies:
         - duistats.tsv
         - teenstats.csv
+        - dui-correlates.R
     formula: >
         ./dui-correlates.R
     output:

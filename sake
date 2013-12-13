@@ -136,8 +136,7 @@ for node in G.nodes(data=True):
 g = G.subgraph(nodes_in_subgraph)
 for node in g.nodes():
     print node
-build.build_this_graph(g, sakefile, args.verbose)
-    
+build.build_this_graph(g, args.verbose)
 
 sys.exit(0)
 

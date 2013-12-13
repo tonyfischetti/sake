@@ -1,7 +1,6 @@
 #!/usr/bin/rscript --vanilla
 
 rm(list=ls())
-setwd("~/Desktop/sake/tests/test1/")
 
 
 dui.frame <- read.table("duistats.tsv", stringsAsFactors=FALSE, 

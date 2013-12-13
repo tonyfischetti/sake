@@ -70,12 +70,12 @@ def write_shas_to_shastore(sha_dict):
     fh.write("...")
 
 
-def take_shas_of_all_dependencies(sakefile, verbose):
+def take_shas_of_all_dependencies(G, verbose):
     """
     Takes sha1 hash of all dependencies of all targets
 
     Args:
-        The parsed Sakefile object
+        The graph we are going to build
         A flag indicating verbosity
 
     Returns:
@@ -84,14 +84,14 @@ def take_shas_of_all_dependencies(sakefile, verbose):
     """
     sha_dict = {}
     all_deps = []
-    for target in sakefile["all"]:
+    for target in G.nodes(data=True):
         if verbose:
             print("About to take shas of dependencies in target '{}'".format(
-                                                              target))
-        if 'dependencies' in sakefile[target]:
+                                                              target[0]))
+        if 'dependencies' in target[1]:
             if verbose:
                 print("It has dependencies")
-            for dep in sakefile[target]['dependencies']:
+            for dep in target[1]['dependencies']:
                 if verbose:
                     print("  - {}".format(dep))
                 all_deps.append(dep)
@@ -104,14 +104,14 @@ def take_shas_of_all_dependencies(sakefile, verbose):
         print("No dependencies")
 
 
-def needs_to_run(sakefile, target, in_mem_shas, from_store, verbose):
+def needs_to_run(G, target, in_mem_shas, from_store, verbose):
     """
     Determines if a target needs to run. This can happen in two ways:
     (a) If a dependency of the target has changed
     (b) If an output of the target is missing
 
     Args:
-        The sakefile object
+        The graph we are going to build
         The name of the target
         The dictionary of the current shas held in memory
         The dictionary of the shas from the shastore
@@ -121,20 +121,21 @@ def needs_to_run(sakefile, target, in_mem_shas, from_store, verbose):
         True if the target needs to be run
         False if not
     """
-    if 'output' in sakefile[target]:
-        for output in sakefile[target]["output"]:
+    node_dict = get_the_node_dict(G, target)
+    if 'output' in node_dict:
+        for output in node_dict["output"]:
             if not os.path.isfile(output):
                 if verbose:
                     outstr = "Output file '{}' is missing so it needs to run"
                     print(outstr.format(output))
                 return True
-    if 'dependencies' not in sakefile[target]:
+    if 'dependencies' not in node_dict:
         # if it has no dependencies, it always needs to run
         if verbose:
             print("Target {} has no dependencies and needs to run".format(
                                                                       target))
         return True
-    for dep in sakefile[target]['dependencies']:
+    for dep in node_dict['dependencies']:
         # because the shas are updated after all targets build,
         # its possible that the dependency's sha doesn't exist
         # in the current "in_mem" dictionary. If this is the case,
@@ -180,36 +181,38 @@ def run_commands(commands, verbose):
         sys.exit("Command failed to run")
 
 
-def run_the_target(sakefile, target, verbose):
+def run_the_target(G, target, verbose):
     """
     Wrapper function that sends to commands in a target's 'formula'
     to run_commands()
 
     Args:
-        The sakefile object
+        The graph we are going to build
         The target to run
         A flag indicating verbosity
     """
     if verbose:
         print("Running target {}".format(target))
-    run_commands(sakefile[target]['formula'], verbose)
+    the_formula = get_the_node_dict(G, target)["formula"]
+    run_commands(the_formula, verbose)
 
 
+def get_the_node_dict(G, name):
+    """
+    Helper function that returns the node data
+    of the node with the name supplied
+    """
+    for node in G.nodes(data=True):
+        if node[0] == name:
+            return node[1]
 
 
-def build_this_graph(G, sakefile, verbose):
-    # does it need the sakefile?!
+# clean this
+def build_this_graph(G, verbose):
+    verbose = True   #####
     print "going to build this subgraph"
     print nx.topological_sort(G)
-
-
-
-def build_all(sakefile, G, verbose):
-    """
-    """
-    print nx.topological_sort(G)
-    #pudb.set_trace()
-    in_mem_shas = take_shas_of_all_dependencies(sakefile, verbose)
+    in_mem_shas = take_shas_of_all_dependencies(G, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
@@ -219,20 +222,15 @@ def build_all(sakefile, G, verbose):
         if verbose:
             outstr = "Checking if target '{}' needs to be run"
             print(outstr.format(target))
-        if needs_to_run(sakefile, target, in_mem_shas, from_store, verbose):
-            run_the_target(sakefile, target, verbose)
-            if "output" in sakefile[target]:
-                for output in sakefile[target]["output"]:
+        if needs_to_run(G, target, in_mem_shas, from_store, verbose):
+            run_the_target(G, target, verbose)
+            node_dict = get_the_node_dict(G, target)
+
+            if "output" in node_dict:
+                for output in node_dict['output']:
                     if output in from_store:
                         in_mem_shas[output] = get_sha(output)
     write_shas_to_shastore(in_mem_shas)
     return 0
-
-
-
-
-
-
-
 
 

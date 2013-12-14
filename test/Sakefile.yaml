@@ -1,9 +1,14 @@
 ---
+
+# Macros
+#! TEEN_STATS_URL=http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls
+
+
 fetch teen stats:
     help: fetches various teen statstics from the web
     # no dependencies
     formula: >
-        curl -o teenstats.xls http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls;
+        curl -o teenstats.xls $TEEN_STATS_URL;
     output:
         - teenstats.xls
  

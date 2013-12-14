@@ -80,8 +80,14 @@ if not fname:
     sys.stderr.write("Error: there is no Sakefile to read\n")
     sys.exit(1)
 
+# expand macros
+fh = open(fname, "r")
+raw_text = fh.read()
+sake_text = acts.expand_macros(raw_text)
+fh.close()
+
 try:
-    sakefile = yaml.load(file(fname, "r"))
+    sakefile = yaml.load(sake_text)
 except yaml.YAMLError, exc:
     sys.stderr.write("Error: Sakefile failed to parse as valid YAML\n")
     if hasattr(exc, 'problem_mark'):

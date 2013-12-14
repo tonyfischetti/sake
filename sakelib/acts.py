@@ -40,10 +40,11 @@
 Various actions that the main entry delegates to
 """
 
-import sys
-import os.path
 import networkx as nx
+import os.path
+import re
 from subprocess import Popen
+import sys
 
 
 def escp(target_name):
@@ -94,6 +95,26 @@ def print_help(sakefile):
     what_visual_does = "output visual representation of project's dependencies"
     full_string += "visual:\n  -  {}\n".format(what_visual_does)
     print(full_string)
+
+
+def expand_macros(raw_text):
+    """
+    This gets called before the Sakefile is parsed. It looks for
+    macros defined anywhere in the Sakefile (the start of the line
+    is '#!') and then replaces all occurences of '$variable' with thr
+    value defined in the macro. It then returns the contents of the
+    file with the macros expanded
+    """
+    # gather macros
+    macros = {}
+    for line in raw_text.split("\n"):
+        if re.search("^#!", line):
+            var, val = re.search("^#!\s*(\w+)\s*=\s*(\S+)", line).group(1, 2)
+            macros[var] = val
+    for var in macros:
+        raw_text = raw_text.replace("$"+var, macros[var])
+    return raw_text
+
 
 def check_for_dep_in_outputs(dep, verbose, G):
     """

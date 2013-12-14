@@ -46,9 +46,7 @@ import os.path
 import sys
 import yaml
 
-from subprocess import Popen
-
-import pudb
+from subprocess import Popen, PIPE
 
 
 def get_sha(a_file):
@@ -163,28 +161,32 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
     return False
 
 
-def run_commands(commands, verbose):
+def run_commands(commands, verbose, quiet):
     """
     Runs the commands supplied as an argument
-    It will exit the program if the commands return a 
+    It will exit the program if the commands return a
     non-zero code
 
     Args:
         the commands to run
         A flag indicating verbosity
+        A flag indicatingf quiet mode
     """
     commands = commands.rstrip()
     if verbose:
         print("About to run commands '{}'".format(commands))
-    print(commands)
-    p = Popen(commands, shell=True)
+    if not quiet:
+        print(commands)
+        p = Popen(commands, shell=True)
+    else:
+        p = Popen(commands, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     if p.returncode:
         print(err)
         sys.exit("Command failed to run")
 
 
-def run_the_target(G, target, verbose):
+def run_the_target(G, target, verbose, quiet):
     """
     Wrapper function that sends to commands in a target's 'formula'
     to run_commands()
@@ -193,10 +195,11 @@ def run_the_target(G, target, verbose):
         The graph we are going to build
         The target to run
         A flag indicating verbosity
+        A flag indicating quiet mode
     """
     print("Running target {}".format(target))
     the_formula = get_the_node_dict(G, target)["formula"]
-    run_commands(the_formula, verbose)
+    run_commands(the_formula, verbose, quiet)
 
 
 def get_the_node_dict(G, name):
@@ -209,13 +212,14 @@ def get_the_node_dict(G, name):
             return node[1]
 
 
-def build_this_graph(G, verbose):
+def build_this_graph(G, verbose, quiet):
     """
     This is the master function that performs the building.
 
     Args:
         A graph (often a subgraph)
         A flag indicating verbosity
+        A flag indicating quiet mode
 
     Returns:
         0 if successful
@@ -232,7 +236,7 @@ def build_this_graph(G, verbose):
             outstr = "Checking if target '{}' needs to be run"
             print(outstr.format(target))
         if needs_to_run(G, target, in_mem_shas, from_store, verbose):
-            run_the_target(G, target, verbose)
+            run_the_target(G, target, verbose, quiet)
             node_dict = get_the_node_dict(G, target)
             if "output" in node_dict:
                 for output in node_dict['output']:

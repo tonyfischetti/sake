@@ -40,6 +40,7 @@ import networkx as nx
 import os.path
 import sys
 import yaml
+import pudb
 
 from sakelib import acts
 from sakelib import audit
@@ -87,7 +88,7 @@ if args.verbose:
     print("Sakefile passes integrity test")
 
 
-# if target is help
+# if target is "help"
 if args.target == "help":
     ret_val = acts.print_help(sakefile)
     sys.exit(ret_val)
@@ -96,6 +97,12 @@ if args.target == "help":
 # get the graph representation
 G = nx.DiGraph()
 G = acts.construct_graph(sakefile, args.verbose, G)
+
+
+# if target is "clean"
+if args.target == "clean":
+    acts.clean_all(G)
+    sys.exit(0)
 
 
 # if target is "visual"

@@ -41,7 +41,9 @@ Various actions that the main entry delegates to
 """
 
 import sys
+import os.path
 import networkx as nx
+from subprocess import Popen
 
 
 def print_help(sakefile):
@@ -154,6 +156,28 @@ def construct_graph(sakefile, verbose, G):
             for connect in connects:
                 G.add_edge(connect, node[0])
     return G
+
+def clean_all(G):
+    """
+    Removes all the output files from all targets. Takes
+    the graph as the only argument
+    """
+    all_outputs = []
+    for node in G.nodes(data=True):
+        if "output" in node[1]:
+            for item in node[1]["output"]:
+                all_outputs.append(item)
+    all_outputs.append(".shastore")
+    for item in all_outputs:
+        if os.path.isfile(item):
+            command = "rm {}".format(item)
+            print command
+            p = Popen(command, shell=True)
+            p.communicate()
+            if p.returncode:
+                sys.stdout.write("Command failed to run\n")
+                sys.exit(1)
+
 
 def visualize(G, verbose, filename="dependencies.png"):
     """

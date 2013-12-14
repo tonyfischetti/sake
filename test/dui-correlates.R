@@ -3,6 +3,7 @@
 rm(list=ls())
 
 
+
 dui.frame <- read.table("duistats.tsv", stringsAsFactors=FALSE, 
                         sep='\t', header=TRUE)
 

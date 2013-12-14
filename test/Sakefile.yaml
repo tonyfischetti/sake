@@ -38,7 +38,6 @@ find correlates:
         ./dui-correlates.R
     output:
         - Rplots.pdf
-        - correlation.png
         - lmcoeffs.txt
  
 all:

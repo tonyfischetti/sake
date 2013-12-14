@@ -46,7 +46,7 @@ import os.path
 import sys
 import yaml
 
-from subprocess import Popen, PIPE
+from subprocess import Popen
 
 import pudb
 
@@ -68,6 +68,7 @@ def write_shas_to_shastore(sha_dict):
     for key in sha_dict:
         fh.write("{}: {}\n".format(key, sha_dict[key]))
     fh.write("...")
+    fh.close()
 
 
 def take_shas_of_all_dependencies(G, verbose):
@@ -175,7 +176,8 @@ def run_commands(commands, verbose):
     commands = commands.rstrip()
     if verbose:
         print("About to run commands '{}'".format(commands))
-    p = Popen(commands, shell=True, stdout=PIPE, stderr=PIPE)
+    print(commands)
+    p = Popen(commands, shell=True)
     out, err = p.communicate()
     if p.returncode:
         print(err)
@@ -236,7 +238,9 @@ def build_this_graph(G, verbose):
                 for output in node_dict['output']:
                     if output in from_store:
                         in_mem_shas[output] = get_sha(output)
+    in_mem_shas = take_shas_of_all_dependencies(G, verbose)
     write_shas_to_shastore(in_mem_shas)
+    print("Done")
     return 0
 
 

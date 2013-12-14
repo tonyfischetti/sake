@@ -77,7 +77,6 @@ def print_help(sakefile):
                                                     sakefile[target]["help"])
     print(full_string)
 
-
 def check_for_dep_in_outputs(dep, verbose, G):
     """
     Function to help construct_graph() identify dependencies
@@ -100,7 +99,6 @@ def check_for_dep_in_outputs(dep, verbose, G):
         if dep in node[1]['output']:
             ret_list.append(node[0])
     return ret_list
-
 
 def construct_graph(sakefile, verbose, G):
     """
@@ -156,23 +154,6 @@ def construct_graph(sakefile, verbose, G):
             for connect in connects:
                 G.add_edge(connect, node[0])
     return G
-
-
-def build_all(sakefile, verbose):
-    """
-    Builds all targets (all in "all" target, anyway)
-
-    Args:
-        A dictionary that is the parsed Sakefile (from sake.py)
-        A flag indicating verbosity
-
-    Returns:
-        True is successful, False otherwise
-    """
-    if verbose:
-        print("Call to build_all issued")
-    pass
-
 
 def visualize(G, verbose, filename="dependencies.png"):
     """

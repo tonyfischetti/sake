@@ -97,21 +97,37 @@ if args.target == "help":
 G = nx.DiGraph()
 G = acts.construct_graph(sakefile, args.verbose, G)
 
-if args.outfile:
-    if args.outfile[-4:] == ".png":
-        outfile = args.outfile
-    else:
-        outfile = args.outfile + ".png"
-else:
-    outfile = "dependencies.png"
-
 
 # if target is "visual"
 if args.target ==  'visual':
     if args.verbose:
         print("Going to generate dependency graph image")
+    if args.outfile:
+        if args.outfile[-4:] == ".png":
+            outfile = args.outfile
+        else:
+            outfile = args.outfile + ".png"
+    else:
+        outfile = "dependencies.png"
     ret_val = acts.visualize(G, args.verbose, filename=outfile)
     sys.exit(ret_val)
+
+
+# recursive function to get all predecessors
+# must be called with a list (even if its one element
+def all_preds(preds):
+    if isinstance(preds, list):
+        if len(preds) == 0:
+            return []
+        if len(preds) == 1:
+            if G.predecessors(preds[0]):
+                all_preds(G.predecessors(preds[0]))
+            else:
+                return preds
+        car, cdr = preds[0], preds[1:]
+        return all_preds(G.predecessors(car)) + all_preds(car) + all_preds(cdr)
+    else:
+        return [preds]
 
 
 # if target is "all"
@@ -125,15 +141,41 @@ if args.target == 'all':
         sys.exit(retval)
     # ok, "all" is a listed target in the sakefile
     # lets make a subgraph with only the targets in "all"
+    # ah! but wait! it needs to have all the predecessors of
+    # those targets, as well
     nodes_in_subgraph = []
     for node in G.nodes(data=True):
         if node[0] in sakefile["all"]:
-            nodes_in_subgraph.append(node[0])
+            nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
         elif "parent" in node[1] and node[1]["parent"] in sakefile["all"]:
-            nodes_in_subgraph.append(node[0])
+            nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
+    nodes_in_subgraph = list(set(nodes_in_subgraph))
     subgraph = G.subgraph(nodes_in_subgraph)
     retval = build.build_this_graph(subgraph, args.verbose)
     sys.exit(retval)
 
-sys.exit(0)
+
+# for other target specified
+# it's easier to ask for forgiveness that permission
+try:
+    predecessors =  G.predecessors(args.target)
+except:
+    # maybe its a meta-target?
+    if args.target in sakefile:
+        nodes_in_subgraph = []
+        for node in G.nodes(data=True):
+            if "parent" in node[1] and node[1]["parent"] == args.target:
+                nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
+        nodes_in_subgraph = list(set(nodes_in_subgraph))
+        subgraph = G.subgraph(nodes_in_subgraph)
+        retval = build.build_this_graph(subgraph, args.verbose)
+        sys.exit(retval)
+    # I guess its not :(
+    err_mes = "Error: Couldn't find target '{}' in Sakefile\n"
+    sys.stderr.write(err_mes.format(args.target))
+    sys.exit(1)
+nodes_in_subgraph = list(set(all_preds([args.target])))
+subgraph = G.subgraph(nodes_in_subgraph)
+retval = build.build_this_graph(subgraph, args.verbose)
+sys.exit(retval)
 

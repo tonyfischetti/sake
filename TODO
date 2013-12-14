@@ -25,3 +25,5 @@ make visual take file args
 Sakefiles need globbing support
 get rid of the stupid labels
 what to do if meta target
+missing clean functionality
+HAVE ECHO TO STDOUT

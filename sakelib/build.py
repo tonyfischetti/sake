@@ -153,8 +153,9 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
             return True
         old_sha = from_store[dep]
         if now_sha != old_sha:
-            outstr = "There's a mismatch for dep {} so it needs to run"
-            print(outstr.format(dep))
+            if verbose:
+                outstr = "There's a mismatch for dep {} so it needs to run"
+                print(outstr.format(dep))
             return True
     if verbose:
         print("Target '{}' doesn't need to run".format(target))
@@ -191,8 +192,7 @@ def run_the_target(G, target, verbose):
         The target to run
         A flag indicating verbosity
     """
-    if verbose:
-        print("Running target {}".format(target))
+    print("Running target {}".format(target))
     the_formula = get_the_node_dict(G, target)["formula"]
     run_commands(the_formula, verbose)
 
@@ -207,11 +207,18 @@ def get_the_node_dict(G, name):
             return node[1]
 
 
-# clean this
 def build_this_graph(G, verbose):
-    verbose = True   #####
-    print "going to build this subgraph"
-    print nx.topological_sort(G)
+    """
+    This is the master function that performs the building.
+
+    Args:
+        A graph (often a subgraph)
+        A flag indicating verbosity
+
+    Returns:
+        0 if successful
+        UN-success results in a fatal error so it will return 0 or nothing
+    """
     in_mem_shas = take_shas_of_all_dependencies(G, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):
@@ -225,7 +232,6 @@ def build_this_graph(G, verbose):
         if needs_to_run(G, target, in_mem_shas, from_store, verbose):
             run_the_target(G, target, verbose)
             node_dict = get_the_node_dict(G, target)
-
             if "output" in node_dict:
                 for output in node_dict['output']:
                     if output in from_store:

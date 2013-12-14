@@ -94,7 +94,6 @@ def check_integrity(sakefile, verbose):
             return False
     return True
 
-
 def check_target_integrity(key, values, meta=False, all=False, parent=None):
     """
     Checks the integrity of a specific target. Gets called

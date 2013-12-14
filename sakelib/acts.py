@@ -46,6 +46,18 @@ import networkx as nx
 from subprocess import Popen
 
 
+def escp(target_name):
+    """
+    This function is used by sake help. Since sakefiles allow
+    for targets with spaces in them, sake help needs to quote
+    all targets with spaces. This takes a target name and
+    quotes it if necessary
+    """
+    if ' ' in target_name:
+        return '"{}"'.format(target_name)
+    return target_name
+
+
 def print_help(sakefile):
     """
     Prints the help string of the Sakefile, prettily
@@ -57,7 +69,7 @@ def print_help(sakefile):
         0 if all targets have help messages to print,
         1 otherwise
     """
-    full_string = "\n"
+    full_string = "You can 'sake' one of the following...\n\n"
     errmes = "target '{}' is not allowed to not have help message\n"
     for target in sakefile:
         if target == "all":
@@ -65,18 +77,22 @@ def print_help(sakefile):
             continue
         if "formula" not in sakefile[target]:
             # this means it's a meta-target
-            full_string += "{}:\n  - {}\n\n".format(target,
+            full_string += "{}:\n  - {}\n\n".format(escp(target),
                                                     sakefile[target]["help"])
             for atom_target in sakefile[target]:
                 if atom_target == "help":
                     continue
                 full_string += "    "
-                full_string += "{}:\n      -  {}\n".format(atom_target,
+                full_string += "{}:\n      -  {}\n".format(escp(atom_target),
                                        sakefile[target][atom_target]["help"])
             full_string += "\n"
         else:
-            full_string += "{}:\n  - {}\n\n".format(target,
+            full_string += "{}:\n  - {}\n\n".format(escp(target),
                                                     sakefile[target]["help"])
+    what_clean_does = "remove all targets' outputs and start from scratch"
+    full_string += "clean:\n  -  {}\n\n".format(what_clean_does)
+    what_visual_does = "output visual representation of project's dependencies"
+    full_string += "visual:\n  -  {}\n".format(what_visual_does)
     print(full_string)
 
 def check_for_dep_in_outputs(dep, verbose, G):

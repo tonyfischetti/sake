@@ -37,7 +37,7 @@
 
 
 # Version number
-VERSION = "0.0.1"
+VERSION = "0.5"
 
 # Name of application
 NAME = 'sake'
@@ -49,10 +49,10 @@ TITLE = 'Sake'
 DESCRIPTION = 'A self-documenting build automation tool'
 
 # Website for project
-URL = 'none yet'
+URL = 'http://tonyfischetti.github.io/sake'
 
 # Git URL
-SOURCE_URL = ''
+SOURCE_URL = 'https://github.com/tonyfischetti/sake'
 
 # Author name
 AUTHOR_NAME = "Tony Fischetti"

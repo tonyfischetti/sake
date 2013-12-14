@@ -3,7 +3,6 @@ a help message is mandatory
 if no formula then its meta
 meta-targets should have nothing but help and atom targets
 
-
 get url
 put source url in lib/constants
 look at /Library/Python/2.7/site-packages and populate
@@ -17,13 +16,6 @@ duplicates are a sign of a really really big bug
 ¿tests?
 docs man file
 
-
-?help and visual must be called on their own
 ?no target may be names help or visual
 fix command line visual call
-make visual take file args
 Sakefiles need globbing support
-get rid of the stupid labels
-what to do if meta target
-missing clean functionality
-HAVE ECHO TO STDOUT

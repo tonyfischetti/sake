@@ -19,3 +19,4 @@ docs man file
 ?no target may be names help or visual
 fix command line visual call
 Sakefiles need globbing support
+?macros are #! var=val to the end of the line

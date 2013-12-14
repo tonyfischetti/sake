@@ -92,7 +92,7 @@ except yaml.YAMLError, exc:
     sys.stderr.write("Error: Sakefile failed to parse as valid YAML\n")
     if hasattr(exc, 'problem_mark'):
         mark = exc.problem_mark
-        print "Error position: (%s:%s)" % (mark.line+1, mark.column+1)
+        sys.stderr.write("Error near line {}\n".format(str(mark.line+1)))
         sys.exit(1)
 if not audit.check_integrity(sakefile, args.verbose):
     sys.stderr.write("Error: Sakefile isn't written to specification\n")

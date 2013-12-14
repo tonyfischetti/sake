@@ -101,7 +101,7 @@ def expand_macros(raw_text):
     """
     This gets called before the Sakefile is parsed. It looks for
     macros defined anywhere in the Sakefile (the start of the line
-    is '#!') and then replaces all occurences of '$variable' with thr
+    is '#!') and then replaces all occurences of '$variable' with the
     value defined in the macro. It then returns the contents of the
     file with the macros expanded
     """
@@ -109,7 +109,12 @@ def expand_macros(raw_text):
     macros = {}
     for line in raw_text.split("\n"):
         if re.search("^#!", line):
-            var, val = re.search("^#!\s*(\w+)\s*=\s*(\S+)", line).group(1, 2)
+            try:
+                var, val = re.search("^#!\s*(\w+)\s*=\s*(.+$)",
+                                     line).group(1, 2)
+            except:
+                sys.stderr.write("Failed to parse macro {}\n".format(line))
+                sys.exit(1)
             macros[var] = val
     for var in macros:
         raw_text = raw_text.replace("$"+var, macros[var])

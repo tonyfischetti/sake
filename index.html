@@ -37,7 +37,7 @@ instructions for building a project also serve as the documentation of the
 projects' workflow. The first time it's run, sake will build the whole 
 project in an order that automatically satisfies all dependencies. For all 
 subsequent runs, sake will only rebuild the parts of the project that depend 
-on changed files. This cuts down on unnecessary re-building and let’s you 
+on <em>changed</em> files. This cuts down on unnecessary re-building and let’s you 
 concentrate on your work rather than memorizing the order in which commands 
 have to be run.</p>
 
@@ -133,12 +133,16 @@ visual:
   -  output visual representation of project's dependencies
 </code></pre>
 
-<p>Finally, a visual representation of the dependency diagram can be produce automagically by running the following command</p>
+<p>Finally, a visual representation of the dependency diagram can be produced, automagically, by running the following command</p>
 
 <pre><code>sake visual
 </code></pre>
 
 <p>Which produces the following image<img src="http://www.onthelambda.com/wp-content/uploads/2013/12/dependency-visualization.png" alt="Automagic dependency visualization"></p>
+
+<p>This is a really simple example, sure, but it's easy to see that, even for the most labyrinthine of pipelines, that a visualization like this can really help get a sense all the actions involved in a workflow. The key points here are (a) that no extra effort had to be expended by the operator/writer of the workflow to generate 'help' and visualization of dependencies, and (b) that the documentation of the workflow occurs <em>as a result</em> of designing and writing it.</p>
+
+<p>The coupling of writing the automation and documentation makes sake a sound choice for ...</p>
 
 <h3>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>

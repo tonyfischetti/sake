@@ -47,7 +47,98 @@ and is written in python.</p>
 <h3>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h3>
 
-<p>Coming soon</p>
+<p>Consider this example workflow that examines correlates of DUI arrests with various adolescent-related data by state.</p>
+
+<div class="highlight highlight-yaml"><pre><span class="nn">---</span>
+<span class="c1"># Macros</span>
+<span class="c1">#! TEEN_STATS_URL=http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls</span>
+
+<span class="l-Scalar-Plain">fetch teen stats</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">fetches various teen statstics from the web</span>
+    <span class="c1"># no dependencies</span>
+    <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+        <span class="no">curl -o teenstats.xls $TEEN_STATS_URL;</span>
+    <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.xls</span>
+
+<span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">formatting and conversion steps</span>
+    <span class="l-Scalar-Plain">convert teen stats to csv</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">uses gnumerics ssconvert to convert ugly xls to csv and cleans it</span>
+        <span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.xls</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">convert.sh</span>
+        <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+            <span class="no">./convert.sh;</span>
+        <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.csv</span>
+    <span class="l-Scalar-Plain">format dui stats</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">format raw (copy and pasted) dui/state data using perl</span>
+        <span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">rawdata.txt</span>
+        <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+            <span class="no">perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'</span>
+            <span class="no">rawdata.txt | sed 's/,//g' &gt; duistats.tsv;</span>
+        <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">duistats.tsv</span>
+
+<span class="l-Scalar-Plain">find correlates</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">calls R script that finds correlated of DUI arrest in various teen statistics</span>
+    <span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">duistats.tsv</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.csv</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">dui-correlates.R</span>
+    <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+        <span class="no">./dui-correlates.R</span>
+    <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Rplots.pdf</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">lmcoeffs.txt</span>
+<span class="nn">...</span>
+</pre></div>
+
+<p>This is an Sakefile to build/document a process that processes and formats two data files from the web and feeds it into an R script that searches for correlations and, ultimately, produces an output table and a graphic.</p>
+
+<p>The entire process can be performed, start to finish by running the following command:</p>
+
+<pre><code>sake
+</code></pre>
+
+<p>The mandatory "help" fields are used internally by sake to produce the following output when </p>
+
+<pre><code>sake help
+</code></pre>
+
+<p>is run</p>
+
+<pre><code>You can 'sake' one of the following...
+
+"find correlates":
+  - calls R script that finds correlated of DUI arrest in various teen statistics
+
+formatting:
+  - formatting and conversion steps
+
+    "convert teen stats to csv":
+      -  uses gnumerics ssconvert to convert ugly xls to csv and cleans it
+    "format dui stats":
+      -  format raw (copy and pasted) dui/state data using perl
+
+"fetch teen stats":
+  - fetches various teen statstics from the web
+
+clean:
+  -  remove all targets' outputs and start from scratch
+
+visual:
+  -  output visual representation of project's dependencies
+</code></pre>
+
+<p>Finally, a visual representation of the dependency diagram can be produce automagically by running the following command</p>
+
+<pre><code>sake visual
+</code></pre>
+
+<p>Which produces the following image<img src="http://www.onthelambda.com/wp-content/uploads/2013/12/dependency-visualization.png" alt="Automagic dependency visualization"></p>
 
 <h3>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>

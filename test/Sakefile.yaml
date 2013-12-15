@@ -3,7 +3,6 @@
 # Macros
 #! TEEN_STATS_URL=http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls
 
-
 fetch teen stats:
     help: fetches various teen statstics from the web
     # no dependencies

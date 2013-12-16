@@ -238,18 +238,25 @@ def clean_all(G, verbose, quiet):
     return retcode
 
 
-def visualize(G, verbose, filename="dependencies"):
+def visualize(G, filename="dependencies", no_graphviz=False):
     """
-    Uses networkX to draw a graphviz dot file and
+    Uses networkX to draw a graphviz dot file either (a) calls the
+    graphviz command "dot" to turn it into a SVG and remove the
+    dotfile (default), or (b) if no_graphviz is True, just output
+    the graphviz dot file
 
     Args:
         a NetworkX DiGraph
+        a filename (a default is provided
+        a flag indicating whether graphviz should *not* be called
 
     Returns:
         0 if everything worked
         will cause fatal error on failure
     """
-    print filename
+    if no_graphviz:
+        nx.write_dot(G, filename)
+        return 0
     nx.write_dot(G, "tempdot")
     command = "dot -Tsvg tempdot -o {}.svg".format(filename)
     p = Popen(command, shell=True)

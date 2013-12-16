@@ -46,6 +46,8 @@ import os.path
 import sys
 import yaml
 
+import pudb
+
 from subprocess import Popen, PIPE
 
 
@@ -225,6 +227,16 @@ def build_this_graph(G, verbose, quiet):
         0 if successful
         UN-success results in a fatal error so it will return 0 or nothing
     """
+    if verbose:
+        print("Checking that graph is directed acyclic")
+    if not nx.is_directed_acyclic_graph(G):
+        errmes = "Dependency resolution is impossible; "
+        errmes += "graph is not directed and acyclic"
+        errmes += "\nCheck the Sakefile\n"
+        sys.stderr.write(errmes)
+        sys.exit(1)
+    if verbose:
+        print("Dependency resolution is possible")
     in_mem_shas = take_shas_of_all_dependencies(G, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):

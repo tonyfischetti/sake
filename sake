@@ -59,7 +59,11 @@ parser.add_argument('-v', '--verbose', action='store_true',
 parser.add_argument('-q', '--quiet', action='store_true',
                     help="suppress most output")
 parser.add_argument('-f', '--file', action="store", dest="outfile",
-                    help="filename to place visualization")
+                    help="filename to place visualization or " +
+                         "graphviz dotfile")
+parser.add_argument('-n', '--no-graphviz', action="store_true",
+                    help="Suppress command to graphviz and just" +
+                         "produce graphviz dot file (`sake visual' only)")
 
 args = parser.parse_args()
 
@@ -119,13 +123,13 @@ if args.target == "clean":
 
 
 # if target is "visual"
-if args.target ==  'visual':
+if args.target == 'visual':
     if args.verbose:
         print("Going to generate dependency graph image")
     ##
     if not args.outfile:
         outfile = "dependencies"
-    ret_val = acts.visualize(G, args.verbose, filename=outfile)
+    ret_val = acts.visualize(G, filename=outfile, no_graphviz=args.no_graphviz)
     sys.exit(ret_val)
 
 

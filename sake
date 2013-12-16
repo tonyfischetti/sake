@@ -63,7 +63,7 @@ parser.add_argument('-f', '--file', action="store", dest="outfile",
                          "graphviz dotfile")
 parser.add_argument('-n', '--no-graphviz', action="store_true",
                     help="Suppress command to graphviz and just" +
-                         "produce graphviz dot file (`sake visual' only)")
+                         " produce graphviz dot file (`sake visual' only)")
 
 args = parser.parse_args()
 

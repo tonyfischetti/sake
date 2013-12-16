@@ -1,0 +1,35 @@
+.TH SAKE 1 "DEC 2013"
+.SH NAME
+sake \- a self-documenting build automation tool
+.SH SYNOPSIS
+.B sake [-h] [-v] [-q] [-f OUTFILE] [-n] [target]
+.SH WARNING
+For more complete documentation, check this project's webpage at
+http://tonyfischetti.github.io/sake/
+.SH DESCRIPTION
+.B sake
+This tool reads a YAML document called a
+.B Sakefile
+which outlines the steps in a workflow including dependencies and output
+files. The first time it's run, sake will build the whole project in an order
+that automatically satisfies all dependencies. For all subsequent runs,
+sake will only rebuild the parts of the project that depend on changed
+files. This cuts down on unnecessary re-building and let’s you concentrate
+on your work rather than memorizing the order in which commands have to
+be run. Additionally, it has the ability to draw a dependency diagram
+for the project.
+.SH OPTIONS
+.IP -h
+prints the help and usage
+.IP -v 
+Runs sake in verbose mode
+.IP -q
+Runs sake in quiet mode and suppresses most output
+.IP "-f <filename>"
+Specifies file name to use for the visual dependency output
+.IP -n
+Skips external call to graphviz and just outputs dependency graph dot file
+.SH AUTHOR
+Tony Fischetti <tony.fischetti at gmail.com>
+.SH "SEE ALSO"
+.BR make (1)

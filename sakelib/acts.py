@@ -41,7 +41,7 @@ Various actions that the main entry delegates to
 """
 
 import networkx as nx
-import os.path
+import os
 import re
 from subprocess import Popen
 import sys
@@ -199,10 +199,19 @@ def construct_graph(sakefile, verbose, G):
                 G.add_edge(connect, node[0])
     return G
 
-def clean_all(G):
+def clean_all(G, verbose, quiet):
     """
     Removes all the output files from all targets. Takes
     the graph as the only argument
+
+    Args:
+        The networkx graph object
+        A flag indicating verbosity
+        A flag indicating quiet mode
+
+    Returns:
+        0 if successful
+        1 if removing even one file failed
     """
     all_outputs = []
     for node in G.nodes(data=True):
@@ -210,38 +219,45 @@ def clean_all(G):
             for item in node[1]["output"]:
                 all_outputs.append(item)
     all_outputs.append(".shastore")
+    retcode = 0
     for item in all_outputs:
         if os.path.isfile(item):
-            command = "rm {}".format(item)
-            print command
-            p = Popen(command, shell=True)
-            p.communicate()
-            if p.returncode:
-                sys.stdout.write("Command failed to run\n")
-                sys.exit(1)
+            if verbose:
+                mesg = "Attempting to remove file '{}'"
+                print(mesg.format(item))
+            try:
+                os.remove(item)
+                if verbose:
+                    print("Removed file")
+            except:
+                errmeg = "Error: file '{}' failed to be removed\n"
+                sys.stderr.write(errmeg.format(item))
+                retcode = 1
+    if not retcode:
+        print("All clean")
+    return retcode
 
 
-def visualize(G, verbose, filename="dependencies.png"):
+def visualize(G, verbose, filename="dependencies"):
     """
-    Uses networkX's inteface with matplotlib to draw
+    Uses networkX to draw a graphviz dot file and
 
     Args:
         a NetworkX DiGraph
 
     Returns:
         0 if everything worked
-        1 if otherwise
+        will cause fatal error on failure
     """
-    try:
-        import matplotlib.pyplot as plt
-    except ImportError:
-        sys.stderr.write("Matplotlib required for visualization\n")
-        return 1
-    except RuntimeError:
-        sys.stderr.write("Matplotlib had a runtime error\n")
-        return 1
-    pos = nx.spring_layout(G)
-    nx.draw(G, pos, node_color="pink", node_size=1000, font_size=8)
-    plt.savefig(filename)
+    print filename
+    nx.write_dot(G, "tempdot")
+    command = "dot -Tsvg tempdot -o {}.svg".format(filename)
+    p = Popen(command, shell=True)
+    p.communicate()
+    if p.returncode:
+        errmes = "Either graphviz is not installed, or its not on PATH"
+        sys.stderr.write(errmes)
+        sys.exit(1)
+    os.remove("tempdot")
     return 0
 

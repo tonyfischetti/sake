@@ -114,21 +114,17 @@ G = acts.construct_graph(sakefile, args.verbose, G)
 
 # if target is "clean"
 if args.target == "clean":
-    acts.clean_all(G)
-    sys.exit(0)
+    retcode = acts.clean_all(G, args.verbose, args.quiet)
+    sys.exit(retcode)
 
 
 # if target is "visual"
 if args.target ==  'visual':
     if args.verbose:
         print("Going to generate dependency graph image")
-    if args.outfile:
-        if args.outfile[-4:] == ".png":
-            outfile = args.outfile
-        else:
-            outfile = args.outfile + ".png"
-    else:
-        outfile = "dependencies.png"
+    ##
+    if not args.outfile:
+        outfile = "dependencies"
     ret_val = acts.visualize(G, args.verbose, filename=outfile)
     sys.exit(ret_val)
 

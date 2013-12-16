@@ -5,7 +5,7 @@
 Sake is a way to easily design, share, build, and visualize workflows with 
 intricate interdependencies. Sake is self-documenting because the 
 instructions for building a project also serve as the documentation of the 
-projects' workflow. The first time it's run, sake will build the whole 
+project's workflow. The first time it's run, sake will build the whole 
 project in an order that automatically satisfies all dependencies. For all 
 subsequent runs, sake will only rebuild the parts of the project that depend 
 on changed files. This cuts down on unnecessary re-building and let’s you 

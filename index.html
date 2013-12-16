@@ -29,36 +29,141 @@
       </header>
       <section>
         <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<a name="what-is-it" class="anchor" href="#what-is-it"><span class="octicon octicon-link"></span></a>What is it?</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>Sake is a way to easily design, share, build, and visualize workflows with 
+intricate interdependencies. Sake is self-documenting because the 
+instructions for building a project also serve as the documentation of the 
+project's workflow. The first time it's run, sake will build the whole 
+project in an order that automatically satisfies all dependencies. For all 
+subsequent runs, sake will only rebuild the parts of the project that depend 
+on <em>changed</em> files. This cuts down on unnecessary re-building and let’s you 
+concentrate on your work rather than memorizing the order in which commands 
+have to be run.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>Sake is free, open source software under a very permissive license (MIT Expat)
+and is written in python.</p>
+
+<h4>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h4>
+
+<p>Consider this example workflow that examines correlates of DUI arrests with various adolescent-related data by state.</p>
+
+<div class="highlight highlight-yaml"><pre><span class="nn">---</span>
+<span class="c1"># Macros</span>
+<span class="c1">#! TEEN_STATS_URL=http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls</span>
+
+<span class="l-Scalar-Plain">fetch teen stats</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">fetches various teen statstics from the web</span>
+    <span class="c1"># no dependencies</span>
+    <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+        <span class="no">curl -o teenstats.xls $TEEN_STATS_URL;</span>
+    <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.xls</span>
+
+<span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">formatting and conversion steps</span>
+    <span class="l-Scalar-Plain">convert teen stats to csv</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">uses gnumerics ssconvert to convert ugly xls to csv and cleans it</span>
+        <span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.xls</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">convert.sh</span>
+        <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+            <span class="no">./convert.sh;</span>
+        <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.csv</span>
+    <span class="l-Scalar-Plain">format dui stats</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">format raw (copy and pasted) dui/state data using perl</span>
+        <span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">rawdata.txt</span>
+        <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+            <span class="no">perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'</span>
+            <span class="no">rawdata.txt | sed 's/,//g' &gt; duistats.tsv;</span>
+        <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">duistats.tsv</span>
+
+<span class="l-Scalar-Plain">find correlates</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">help</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">calls R script that finds correlated of DUI arrest in various teen statistics</span>
+    <span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">duistats.tsv</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">teenstats.csv</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">dui-correlates.R</span>
+    <span class="l-Scalar-Plain">formula</span><span class="p-Indicator">:</span> <span class="p-Indicator">&gt;</span>
+        <span class="no">./dui-correlates.R</span>
+    <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Rplots.pdf</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">lmcoeffs.txt</span>
+<span class="nn">...</span>
+</pre></div>
+
+<p>This is an Sakefile to build/document a process that processes and formats two data files from the web and feeds it into an R script that searches for correlations and, ultimately, produces an output table and a graphic.</p>
+
+<p>The entire process can be performed, start to finish by running the following command:</p>
+
+<pre><code>sake
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>The mandatory "help" fields are used internally by sake to produce the following output when </p>
+
+<pre><code>sake help
+</code></pre>
+
+<p>is run:</p>
+
+<pre><code>You can 'sake' one of the following...
+
+"find correlates":
+  - calls R script that finds correlated of DUI arrest in various teen statistics
+
+formatting:
+  - formatting and conversion steps
+
+    "convert teen stats to csv":
+      -  uses gnumerics ssconvert to convert ugly xls to csv and cleans it
+    "format dui stats":
+      -  format raw (copy and pasted) dui/state data using perl
+
+"fetch teen stats":
+  - fetches various teen statstics from the web
+
+clean:
+  -  remove all targets' outputs and start from scratch
+
+visual:
+  -  output visual representation of project's dependencies
+</code></pre>
+
+<p>Finally, a visual representation of the dependency diagram can be produced, automagically, by running the following command</p>
+
+<pre><code>sake visual
+</code></pre>
+
+<p>Which produces the following image<img src="http://www.onthelambda.com/wp-content/uploads/2013/12/graphviz.png" alt="Automagic dependency visualization"></p>
+
+<p>This is a really simple example, sure, but it's easy to see that, even for the most labyrinthine of pipelines, that a visualization like this can really help get a sense all the actions involved in a workflow. The key points here are (a) that no extra effort had to be expended by the operator/writer of the workflow to generate 'help' and visualization of dependencies, and (b) that the documentation of the workflow occurs <em>as a result</em> of designing and writing it.</p>
+
+<p>The coupling of writing the automation and documentation makes sake a sound choice for ...</p>
+
+<h4>
+<a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How it works</h4>
+
+<p>Coming soon</p>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>Coming soon</p>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="the-rules" class="anchor" href="#the-rules"><span class="octicon octicon-link"></span></a>The rules</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Coming soon</p>
 
 <h3>
 <a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>If you're having trouble using sake; have a question; or want to contribute,
+please email me at <a href="mailto:tony.fischetti@gmail.com">tony.fischetti@gmail.com</a></p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/tonyfischetti">tonyfischetti</a></p>

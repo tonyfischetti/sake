@@ -40,7 +40,7 @@
 VERSION = "0.5"
 
 # Name of application
-NAME = 'sake'
+NAME = 'master-sake'
 
 # Title of project
 TITLE = 'Sake'

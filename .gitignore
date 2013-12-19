@@ -5,3 +5,4 @@ build/
 *.pyc
 dependencies.png
 .shastore
+MANIFEST

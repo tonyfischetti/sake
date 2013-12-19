@@ -71,9 +71,9 @@ def write_shas_to_shastore(sha_dict):
     fh.close()
 
 
-def take_shas_of_all_dependencies(G, verbose):
+def take_shas_of_all_files(G, verbose):
     """
-    Takes sha1 hash of all dependencies of all targets
+    Takes sha1 hash of all dependencies and outputs of all targets
 
     Args:
         The graph we are going to build
@@ -84,10 +84,10 @@ def take_shas_of_all_dependencies(G, verbose):
         value is the sha1 hash
     """
     sha_dict = {}
-    all_deps = []
+    all_files = []
     for target in G.nodes(data=True):
         if verbose:
-            print("About to take shas of dependencies in target '{}'".format(
+            print("About to take shas of files in target '{}'".format(
                                                               target[0]))
         if 'dependencies' in target[1]:
             if verbose:
@@ -95,11 +95,18 @@ def take_shas_of_all_dependencies(G, verbose):
             for dep in target[1]['dependencies']:
                 if verbose:
                     print("  - {}".format(dep))
-                all_deps.append(dep)
-    if len(all_deps):
-        for dep in all_deps:
-            if os.path.isfile(dep):
-                sha_dict[dep] = get_sha(dep)
+                all_files.append(dep)
+        if 'output' in target[1]:
+            if verbose:
+                print("It has outputs")
+            for out in target[1]['output']:
+                if verbose:
+                    print("  - {}".format(out))
+                all_files.append(out)
+    if len(all_files):
+        for item in all_files:
+            if os.path.isfile(item):
+                sha_dict[item] = get_sha(item)
         return sha_dict
     if verbose:
         print("No dependencies")
@@ -237,7 +244,7 @@ def build_this_graph(G, verbose, quiet):
         sys.exit(1)
     if verbose:
         print("Dependency resolution is possible")
-    in_mem_shas = take_shas_of_all_dependencies(G, verbose)
+    in_mem_shas = take_shas_of_all_files(G, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
@@ -254,7 +261,7 @@ def build_this_graph(G, verbose, quiet):
                 for output in node_dict['output']:
                     if output in from_store:
                         in_mem_shas[output] = get_sha(output)
-    in_mem_shas = take_shas_of_all_dependencies(G, verbose)
+    in_mem_shas = take_shas_of_all_files(G, verbose)
     write_shas_to_shastore(in_mem_shas)
     print("Done")
     return 0

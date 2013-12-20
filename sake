@@ -92,7 +92,7 @@ fh.close()
 
 try:
     sakefile = yaml.load(sake_text)
-except yaml.YAMLError, exc:
+except yaml.YAMLError as exc:
     sys.stderr.write("Error: Sakefile failed to parse as valid YAML\n")
     if hasattr(exc, 'problem_mark'):
         mark = exc.problem_mark

@@ -37,7 +37,7 @@
 
 
 # Version number
-VERSION = "0.7"
+VERSION = "0.7.1"
 
 # Name of application
 NAME = 'master-sake'

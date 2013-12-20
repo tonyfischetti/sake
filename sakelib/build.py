@@ -256,8 +256,9 @@ def build_this_graph(G, verbose, quiet):
             node_dict = get_the_node_dict(G, target)
             if "output" in node_dict:
                 for output in node_dict['output']:
-                    if output in from_store:
-                        in_mem_shas[output] = get_sha(output)
+                    if from_store:
+                        if output in from_store:
+                            in_mem_shas[output] = get_sha(output)
     in_mem_shas = take_shas_of_all_files(G, verbose)
     write_shas_to_shastore(in_mem_shas)
     print("Done")

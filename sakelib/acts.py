@@ -135,7 +135,7 @@ def check_for_dep_in_outputs(dep, verbose, G):
 
     """
     if verbose:
-        print "checking dep {}".format(dep)
+        print("checking dep {}".format(dep))
     ret_list = []
     for node in G.nodes(data=True):
         if "output" not in node[1]:
@@ -180,11 +180,11 @@ def construct_graph(sakefile, verbose, G):
         print("Nodes are built\nBuilding connections")
     for node in G.nodes(data=True):
         if verbose:
-            print "checking node {} for dependencies".format(node[0])
+            print("checking node {} for dependencies".format(node[0]))
         if "dependencies" not in node[1]:
             continue
         if verbose:
-            print "it has dependencies"
+            print("it has dependencies")
         connects = []
         for dep in node[1]['dependencies']:
             matches = check_for_dep_in_outputs(dep, verbose, G)

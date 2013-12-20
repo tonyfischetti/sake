@@ -45,12 +45,37 @@ setup(name=constants.NAME,
       author=constants.AUTHOR_NAME,
       author_email=constants.AUTHOR_EMAIL,
       url=constants.URL,
+      license='MIT',
+      long_description="""
+      Sake is a way to easily design, share, build, and visualize
+      workflows with intricate interdependencies. Sake is self-documenting
+      because the instructions for building a project also serve as the
+      documentation of the project's workflow. The first time it's run,
+      sake will build the whole project in an order that automatically
+      satisfies all dependencies. For all subsequent runs, sake will only
+      rebuild the parts of the project that depend on changed files. This
+      cuts down on unnecessary re-building and let's you concentrate on
+      your work rather than memorizing the order in which commands have to
+      be run.
+
+      For more information and documentation, check out this project's
+      website: http://tonyfischetti.github.io/sake/
+      """,
+      classifiers=['Development Status :: 4 - Beta',
+                   'Environment :: Console',
+                   'Operating System :: OS Independent',
+                   'Intended Audience :: Science/Research',
+                   'Intended Audience :: Developers',
+                   'License :: OSI Approved :: MIT License',
+                   'Programming Language :: Python',
+                   'Topic :: Scientific/Engineering',
+                   'Topic :: Utilities',
+                   'Topic :: Software Development',
+                   'Topic :: Documentation'],
       packages=['sakelib'],
       requires=['networkx (>=1.8)', 'PyYAML (>=3.0)'],
       scripts=['sake']
      )
-
-
 
 if __name__ == '__main__':
     print("I hope you enjoy using Sake!")

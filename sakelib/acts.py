@@ -257,7 +257,14 @@ def visualize(G, filename="dependencies", no_graphviz=False):
     if no_graphviz:
         nx.write_dot(G, filename)
         return 0
-    nx.write_dot(G, "tempdot")
+    try:
+        nx.write_dot(G, "tempdot")
+    except:
+        errmes = "Could not write dot file. "
+        errmes += "Perhaps there is something wrong with pydot"
+        errmes += " or pyparsing\n"
+        sys.stderr.write(errmes)
+        sys.exit(1)
     command = "dot -Tsvg tempdot -o {}.svg".format(filename)
     p = Popen(command, shell=True)
     p.communicate()

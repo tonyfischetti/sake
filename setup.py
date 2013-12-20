@@ -73,7 +73,10 @@ setup(name=constants.NAME,
                    'Topic :: Software Development',
                    'Topic :: Documentation'],
       packages=['sakelib'],
-      requires=['networkx (>=1.8)', 'PyYAML (>=3.0)'],
+      requires=['networkx (>=1.8)',
+                'PyYAML (>=3.0)',
+                'pydot (>=1.0.2)',
+                'pyparsing (==1.5.7)'],
       scripts=['sake']
      )
 

@@ -237,6 +237,22 @@ def clean_all(G, verbose, quiet):
         print("All clean")
     return retcode
 
+def write_dot_file(G, filename):
+    """
+    Writes the graph G in dot file format for graphviz visualization.
+
+    Args:
+        a Networkx graph
+        A filename to name the dot files
+    """
+    fh = open(filename, "w")
+    fh.write("strict digraph DependencyDiagram {\n")
+    for edge in G.edges():
+        source, targ = edge
+        line = '"{}" -> "{}";\n'
+        fh.write(line.format(source, targ))
+    fh.write("}")
+
 
 def visualize(G, filename="dependencies", no_graphviz=False):
     """
@@ -255,16 +271,9 @@ def visualize(G, filename="dependencies", no_graphviz=False):
         will cause fatal error on failure
     """
     if no_graphviz:
-        nx.write_dot(G, filename)
+        write_dot_file(G, filename)
         return 0
-    try:
-        nx.write_dot(G, "tempdot")
-    except:
-        errmes = "Could not write dot file. "
-        errmes += "Perhaps there is something wrong with pydot"
-        errmes += " or pyparsing\n"
-        sys.stderr.write(errmes)
-        sys.exit(1)
+    write_dot_file(G, "tempdot")
     command = "dot -Tsvg tempdot -o {}.svg".format(filename)
     p = Popen(command, shell=True)
     p.communicate()

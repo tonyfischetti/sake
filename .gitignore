@@ -6,3 +6,4 @@ build/
 dependencies.png
 .shastore
 MANIFEST
+dist/

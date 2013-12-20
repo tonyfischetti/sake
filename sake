@@ -64,8 +64,12 @@ parser.add_argument('-f', '--file', action="store", dest="outfile",
 parser.add_argument('-n', '--no-graphviz', action="store_true",
                     help="Suppress command to graphviz and just" +
                          " produce graphviz dot file (`sake visual' only)")
+parser.add_argument('-s', '--sakefile', action="store",
+                    dest="customsake",
+                    help="Path to specific sakefile")
 
 args = parser.parse_args()
+
 
 # you can't have it both ways
 if args.verbose and args.quiet:
@@ -74,15 +78,22 @@ if args.verbose and args.quiet:
     args.quiet = False
 
 
-# parse sakefile
+# find sakefile to read
 fname = ""
-for name in ["Sakefile", "Sakefile.yaml", "Sakefile.yml"]:
-    if os.path.isfile(name):
-        fname = name
-        break
-if not fname:
-    sys.stderr.write("Error: there is no Sakefile to read\n")
-    sys.exit(1)
+if args.customsake:
+    if not os.path.isfile(args.customsake):
+        errmes = "Specified sakefile '{}' doesn't exist\n"
+        sys.stderr.write(errmes.format(args.customsake))
+        sys.exit(1)
+    fname = args.customsake
+else:
+    for name in ["Sakefile", "Sakefile.yaml", "Sakefile.yml"]:
+        if os.path.isfile(name):
+            fname = name
+            break
+    if not fname:
+        sys.stderr.write("Error: there is no Sakefile to read\n")
+        sys.exit(1)
 
 # expand macros
 fh = open(fname, "r")

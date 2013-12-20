@@ -52,7 +52,7 @@ def get_sha(a_file):
     """
     Returns sha1 hash of the file supplied as an argument
     """
-    return hashlib.sha1(open(a_file, "r").read()).hexdigest()
+    return hashlib.sha1(open(a_file, "r").read().encode()).hexdigest()
 
 
 def write_shas_to_shastore(sha_dict):
@@ -246,7 +246,7 @@ def build_this_graph(G, verbose, quiet):
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
-    from_store = yaml.load(file(".shastore", "r"))
+    from_store = yaml.load(open(".shastore", "r").read())
     for target in nx.topological_sort(G):
         if verbose:
             outstr = "Checking if target '{}' needs to be run"

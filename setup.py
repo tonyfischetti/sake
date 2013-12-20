@@ -35,18 +35,16 @@
 #                                                                            #
 ##############################################################################
 
-from distutils.core import setup
 from sakelib import constants
 
-
-setup(name=constants.NAME,
-      version=constants.VERSION,
-      description=constants.DESCRIPTION,
-      author=constants.AUTHOR_NAME,
-      author_email=constants.AUTHOR_EMAIL,
-      url=constants.URL,
-      license='MIT',
-      long_description="""
+kw = dict(name=constants.NAME,
+          version=constants.VERSION,
+          description=constants.DESCRIPTION,
+          author=constants.AUTHOR_NAME,
+          author_email=constants.AUTHOR_EMAIL,
+          url=constants.URL,
+          license='MIT',
+          long_description="""
       Sake is a way to easily design, share, build, and visualize
       workflows with intricate interdependencies. Sake is self-documenting
       because the instructions for building a project also serve as the
@@ -61,24 +59,45 @@ setup(name=constants.NAME,
       For more information and documentation, check out this project's
       website: http://tonyfischetti.github.io/sake/
       """,
-      classifiers=['Development Status :: 4 - Beta',
-                   'Environment :: Console',
-                   'Operating System :: OS Independent',
-                   'Intended Audience :: Science/Research',
-                   'Intended Audience :: Developers',
-                   'License :: OSI Approved :: MIT License',
-                   'Programming Language :: Python',
-                   'Topic :: Scientific/Engineering',
-                   'Topic :: Utilities',
-                   'Topic :: Software Development',
-                   'Topic :: Documentation'],
-      packages=['sakelib'],
-      requires=['networkx (>=1.8)',
-                'PyYAML (>=3.0)',
-                'pydot (>=1.0.2)',
-                'pyparsing (==1.5.7)'],
+        classifiers=['Development Status :: 4 - Beta',
+                     'Environment :: Console',
+                     'Operating System :: OS Independent',
+                     'Intended Audience :: Science/Research',
+                     'Intended Audience :: Developers',
+                     'License :: OSI Approved :: MIT License',
+                     'Programming Language :: Python',
+                     'Topic :: Scientific/Engineering',
+                     'Topic :: Utilities',
+                     'Topic :: Software Development',
+                     'Topic :: Documentation'],
+        packages=['sakelib'],
+        requires=['networkx (>=1.8)',
+                  'PyYAML (>=3.0)',
+                  'pydot (>=1.0.2)',
+                  ],
       scripts=['sake']
      )
+
+import sys
+dependency_links = []
+if sys.version.startswith('3'):
+    # pyparsing version depends on python version
+    kw['requires'].append('pyparsing')
+    dependency_links = ['https://bitbucket.org/prologic/pydot/get/1.0.15.zip#egg=pydot-1.0.15']
+else:
+    kw['requires'].append('pyparsing (==1.5.7)')
+
+
+try:
+    # use setuptools if it is installed
+    from setuptools import setup
+    kw['install_requires'] = [requirement.replace('(', '').replace(')', '')
+                              for requirement in kw['requires']]
+    kw['dependency_links'] = dependency_links
+except ImportError:
+    from distutils.core import setup
+
+setup(**kw)
 
 if __name__ == '__main__':
     print("I hope you enjoy using Sake!")

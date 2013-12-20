@@ -6,3 +6,6 @@ build/
 dependencies.png
 .shastore
 MANIFEST
+duistats.tsv
+teenstats.csv
+teenstats.xls

@@ -27,6 +27,7 @@ This projects depends on
  - the PyYAML python module
 
 Assuming you have python and easy\_install installed, just run
+
     [sudo] easy_install pip
     [sudo] pip install networkx
     [sudo] pip install pyyaml

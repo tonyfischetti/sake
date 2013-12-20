@@ -21,13 +21,24 @@ and is written in python.
 To see an example, check out [this project's webpage](http://tonyfischetti.github.io/sake/)
 
 ### Installation
-Coming soon
+This projects depends on
+ - Python 2.7, or above
+ - The networkx python module
+ - the PyYAML python module
+Assuming you have python and easy\_install installed, just run
+    [sudo] easy_install pip
+    [sudo] pip install networkx
+    [sudo] pip install pyyaml
+    [sudo] pip install master-sake
 
-### How it works
-Coming soon
+More detailed instructions for installation, including platform specific
+directions, are available at this project's webpage
 
-### The rules
-Coming soon
+
+### How do I use it
+Again, check out [this project's webpage](http://tonyfischetti.github.io/sake/)
+for more detailed information
+    
 
 ### Support or Contact
 If you're having trouble using sake; have a question; or want to contribute,

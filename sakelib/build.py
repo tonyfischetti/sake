@@ -63,7 +63,7 @@ def write_shas_to_shastore(sha_dict):
     fh = open(".shastore", "w")
     fh.write("---\n")
     for key in sha_dict:
-        fh.write("{}: {}\n".format(key, sha_dict[key]))
+        fh.write("{}: {}\n".format(key.encode('utf-8'), sha_dict[key]))
     fh.write("...")
     fh.close()
 
@@ -85,20 +85,20 @@ def take_shas_of_all_files(G, verbose):
     for target in G.nodes(data=True):
         if verbose:
             print("About to take shas of files in target '{}'".format(
-                                                              target[0]))
+                                                    target[0].encode('utf-8')))
         if 'dependencies' in target[1]:
             if verbose:
                 print("It has dependencies")
             for dep in target[1]['dependencies']:
                 if verbose:
-                    print("  - {}".format(dep))
+                    print("  - {}".format(dep.encode('utf-8')))
                 all_files.append(dep)
         if 'output' in target[1]:
             if verbose:
                 print("It has outputs")
             for out in target[1]['output']:
                 if verbose:
-                    print("  - {}".format(out))
+                    print("  - {}".format(out.encode('utf-8')))
                 all_files.append(out)
     if len(all_files):
         for item in all_files:
@@ -132,13 +132,13 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
             if not os.path.isfile(output):
                 if verbose:
                     outstr = "Output file '{}' is missing so it needs to run"
-                    print(outstr.format(output))
+                    print(outstr.format(output.encode('utf-8')))
                 return True
     if 'dependencies' not in node_dict:
         # if it has no dependencies, it always needs to run
         if verbose:
             print("Target {} has no dependencies and needs to run".format(
-                                                                      target))
+                                                     target.encode('utf-8')))
         return True
     for dep in node_dict['dependencies']:
         # because the shas are updated after all targets build,
@@ -148,22 +148,22 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
         if dep not in in_mem_shas:
             if verbose:
                 outstr = "Dep '{}' doesn't exist in memory so it needs to run"
-                print(outstr.format(dep))
+                print(outstr.format(dep.encode('utf-8')))
             return True
         now_sha = in_mem_shas[dep]
         if dep not in from_store:
             if verbose:
                 outstr = "Dep '{}' doesn't exist in shastore so it needs to run"
-                print(outstr.format(dep))
+                print(outstr.format(dep.encode('utf-8')))
             return True
         old_sha = from_store[dep]
         if now_sha != old_sha:
             if verbose:
                 outstr = "There's a mismatch for dep {} so it needs to run"
-                print(outstr.format(dep))
+                print(outstr.format(dep.encode('utf-8')))
             return True
     if verbose:
-        print("Target '{}' doesn't need to run".format(target))
+        print("Target '{}' doesn't need to run".format(target.encode('utf-8')))
     return False
 
 
@@ -180,7 +180,7 @@ def run_commands(commands, verbose, quiet):
     """
     commands = commands.rstrip()
     if verbose:
-        print("About to run commands '{}'".format(commands))
+        print("About to run commands '{}'".format(commands.encode('utf-8')))
     if not quiet:
         print(commands)
         p = Popen(commands, shell=True)
@@ -203,7 +203,7 @@ def run_the_target(G, target, verbose, quiet):
         A flag indicating verbosity
         A flag indicating quiet mode
     """
-    print("Running target {}".format(target))
+    print("Running target {}".format(target.encode('utf-8')))
     the_formula = get_the_node_dict(G, target)["formula"]
     run_commands(the_formula, verbose, quiet)
 
@@ -250,7 +250,7 @@ def build_this_graph(G, verbose, quiet):
     for target in nx.topological_sort(G):
         if verbose:
             outstr = "Checking if target '{}' needs to be run"
-            print(outstr.format(target))
+            print(outstr.format(target.encode('utf-8')))
         if needs_to_run(G, target, in_mem_shas, from_store, verbose):
             run_the_target(G, target, verbose, quiet)
             node_dict = get_the_node_dict(G, target)

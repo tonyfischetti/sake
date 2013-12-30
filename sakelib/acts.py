@@ -55,7 +55,7 @@ def escp(target_name):
     quotes it if necessary
     """
     if ' ' in target_name:
-        return '"{}"'.format(target_name)
+        return '"{}"'.format(target_name.encode('utf-8'))
     return target_name
 
 
@@ -79,17 +79,17 @@ def print_help(sakefile):
         if "formula" not in sakefile[target]:
             # this means it's a meta-target
             full_string += "{}:\n  - {}\n\n".format(escp(target),
-                                                    sakefile[target]["help"])
+                                    sakefile[target]["help"].encode('utf-8'))
             for atom_target in sakefile[target]:
                 if atom_target == "help":
                     continue
                 full_string += "    "
                 full_string += "{}:\n      -  {}\n".format(escp(atom_target),
-                                       sakefile[target][atom_target]["help"])
+                      sakefile[target][atom_target]["help"].encode('utf-8'))
             full_string += "\n"
         else:
             full_string += "{}:\n  - {}\n\n".format(escp(target),
-                                                    sakefile[target]["help"])
+                                    sakefile[target]["help"].encode('utf-8'))
     what_clean_does = "remove all targets' outputs and start from scratch"
     full_string += "clean:\n  -  {}\n\n".format(what_clean_does)
     what_visual_does = "output visual representation of project's dependencies"
@@ -135,7 +135,7 @@ def check_for_dep_in_outputs(dep, verbose, G):
 
     """
     if verbose:
-        print("checking dep {}".format(dep))
+        print("checking dep {}".format(dep.encode('utf-8')))
     ret_list = []
     for node in G.nodes(data=True):
         if "output" not in node[1]:
@@ -168,19 +168,20 @@ def construct_graph(sakefile, verbose, G):
                 if atomtarget == "help":
                     continue
                 if verbose:
-                    print("Adding '{}'".format(atomtarget))
+                    print("Adding '{}'".format(atomtarget.encode('utf-8')))
                 data_dict = sakefile[target][atomtarget]
                 data_dict["parent"] = target
                 G.add_node(atomtarget, data_dict)
         else:
             if verbose:
-                print("Adding '{}'".format(target))
+                print("Adding '{}'".format(target.encode('utf-8')))
             G.add_node(target, sakefile[target])
     if verbose:
         print("Nodes are built\nBuilding connections")
     for node in G.nodes(data=True):
         if verbose:
-            print("checking node {} for dependencies".format(node[0]))
+            print("checking node {} for dependencies".format(
+                                                    node[0].encode('utf-8')))
         if "dependencies" not in node[1]:
             continue
         if verbose:
@@ -192,7 +193,8 @@ def construct_graph(sakefile, verbose, G):
                 continue
             for match in matches:
                 if verbose:
-                    print("Appending {} to matches".format(match))
+                    print("Appending {} to matches".format(
+                                                    match.encode('utf-8')))
                 connects.append(match)
         if connects:
             for connect in connects:
@@ -224,14 +226,14 @@ def clean_all(G, verbose, quiet):
         if os.path.isfile(item):
             if verbose:
                 mesg = "Attempting to remove file '{}'"
-                print(mesg.format(item))
+                print(mesg.format(item.encode('utf-8')))
             try:
                 os.remove(item)
                 if verbose:
                     print("Removed file")
             except:
                 errmeg = "Error: file '{}' failed to be removed\n"
-                sys.stderr.write(errmeg.format(item))
+                sys.stderr.write(errmeg.format(item.encode('utf-8')))
                 retcode = 1
     if not retcode:
         print("All clean")

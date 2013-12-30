@@ -22,7 +22,7 @@ formatting:
             ./convert.sh;
         output:
             - teenstats.csv
-    format dui stats:
+    format dui stat♥s:
         help: format raw (copy and pasted) dui/state data using perl
         dependencies:
             - rawdata.txt

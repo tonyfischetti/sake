@@ -132,8 +132,11 @@ if args.target == "help":
 
 # get the graph representation
 G = nx.DiGraph()
-G = acts.construct_graph(sakefile, args.verbose, G)
-
+try:
+    G = acts.construct_graph(sakefile, args.verbose, G)
+except:
+    sys.stderr.write("Unspecified error constructing dependency graph\n")
+    sys.exit(1)
 
 # if target is "clean"
 if args.target == "clean":

@@ -253,7 +253,7 @@ def write_dot_file(G, filename):
         # if there is no edges, make it a regular graph
         fh.write("strict graph DependencyDiagram {\n")
         for node in G.nodes():
-            line = '"{}"\n'.format(node)
+            line = '"{}"\n'.format(node.encode('utf-8'))
             fh.write(line)
         fh.write("}")
         return
@@ -261,7 +261,7 @@ def write_dot_file(G, filename):
     for edge in G.edges():
         source, targ = edge
         line = '"{}" -> "{}";\n'
-        fh.write(line.format(source, targ))
+        fh.write(line.format(source.encode('utf-8'), targ.encode('utf-8')))
     fh.write("}")
 
 

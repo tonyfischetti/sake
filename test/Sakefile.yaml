@@ -10,7 +10,7 @@ fetch teen stats:
         curl -o teenstats.xls $TEEN_STATS_URL;
     output:
         - teenstats.xls
- 
+
 formatting:
     help: formatting and conversion steps
     convert teen stats to csv:
@@ -22,7 +22,7 @@ formatting:
             ./convert.sh;
         output:
             - teenstats.csv
-    format dui stat♥s:
+    format dui stats:
         help: format raw (copy and pasted) dui/state data using perl
         dependencies:
             - rawdata.txt
@@ -31,7 +31,7 @@ formatting:
             rawdata.txt | sed 's/,//g' > duistats.tsv;
         output:
             - duistats.tsv
- 
+
 find correlates:
     help: calls R script that finds correlated of DUI arrest in various teen statistics
     dependencies:
@@ -43,7 +43,7 @@ find correlates:
     output:
         - Rplots.pdf
         - lmcoeffs.txt
- 
+
 all:
     - formatting
     - fetch teen stats

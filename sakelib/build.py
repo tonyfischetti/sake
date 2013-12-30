@@ -152,11 +152,6 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
                 print(outstr.format(dep.encode('utf-8')))
             return True
         now_sha = in_mem_shas[dep]
-        print "dep"
-        print dep
-        print "from store"
-        print from_store
-        sys.stdout.flush()
         if dep not in from_store:
             if verbose:
                 outstr = "Dep '{}' doesn't exist in shastore so it needs to run"

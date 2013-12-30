@@ -162,7 +162,7 @@ def construct_graph(sakefile, verbose, G):
         if target == "all":
             # we don't want this node
             continue
-        if "output" not in sakefile[target]:
+        if "formula" not in sakefile[target]:
             # that means this is a meta target
             for atomtarget in sakefile[target]:
                 if atomtarget == "help":

@@ -10,3 +10,5 @@ dist/
 duistats.tsv
 teenstats.csv
 teenstats.xls
+test/Rplots.pdf
+test/lmcoeffs.txt

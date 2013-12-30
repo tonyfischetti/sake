@@ -44,6 +44,7 @@ import yaml
 from sakelib import acts
 from sakelib import audit
 from sakelib import build
+from sakelib import constants
 
 parser = argparse.ArgumentParser(description='Build from a Sakefile')
 
@@ -56,6 +57,8 @@ parser.add_argument("target",
 # optional arguments
 parser.add_argument('-v', '--verbose', action='store_true',
                     help="verbose output")
+parser.add_argument('-V', '--version', action='store_true',
+                    help="print out version")
 parser.add_argument('-q', '--quiet', action='store_true',
                     help="suppress most output")
 parser.add_argument('-f', '--file', action="store", dest="outfile",
@@ -70,6 +73,11 @@ parser.add_argument('-s', '--sakefile', action="store",
 
 args = parser.parse_args()
 
+
+# print out version and exit (if specified)
+if args.version:
+    print("Sake -- version {}".format(constants.VERSION))
+    sys.exit(0)
 
 # you can't have it both ways
 if args.verbose and args.quiet:

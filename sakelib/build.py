@@ -52,7 +52,7 @@ def get_sha(a_file):
     """
     Returns sha1 hash of the file supplied as an argument
     """
-    return hashlib.sha1(open(a_file, "r").read().encode()).hexdigest()
+    return hashlib.sha1(open(a_file, "r").read()).hexdigest()
 
 
 def write_shas_to_shastore(sha_dict):

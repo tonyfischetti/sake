@@ -62,8 +62,9 @@ def write_shas_to_shastore(sha_dict):
     """
     fh = open(".shastore", "w")
     fh.write("---\n")
-    for key in sha_dict:
-        fh.write("{}: {}\n".format(key.encode('utf-8'), sha_dict[key]))
+    if sha_dict:
+        for key in sha_dict:
+            fh.write("{}: {}\n".format(key.encode('utf-8'), sha_dict[key]))
     fh.write("...")
     fh.close()
 
@@ -151,6 +152,11 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
                 print(outstr.format(dep.encode('utf-8')))
             return True
         now_sha = in_mem_shas[dep]
+        print "dep"
+        print dep
+        print "from store"
+        print from_store
+        sys.stdout.flush()
         if dep not in from_store:
             if verbose:
                 outstr = "Dep '{}' doesn't exist in shastore so it needs to run"
@@ -260,7 +266,8 @@ def build_this_graph(G, verbose, quiet):
                         if output in from_store:
                             in_mem_shas[output] = get_sha(output)
     in_mem_shas = take_shas_of_all_files(G, verbose)
-    write_shas_to_shastore(in_mem_shas)
+    if in_mem_shas:
+        write_shas_to_shastore(in_mem_shas)
     print("Done")
     return 0
 

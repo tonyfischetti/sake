@@ -11,7 +11,7 @@
 #
 ##############################################################################
 #                                                                            #
-# Copyright (c) 2013, Tony Fischetti                                         #
+# Copyright (c) 2013, 2014, Tony Fischetti                                   #
 #                                                                            #
 # MIT License, http://www.opensource.org/licenses/mit-license.php            #
 #                                                                            #
@@ -37,7 +37,7 @@
 
 
 # Version number
-VERSION = "0.7.6.1"
+VERSION = "0.7.7"
 
 # Name of application
 NAME = 'master-sake'

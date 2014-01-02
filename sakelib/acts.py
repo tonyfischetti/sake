@@ -117,7 +117,7 @@ def expand_macros(raw_text):
                 sys.exit(1)
             macros[var] = val
     for var in macros:
-        raw_text = raw_text.replace("?"+var, macros[var])
+        raw_text = raw_text.replace("$"+var, macros[var])
     return raw_text
 
 

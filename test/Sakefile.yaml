@@ -7,7 +7,7 @@ fetch teen stats:
     help: fetches various teen statstics from the web
     # no dependencies
     formula: >
-        curl -o teenstats.xls ?TEEN_STATS_URL;
+        curl -o teenstats.xls $TEEN_STATS_URL;
     output:
         - teenstats.xls
 

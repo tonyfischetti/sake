@@ -248,20 +248,22 @@ def write_dot_file(G, filename):
         A filename to name the dot files
     """
     fh = open(filename, "w")
+    fh.write("strict digraph DependencyDiagram {\n")
     edge_list = G.edges()
-    if not edge_list:
-        # if there is no edges, make it a regular graph
-        fh.write("strict graph DependencyDiagram {\n")
-        for node in G.nodes():
+    node_list = set(G.nodes())
+    if edge_list:
+        for edge in G.edges():
+            source, targ = edge
+            node_list = node_list - set(source)
+            node_list = node_list - set(targ)
+            line = '"{}" -> "{}";\n'
+            fh.write(line.format(source.encode('utf-8'),
+                                 targ.encode('utf-8')))
+    # draw nodes with no links
+    if node_list:
+        for node in node_list:
             line = '"{}"\n'.format(node.encode('utf-8'))
             fh.write(line)
-        fh.write("}")
-        return
-    fh.write("strict digraph DependencyDiagram {\n")
-    for edge in G.edges():
-        source, targ = edge
-        line = '"{}" -> "{}";\n'
-        fh.write(line.format(source.encode('utf-8'), targ.encode('utf-8')))
     fh.write("}")
 
 

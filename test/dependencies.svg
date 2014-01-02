@@ -14,15 +14,15 @@
 <ellipse fill="none" stroke="black" cx="250" cy="-90" rx="97.237" ry="18"/>
 <text text-anchor="middle" x="250" y="-86.3" font-family="Times,serif" font-size="14.00">convert teen stats to csv</text>
 </g>
-<!-- find correlates♥ -->
-<g id="node2" class="node"><title>find correlates♥</title>
-<ellipse fill="none" stroke="black" cx="158" cy="-18" rx="67.3907" ry="18"/>
-<text text-anchor="middle" x="158" y="-14.3" font-family="Times,serif" font-size="14.00">find correlates♥</text>
+<!-- find correlates -->
+<g id="node2" class="node"><title>find correlates</title>
+<ellipse fill="none" stroke="black" cx="158" cy="-18" rx="62.0922" ry="18"/>
+<text text-anchor="middle" x="158" y="-14.3" font-family="Times,serif" font-size="14.00">find correlates</text>
 </g>
-<!-- convert teen stats to csv&#45;&gt;find correlates♥ -->
-<g id="edge1" class="edge"><title>convert teen stats to csv&#45;&gt;find correlates♥</title>
-<path fill="none" stroke="black" d="M228.197,-72.411C216.08,-63.1911 200.831,-51.5885 187.643,-41.5547"/>
-<polygon fill="black" stroke="black" points="189.406,-38.4983 179.329,-35.2285 185.168,-44.0691 189.406,-38.4983"/>
+<!-- convert teen stats to csv&#45;&gt;find correlates -->
+<g id="edge1" class="edge"><title>convert teen stats to csv&#45;&gt;find correlates</title>
+<path fill="none" stroke="black" d="M228.197,-72.411C215.876,-63.0364 200.318,-51.1983 186.981,-41.0508"/>
+<polygon fill="black" stroke="black" points="189.091,-38.258 179.013,-34.9881 184.852,-43.8288 189.091,-38.258"/>
 </g>
 <!-- fetch teen stats -->
 <g id="node3" class="node"><title>fetch teen stats</title>
@@ -39,8 +39,8 @@
 <ellipse fill="none" stroke="black" cx="67" cy="-90" rx="67.3907" ry="18"/>
 <text text-anchor="middle" x="67" y="-86.3" font-family="Times,serif" font-size="14.00">format dui stats</text>
 </g>
-<!-- format dui stats&#45;&gt;find correlates♥ -->
-<g id="edge3" class="edge"><title>format dui stats&#45;&gt;find correlates♥</title>
+<!-- format dui stats&#45;&gt;find correlates -->
+<g id="edge3" class="edge"><title>format dui stats&#45;&gt;find correlates</title>
 <path fill="none" stroke="black" d="M88.106,-72.7646C100.28,-63.3997 115.763,-51.4899 129.06,-41.2612"/>
 <polygon fill="black" stroke="black" points="131.216,-44.0186 137.009,-35.1473 126.948,-38.4703 131.216,-44.0186"/>
 </g>

@@ -148,8 +148,9 @@ if args.target == "clean":
 if args.target == 'visual':
     if args.verbose:
         print("Going to generate dependency graph image")
-    ##
-    if not args.outfile:
+    if args.outfile:
+        outfile = args.outfile
+    else:
         outfile = "dependencies"
     ret_val = acts.visualize(G, filename=outfile, no_graphviz=args.no_graphviz)
     sys.exit(ret_val)

@@ -33,7 +33,7 @@ formatting:
             - duistats.tsv
 
 find correlates:
-    help: calls R script that finds correlated of DUI arrest in various teen statistics
+    help: calls R script that finds correlates of DUI arrest in various teen statistics
     dependencies:
         - duistats.tsv
         - teenstats.csv

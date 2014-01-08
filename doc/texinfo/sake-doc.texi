@@ -1,0 +1,1120 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename sake-doc.info
+@settitle Sake documentation
+@c %**end of header
+
+
+@c --------------------------------------------------------------------
+@copying
+This manual is for sake, version 0.7.7
+
+Copyright @copyright{} 2013, 2014, Tony Fischetti
+@quotation
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice be translated properly.
+@end quotation
+@end copying
+@c --------------------------------------------------------------------
+
+@c --------------------------------------------------------------------
+@titlepage
+@sp 5
+@title Sake
+@subtitle A self-documenting build automation tool
+@subtitle Version 0.7.7 (2014-01-07)
+@author Tony Fischetti
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+@c --------------------------------------------------------------------
+
+
+
+@c --------------------------------------------------------------------
+@contents
+@c --------------------------------------------------------------------
+
+@node Top, Introduction, ,
+
+@c --------------------------------------------------------------------
+@menu
+* Introduction:: Introduction to Sake
+* Installation:: Installing Sake
+* Using Sake:: Documentation for use
+@end menu
+@c --------------------------------------------------------------------
+
+
+
+@c --------------------------------------------------------------------
+@node Introduction, Installation, Top, Top
+@chapter Introduction
+
+@c -----------------------
+@section What is it?
+Sake is a way to easily design, share, build, and visualize workflows with
+intricate interdependencies. Sake is self-documenting because the
+instructions for building a project also serve as the documentation of the
+project's workflow. The first time it's run, sake will build all of the
+components of a project in an order that automatically satisfies all
+dependencies. For all subsequent runs, sake will only rebuild the parts
+of the project that depend on changed files. This cuts down on unnecessary
+re-building and lets the user concentrate on their work rather than memorizing
+the order in which commands have to be run.
+
+Sake is free, open source cross-platform software under a very permissive
+license (MIT Expat) and is written in Python.
+@c -----------------------
+
+@c -----------------------
+@section Who is it for?
+Sake's insistence on clean formatting, explicit statement of intentions,
+capacity for visuallization, ability to work on various platforms, and
+ability to rebuild only what is needed make it a great choice for
+@itemize @bullet
+@item
+Scientists that want to share their scientific workflow  with other
+researchers. Sake helps facilitate open science and reproducibility.
+@item
+Data analysts with steps in their pipeline that take hours or days to
+finish running.
+@item
+Business teams that want to share and visualize workflows amongst its
+members, even if they are using different computing platforms.
+@end itemize
+@c -----------------------
+
+@c -----------------------
+@section Nomenclature
+To avoid confusion, it would be helpful to expound on some of the terms
+that this documentation will be using.
+@table @code
+@item workflow
+a series of steps performed in a particular order to complete a piece of work.
+@item scientific workflow
+a specific type of workflow where many or all of the steps are performed
+by computers. This is a growing trend in science. Data science,
+bioinformatics, cognitive science, and computational linguistics,
+in particular, make heavy use of this paradigm.
+@item pipeline
+Another name for a workflow, especially one whose steps produce outputs
+that are fed, as input, into subsequent steps.
+@item dependency
+An input or step that is required for another step to execute is said to
+be a @code{dependency} of the later step.
+@item graph
+a construct in mathematics that represents a set of objects (called 'nodes'
+or 'vertices') and the connections between them (called 'links' or 'edges')
+@item directed graph
+A type of graph whose connections are unidirectional and can be visually
+represented as arrows.
+@item directed acyclic graph
+A type of directed graph that does not contain any loops or cycles. A
+directed graph has the property of having at least one ordering of nodes
+such that no node in the ordering 'points to' a node earlier in the ordering.
+@item dependency graph
+If the nodes of a directed acyclic graph are viewed as steps in a workflow
+or pipeline, and the directional links are viewed as outputs that become
+another step's input, this construct of mathematics is an abstraction of a
+workflow that can be run in an order that satisfies all dependencies.
+A visual representation of a dependency graph is an easy and intuitive way
+to view a workflow and the steps involved.
+@item YAML
+A data serialization format that is extremely easy to read.
+@item Sakefile
+A file written in a subset of YAML that describes a workflow. This is read and
+can be executed or visualized by @code{sake}.
+@item target
+This is the abstraction of a step in a workflow used by the @code{sakefile}.
+A @code{sakefile} is made of one or more targets. This name is borrowed
+from the @code{make} software.
+@item build
+(Used as a verb). The execution of the commands of a step. A whole project
+can be built, or just a specific step. The 'build' can be the execution
+of a script, the execution of arbitrary shell commands, the removal of
+intermediate files, the compilation of source files, etc...  A build can
+take microseconds or days to complete.
+@end table
+@c -----------------------
+
+@c -----------------------
+@section Differences from GNU Make or other @code{make} software
+The ideas behind @code{sake} and @code{sakefiles} are borrowed heavily
+from @code{make} software, which is used primarily to build executables
+from various source files. A @code{makefile} can, more generally, be used
+to describe a process that brings one or more source files to some
+'completed' state. Probably nothing is better than @code{make} to compile
+executables, but there are several reasons why using @code{sake} may be
+a better choice for some tasks.
+@itemize @bullet
+@item
+As a consequence of being so powerful for source code compilation,
+@code{Makefiles} can sometimes be very hard to read and write, particularly
+to the unfamiliar.
+@item
+Most @code{make} software assumes that if the timestamp of a file changes,
+than all subsequent steps that depend on that file need to be run in order
+to remain up-to-date. In many cases, though, the time-stamp of a file
+can change but the contents remain the same and, thus, a rebuild isn't
+necessary.
+@item
+The syntax of @code{makefiles} makes it difficult to intuit the flow of a
+pipeline. Additionally, outside tools have to be used in order to visualize
+the flow.
+@item
+Steps like displaying help and cleaning intermediate files are not handled
+automatically by @code{make} and are prone to errors.
+@end itemize
+@code{Sake} seeks to rectify these limitations of @code{make}. To wit,
+@itemize @bullet
+@item
+Sakefiles are written in a very easy-to-read-and-write markup language.
+@code{Sake} was also not designed with a particular application in mind, so
+the use of @code{sake} is just as applicable to one domain as it is to
+another. This cuts down on the number of tools a user must learn to do
+certain specialized tasks.
+@item
+Originally borne out of the frustration of rebuilding targets whenever
+a timestamp of a file changes and, therefore, being difficult to use
+for data analysis with very long time-consuming analytics, @code{sake}
+actually @emph{reads} the file to determine if a re-building is really
+necessary.
+@item
+The clean nature of the @code{sakefile} makes it much easier to intuit
+the flow of a pipeline. Additionally, a visualization mechanism is built
+right in which produces an image of the dependency graph that is easy to
+study, to share, and is aesthetically pleasing.
+@item
+Sake handles some 'administrative' tasks for the user. This cuts down
+on hard-to-track-down errors.
+@end itemize
+Perhaps the most fundamental difference between @code{sake} and the
+@code{make} system is that @code{sake} seeks not only to be a system that
+builds a project from start to completion (or part of a project) resolving all
+dependencies along the way; @code{sake} seeks to simultaneously
+@emph{document} the project.
+
+There are some more technical differences between the two systems that may
+confuse a user that is familiar with @code{make}. For example, all 'targets'
+in a @code{sakefile} are what GNU Make considers 'phony' targets. Targets
+in @code{sakefiles} are not filenames, but instead more human-readable
+short descriptions of the step.
+Other differences will become clearer later in the document.
+@c -----------------------
+@c --------------------------------------------------------------------
+
+
+
+@c --------------------------------------------------------------------
+@node Installation, Using Sake, Introduction, Top
+@chapter Installation
+Here we will go over obtaining the @code{sake} software, go over generic
+installation instructions, and discuss detailed installation instructions
+for various platforms.
+
+@strong{Note: Some of the commands in this section may require root or
+administrator privileges depending on your system}
+
+@c -----------------------
+@section Getting Sake
+Since sake is a set of python modules and a python driver, there are no
+binary executables that can be downloaded.
+Although, in most cases, @emph{manually} obtaining the source code for sake
+is unecessary for installation, obtaining the sake source can be done in
+several ways:
+@itemize @bullet
+@item
+A tarball can be downloaded from @url{http://pypi.python.org/pypi/master-sake,
+http://pypi.python.org/pypi/master-sake}. Only the most stable releases
+get uploaded to the Python Package Index, so this is a great option for users
+that are looking for stability.
+@item
+A tarball or zip file of sake is available for download on this project's
+webpage at @url{http://tonyfischetti.github.io/sake/,
+http://tonyfischetti.github.io/sake/}. This is the latest snapshot of the
+master branch of sake from its git repository, where it is developed. This
+is the second-most stable version of the sake source. This is perhaps more
+feature-rich than the source on PyPI, but it may contain bugs that would
+hopefully be found and fixed before upload to PyPI.
+@item
+Finally, the bleeding-edge sake source can be cloned directly from the git
+repository thusly: (assuming you have git installed)
+@example
+    git clone https://github.com/tonyfischetti/sake.git
+@end example
+You can check which branches are available with the command
+@code{git branch}. Usually, a branch called @code{dev} is the most recent
+(and potentially buggy) version of the sake source. On occasion, though, the
+@code{dev} branch will lag behind @code{master} if @code{dev} wasn't recently
+been rebased. This option is most suitable to potential contributors to the
+project.
+@end itemize
+For the vast majority of cases, the best way to obtain sake is during the
+installation step, with the python package manager @code{pip}.
+@c -----------------------
+
+@c -----------------------
+@section Dependencies
+There are four pieces of open source software that must be installed to
+ensure the proper functioning of sake:
+@itemize @bullet
+@item
+Python. Sake is Python3 compatible and is tested using Python 2.7 and
+3.3
+@item
+The python module @code{NetworkX}
+@item
+The python module @code{PyYAML}
+@item
+The graph visualization tool @code{Graphviz}
+@end itemize
+Future versions of sake may shed some of these dependencies.
+@c -----------------------
+
+@c -----------------------
+@section Generic Installation Instructions
+@strong{Note: performing all of these steps are usually unnecessary
+depending on what system you are using. If you do not care to know how
+sake can be installed generically, you should read the installation
+instructions for your specific platform (if available) below.}
+
+If you do not already have it, Python can be installed by following the
+links on the Python.org website: @url{http://www.python.org/download/,
+http://www.python.org/download/}. There are executable installers for
+Windows and Mac OS X. There are also download links to the Python source
+code for compiling on Unix and Unix-alike systems though, for these
+systems, there is very often a package manager available that will
+facilitate a much easier python installation process. If the
+platform-specific instructions are not available below, a quick search
+of the web for
+@example
+<your system here> python install
+@end example
+can save you a lot of trouble.
+
+The two python packages and sake itself can be installed in at least two
+ways.
+@itemize @bullet
+@item
+One uses the python package manager @code{pip}. After @code{pip} is installed,
+these python packages can be installed from the command-line thusly:
+@example
+pip install networkx
+pip install pyyaml
+pip install master-sake
+@end example
+@code{pip} itself can be installed via:
+@example
+easy_install pip
+@end example
+Finally, @code{easy_install} can be installed with instructions from
+this website: @url{https://pypi.python.org/pypi/setuptools,
+https://pypi.python.org/pypi/setuptools}
+@item
+Another way to install these python packages is by downloading a tarball
+of the source of these packages, extracting the archive and running the
+@code{setup.py} script inside the extracted archive with
+@example
+python setup.py install
+@end example
+@url{https://pypi.python.org/pypi/setuptools,
+https://pypi.python.org/pypi/setuptools}
+@end itemize
+
+Finally, Graphviz can be installed easily by following the directions
+on the Graphviz download page: @url{http://www.graphviz.org/Download..php,
+http://www.graphviz.org/Download..php}. Easy-to-install packages are
+available for Mac OS X, Windows, GNU/Linux, and Solaris.
+@c -----------------------
+
+@c -----------------------
+@section Installation for Mac OS X
+Python and @code{easy_install} are already installed and ready to use on
+OS X. Open @code{Terminal.app} (usually in /Applications/Utilities) and issue
+the following commands:
+@example
+sudo easy_install pip
+sudo pip install networkx
+sudo pip install pyyaml
+sudo pip install master-sake
+@end example
+The use of @code{sudo} will prompt you for your login password, if applicable.
+
+Finally, Mac-specific Graphviz installers are available at the Graphviz site
+at @url{http://www.graphviz.org/Download_macos.php,
+http://www.graphviz.org/Download_macos.php}. The Mountain Lion installer
+will work with Mavericks.
+
+If you are using a version of Python that is not the version that ships
+with OS X, you should follow the 'Generic Installation Instructions'.
+@c -----------------------
+
+@c -----------------------
+@section Installation for GNU/Linux (Debian)
+Debian and some Debian-based GNU/Linux distributions make it very easy to
+install sake and all of its dependencies. Issue the following commands in a
+terminal emulator:
+@example
+sudo apt-get install python-networkx
+sudo apt-get install python-pip
+sudo pip install master-sake
+@end example
+The @code{python-networkx} will automatically install PyYAML, and Graphviz.
+
+If for some strange reason, Python is missing on your Debian system, you can
+install it using @code{apt-get}, as well.
+
+For other GNU/Linux distributions, check to see if your system has a
+package management tool and whether these (or analogous) packages are
+available for that tool. @code{yum} and @code{pacman} are some other
+popular package managers, although there are many others.
+@c -----------------------
+
+@c -----------------------
+@section Installation on Windows
+@strong{Note: These instructions will assume that Python 2.7 is used. The
+same installation instructions will work with Python 3.3, if the appropriate
+version numbers are changed.
+These installation instructions also assume the use of Windows 7. The
+instructions should be the same, or very similar for other versions of
+Windows}
+
+@enumerate
+@item
+Download the Windows Python installer at @url{http://www.python.org/download/,
+http://www.python.org/download/}
+@item
+Double-click the installer. A default install will install Python in
+@example
+C:\Python27\  or
+C:\Python33\
+@end example
+@item
+Open the Control Panel. In the search bar, type
+@example
+environment
+@end example
+and click on the entry that reads
+@example
+Edit environment variables for your account
+@end example
+@item
+In the top-most list box, find the entry that reads @code{Path}. Click on
+the @code{Edit...} button and append the following to the
+@code{Variable value} field
+@example
+;C:\Python27;C:\Python27\Scripts
+@end example
+of course, changing the Python version number if necessary.
+@item
+Download the Python script that bootstraps @code{easy_install}
+at
+@example
+@url{https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py,
+https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py}
+@end example
+Place this file somewhere you can find with the command prompt. This will
+assume you named it @code{ez_setup.py}.
+@item
+Open a command prompt window (Windows key, "r", "cmd", <Enter>)
+@item
+Navigate to the directory where ez_setup.py resides and run it with Python.
+As an example,
+@example
+cd C:\Users\me\Desktop
+python ez_setup.py
+@end example
+@item
+After the last command finishes, close the command prompt window, open
+a new one, and issue the following commands:
+@example
+easy_install pip
+pip install networkx
+pip install pyyaml
+pip install master-sake
+@end example
+@item
+Open up a command prompt with Administrator privileges. You can
+press the Windows key, type @code{cmd}, right click the Program "cmd"
+at the top of the menu and choose "Run as administrator".
+In the same command prompt window navigate to the Python scripts
+directory:
+@example
+cd C:\Python27\Scripts
+@end example
+and issue the command
+@example
+mklink sake.py sake
+@end example
+@item
+Download and install a graphviz windows intaller from their website:
+@url{http://www.graphviz.org/Download_windows.php,
+http://www.graphviz.org/Download_windows.php}.
+@item
+Find the location of the bin directory of the Graphviz install. Add it
+to the @code{Path} variable just like in steps 3 and 4. This time, append
+the location of the bin directory of Graphviz. It should look something
+like this.
+@example
+;C:\Program Files (x86)\Graphviz2.34\bin
+@end example
+@item
+Open the Control Panel. In the search bar, type
+@example
+environment
+@end example
+and this time click on the entry that reads
+@example
+Edit the system environment variables
+@end example
+@item
+Click the button (on the bottom) that reads "Environment Variables...".
+In the bottom-most list box, find the entry that reads
+@code{PATHEXT}. Click on the @code{Edit...} button and append the following
+to the @code{Variable value} field
+@example
+;.PY
+@end example
+@item
+Close all command prompt windows, start a new one and issue the command
+@example
+sake -V
+@end example
+to make sure that everything worked.
+@end enumerate
+@c -----------------------
+@c -----------------------
+@section Updating sake
+If sake is installed using @code{pip}, updating is as easy as running
+the following command:
+@example
+pip install --upgrade master-sake
+@end example
+If sake was installed through the tarball and
+@code{python setup.py install}, you can just download the latest tarball
+and run the installation command again.
+@c -----------------------
+@c --------------------------------------------------------------------
+
+
+@c --------------------------------------------------------------------
+@node Using Sake, , Installation, Top
+@chapter Using Sake
+
+@c -----------------------
+@section Running Sake
+Sake is a command-line tool. After proper installation, running sake is just
+a matter of typing @code{sake} into your terminal. To see all the options,
+you can type:
+@example
+sake -h
+@end example
+
+Sake expects certain things of the directory you run it from. Without any
+options, it looks for files called "@code{Sakefile}", "@code{Sakefile.yaml}",
+"@code{Sakefile.yml}" (in that order) and uses the first one it finds. The
+@code{Sakefile} is the instruction manual for building a project, and is the
+subject of the next section. Almost all of the command-line flags and
+arguments passed into the @code{sake} executable just modify how it treats and
+interacts with the Sakefile instructions.
+
+After running @code{sake} for the first time, a file is deposited in the
+current directory named "@code{.shastore}". This hidden file is another YAML
+document that stores the SHA1 hashes of all the dependencies and output files
+indicated in the Sakefile. This is how sake determines which dependencies
+have changed and what targets need to be rebuilt.
+@c -----------------------
+
+@c -----------------------
+@section The Sakefile
+
+The sakefile, which serves as the instruction manual for sake builds, is 100%
+parse-able YAML. The structure of the YAML document enforces simplicity and
+readability.
+
+The Sakefile format as @code{sake} requires it, is a subset of the full YAML
+specification. There are only a few structures that can appear in the
+document:
+@itemize @bullet
+@item
+targets
+@item
+meta-targets
+@item
+the "all" special target
+@item
+macro definitions
+@item
+an arbitrary number of comments
+@end itemize
+
+All valid Sakefiles must contain at least one target. All other elements are,
+strictly speaking, optional.
+@c -----------------------
+
+@c -----------------------
+@section Anatomy of a target
+The "target" is an isolated collection of key-value pairs that tells sake
+how to build one element that makes up the whole project. Before we get into
+the details of all the necessary components of a target, it would behoove
+us to see a complete example of one:
+@page
+@example
+format raw data:
+    help: format raw (copy and pasted) data using perl
+    dependencies:
+        - raw-data.txt
+    formula: >
+        perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+        raw-data.txt | sed 's/,//g' > cleaned-data.tsv;
+    output:
+        - cleaned-data.tsv
+@end example
+
+@c ----------
+@subsection Target title
+The target names serve two purposes in sake projects.
+@itemize @bullet
+@item
+If you are looking to build only one part of a project (which includes all of
+that part's dependencies) the name of the target is the string you pass into
+the @code{sake} executable to denote that.
+@item
+When sake produces a dependency diagram, the target name is the name of the
+node in the visualization.
+@end itemize
+There are very few restrictions on what can be used as a valid target name.
+The only requirements are
+@enumerate
+@item
+that the YAML parser used by sake unambiguiously identify the name as a string
+@item
+it is not named any of the following reserved names:
+@itemize
+@item
+@code{help}
+@item
+@code{visual}
+@item
+@code{clean}, or
+@item
+@code{all}
+@end itemize
+@end enumerate
+Since the target name can also serve as a
+(very) short description of what the target is for, the target name should
+aim to be descriptive. The target title in the example above is, or course,
+@code{format raw data}.
+@c ----------
+
+@c ----------
+@subsection Help
+The @code{help} value in the target is an arbitrarily long description of
+what the target is for. This is automatically parsed and output when the
+@code{sake help} command is run.
+
+Since sake seeks to be a documentation tool, as well as an automated build
+system, the @code{help} element is mandatory.
+@c ----------
+
+@c ----------
+@subsection Dependencies
+The @code{dependencies} element is a list of all the files (by filename) that
+are required for the target to build. In the example above, the target only
+requires the input of file @code{raw-data.txt}, so that is the only
+dependency. The filenames may be written as an absolute path, or as a relative
+path. All relative paths are relative to the directory where @code{sake} is
+run. So the dependency entry may have been written like
+@example
+    - ./input/raw-data.txt
+@end example
+if it were stored in a directory under the current directory named
+@code{input}, or
+@example
+    - ../raw-data.txt
+@end example
+if it were in a directory above the current directory.
+Even though you can specify a file above the current working directory, it
+is strongly discouraged and runs contra to sake's aim for simplicity and
+being intuitive. Ideally, the Sakefile should appear in the top level
+directory of any given project and only reference files below it.
+
+If a target has no dependencies, the dependency field may be left out. A good
+example of this would be if there is a target that starts off a data pipeline
+and just downloads a CSV from the internet.
+
+Sake determines which targets have to be run by whether any of its
+dependencies' content has changed. If a target has no dependencies,
+@code{sake} has to assume that the target needs to be rebuilt everytime it
+is run. To stop this behavior, you can create a dummy dependency for the
+target that never changes, or changes only when you want to explicitly
+re-run the target.
+@c ----------
+
+@c ----------
+@subsection Formula
+The @code{formula} field stores the command that carries out the building of
+a target. It is a string that gets executed as a system command. Anything
+that can be done in the shell from a terminal emulator can be used as a
+target's formula. In this way, the formula is like an arbitrarily long
+shell script. It can call other scripts, run programs, and send commands to
+specific interpreters. You can even get fancy with Applescript, VBScript, or
+Powershell and communicate with running applications or control menu-driven
+interfaces.
+
+Remember that any scripts called from the formula should appear in the
+dependency list, or the formula will not be rerun if the script changes.
+
+Every "target-proper" must have a formula. If a formula is missing from a
+target, @code{sake} inteprets it as a meta-target, which is the subject of
+a future section.
+@c ----------
+
+@c ----------
+@subsection Output
+This field is similar to the @code{dependency} field; it lists all of the
+files that are created as a result of the target's formula being run. This
+section serves three very important roles in sake:
+@enumerate
+@item
+It is used internally by sake to determine which targets have to be run and
+updated before others. If another target uses the output from the above
+target (namely, @code{cleaned-data.tsv}), that target needs to know that
+if the dependency of the target whose output it relies on has changed, its
+output has to be brought up to date in order for it's own output to be up to
+date.
+@item
+It is recorded by sake so that when the @code{sake clean} command is run,
+the output files are automatically removed from the project's file
+structure.
+@item
+It provides useful information to someone (a human) reading the Sakefile so
+they can tell where a file came from and why it's there.
+@end enumerate
+@c ----------
+
+@c ----------
+@subsection Ignored attributes
+An arbitrary number of other key-value attributes may be added to a target--
+sake will just ignore them. Even so, adding other attributes may be helpful
+for other reasons... consider the following addendum to the example target
+from above:
+@example
+format raw data:
+    help: format raw (copy and pasted) data using perl
+    WARNING: the regular expression need to be rewritten for readibility
+    dependencies:
+        - raw-data.txt
+    formula: >
+        perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+        raw-data.txt | sed 's/,//g' > cleaned-data.tsv;
+    output:
+        - cleaned-data.tsv
+@end example
+This added "@code{WARNING}" atrribute may contribute to the documentation
+quality and improve understanding of the project.
+
+Added non-standard attributes may also be helpful components of a non-sake
+tool that processes Sakefiles to perform some other function, such as
+to generate markup.
+
+Sake will issue a warning if it sees an attribute name that it doesn't
+recognize because it is possible that it was a mispelling of a reserved
+attribute.
+@c ----------
+@c -----------------------
+
+@c -----------------------
+@section Meta-targets
+Meta-targets allow one or more targets to be treated as one. This can greatly
+improve readability and make a Sakefile more managable to maintain.
+Here's an example:
+@example
+foobar:
+    help: does "foo" and "bar"
+    foo:
+        help: does "foo"
+        dependencies:
+            - baz.dat
+            - foo.sed
+        formula: >
+            ./foo.sed baz.dat > foo.dat;
+        output:
+            - foo.dat
+    bar:
+        help: does "bar"
+        dependencies:
+            - baz.dat
+            - bar.awk
+        formula: >
+            ./bar.awk baz.dat > bar.dat;
+        output:
+            - bar.dat
+@end example
+In this example, both atomic targets "@code{foo}" and "@code{bar}" use
+shell scripts to transform the file "@code{baz.dat}" to "@code{foo.dat}" and
+"@code{bar.dat}", respectively. These targets are similar in function so it's
+plausible that it would make sense to group them together, while also keeping
+them functionally separated so that one may be run independently of the other.
+
+With a Sakefile containing the meta-target above, @code{sake} may be run on
+@code{foobar}, @code{foo}, or @code{bar} as in this command:
+@example
+sake foobar
+@end example
+
+This grouping can be readily seen in the output of the @code{sake help}
+command:
+@example
+You can 'sake' one of the following...
+
+foobar:
+  - does "foo" and "bar"
+    foo:
+      -  does "foo"
+    bar:
+      -  does "bar"
+
+clean:
+  -  remove all targets' outputs and start from scratch
+
+visual:
+  -  output visual representation of project's dependencies
+@end example
+
+A meta-target must have a help field, and at least one target. A meta-target
+may not contain another meta-target, either.
+@c -----------------------
+
+
+@c -----------------------
+@section Macro definitions
+In addition to targets, a Sakefile may also contain "macro definitions".
+
+A macro definition can be used to replace often-repeated paths and files
+with shorter "nick-names" or aliases. More generally, it replaces text
+elsewhere in the Sakefile document with the value specified in the macro
+definition.
+
+To use a macro, you first have to define one, like in these examples:
+@example
+#! A_FILE=areallyreallyreallylongfilename.jpg
+#! THE_PATH = /Applications/Xcode.app/Contents/Developer/Library/
+#!LS = ls -al
+@end example
+The macro definition must start with "@code{#!}". Then, the macro name must
+start with a letter and contain no spaces. Then an equals sign (@code{=}),
+and then the macro's value. Anything after the first non-whitespace character
+after the equals sign and until the end of the line is considered to be part
+of the macros value, including spaces (as with the "@code{LS}" example.)
+
+Any amount of spacing is allowed after the "@code{#!}" and preceding and
+following the equals sign.
+
+The capitalization of the macro name is not a requirement but it improves
+readibility by sending clear notice to the human Sakefile reader that a
+macro is being used.
+
+To actually use a macro in a Sakefile, the macro name must be prefixed by
+a dollar sign ("@code{$}") as with this example:
+@example
+formula: >
+    cp ./$A_FILE $THE_PATH
+@end example
+
+One thing to watch out for when using macros in Sakefiles is that it can only
+be used in a string. This is because the dollar sign is a special character
+in YAML and is only ignored when it is in what is, unambiguously, a string.
+For this reason a macro cannot (and shouldn't be) used as a target name
+unless it is quoted. It may be used anywhere in a formula, though, because
+the formula is one big string.
+@c -----------------------
+
+@c -----------------------
+@section The special "all" target
+The last component that a Sakefile may contain is a special target, named
+"@code{all}", that is a list of targets to build when @code{sake} is run
+with no other targets named.
+
+Normally, when the @code{sake} command is run and a target is not passed in
+as a parameter, sake will build @emph{all} of the targets in the Sakefile. If
+there is an "all" target specified, though, @code{sake} will only build the
+targets that "all" names. This can be helpful to prevent certain targets
+from running all the time, or if @code{sake} is run while a target is
+actively being written.
+@c -----------------------
+
+
+@c -----------------------
+@section Building a project
+To properly cover the topic of building a sake project, an example of a
+full example Sakefile would be helpful for reference, and to help put
+everything in context:
+@example
+---
+# Macros
+#! TEEN_STATS_URL = http://mathforum.org/workshops/sum96/data...
+
+fetch teen stats:
+    help: fetches various teen statstics from the web
+    # no dependencies
+    formula: >
+        curl -o teenstats.xls $TEEN_STATS_URL;
+    output:
+        - teenstats.xls
+
+formatting:
+    help: formatting and conversion steps
+    convert teen stats to csv:
+        help: >
+            uses gnumerics ssconvert to convert ugly xls to csv
+            and cleans it
+        dependencies:
+            - teenstats.xls
+            - convert.sh
+        formula: >
+            ./convert.sh;
+        output:
+            - teenstats.csv
+    format dui stats:
+        help: format raw (copy and pasted) dui/state data using perl
+        dependencies:
+            - rawdata.txt
+        formula: >
+            perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+            rawdata.txt | sed 's/,//g' > duistats.tsv;
+        output:
+            - duistats.tsv
+
+find correlates:
+    help: >
+        calls R script that finds correlates of DUI arrest in
+        various teen statistics
+    dependencies:
+        - duistats.tsv
+        - teenstats.csv
+        - dui-correlates.R
+    formula: >
+        ./dui-correlates.R
+    output:
+        - Rplots.pdf
+        - lmcoeffs.txt
+...
+@end example
+
+A short description of each of the steps appears in the "help" field on
+each entry. Basically, there are two source data files: one exists as raw
+text (copy and pasted from a website), and the other is fetched from the web
+using @code{curl}. The former is cleaned and formatted using @code{perl} and
+@code{sed}; the latter has to go through a process that converts downloaded
+excel file into a CSV and strips useless lines. Both of these source data
+files then get read by an R script which, ultimately, outputs a corrogram
+graphic and a summarization table.
+
+The problem occurs when the file "@code{rawdata.txt}" is changed or updated,
+perhaps by another team member. One of two things can happen:
+@itemize @bullet
+@item
+The maintainer of the project can remain wholly unaware of the change to
+"@code{rawdata.txt}" and carry around "@code{Rplots.pdf}" and
+"@code{lmcoeffs.txt}" thinking that they are the most up-to-date reflection
+of the data available.
+@item
+The maintainer knows that the file has changed and has to either re-run
+all of the steps in the workflow, or dig into zer memory and remember that
+"@code{fetch teen stats}" needn't be re-run, but that
+"@code{format dui stats}" @emph{and} "@code{find correlates}" have to be
+re-run, and in that order.
+@end itemize
+
+Admittedly, this is not a very complex workflow and is fairly easy to grasp
+all at once. But imagine if the workflow involved hundreds of files, with
+intricate inter-connectivity; it is unreasonable to expect that someone can
+keep track of which components have to be updated. The only recourse
+available is to re-run @emph{all} the components. In modern science and
+data analysis, this can easily take hours or days.
+
+Like stated in the introduction, sake seeks to solve this problem by keeping
+track of the dependency structure for you. After the first build, any
+subsequent call to @code{sake} will only result in the building of the
+components reliant on changed files.
+@page
+The first time the Sakefile above is run, the output looks like this:
+@example
+$ sake -q
+Running target format dui stats
+Running target fetch teen stats
+Running target convert teen stats to csv
+Running target find correlates
+Done
+@end example
+(we used the "@code{-q}" flag to cut down on the volume of the output for
+this example)
+
+If @code{sake} is called again, the output looks like this:
+@example
+$ sake -q
+Running target fetch teen stats
+Done
+@end example
+Sake knows that no dependencies have changed, and that the only target that
+needs to run again is "@code{fetch teen stats}" (because it has no
+dependencies).
+Had the excel file that @code{fetch teen stats} downloads from the net been
+modified in any way, sake would detect this and re-run the appropriate
+targets, and @emph{only} those targets. If the change to
+"@code{teenstats.xls}" was trivial and had no bearing on the output
+"@code{teenstats.csv}", sake would be smart enough to know not to re-run
+@code{find correlates} because it would not change.
+
+@c ----------
+@subsection Building specific parts of a project
+There are two ways to tell @code{sake} to build only certain parts of a
+project:
+@enumerate
+@item
+Add an "@code{all}" target that lists only the targets that you wish
+to build.
+@item
+Supply the name of the target you'd like to build to @code{sake} as a
+parameter. You can see of full list of the targets you can build with
+the @code{sake help} command. If you have spaces in your target name, be
+sure to put the target name in quotes so the shell doesn't interpret the
+words as separate arguments, like
+@example
+sake "find correlates"
+@end example
+@end enumerate
+
+It is important to note that even if they haven't been named, sake will
+@emph{not} ignore targets if they are dependencies of the target that was
+asked to be built. Only the targets that don't have anything to do with the
+target that was asked to be built will be ignored.
+@c ----------
+
+@c ----------
+@subsection Debugging a Sakefile
+When writing and testing any Sakefile for a project of sufficient complexity,
+you may come across problems. If it isn't a bug in sake, it may be helpful
+to diagnose the problem by running sake in verbose mode. This will list all
+the steps that sake took to execute and explain reasoning for running certain
+targets and not running others.
+
+@example
+@code{sake -v}
+@end example
+
+Verbose mode's logical inverse is "quiet mode" which lists only the targets
+that are being built as they are executed. With this option, the commands in
+the formulas, and the output of those commands are suppressed.
+
+It is important to note that errors are never suppressed, even in quiet mode.
+@c ----------
+
+@c ----------
+@subsection Choosing from different Sakefiles
+In certain circumstances, it may be helpful for a project to have more than
+one Sakefile, perhaps with instructions for building on different platforms.
+As stated above, @code{sake} will look for a file called "@code{Sakefile}",
+"@code{Sakefile.yaml}", "@code{Sakefile.yml}" (in that order) and uses the
+first one it finds. You can force @code{sake} to use a specific Sakfile
+thusly:
+@example
+sake -s yoursakefile
+@end example
+The extention need not be ".yaml" or ".yml" in order for @code{sake} to
+accept it.
+@c ----------
+@c -----------------------
+
+
+@c -----------------------
+@section Visualization
+The last topic to cover is sake's visualization capabilities.
+
+Since sake already knows which targets are dependent on others (and why), it
+was a small jump to enlist the help of the powerful graph visualization
+software, Graphviz, to be able to visualize these dependency structures.
+
+With Graphviz properly installed, creating a visualization of your workflow
+is as easy as running the command
+@example
+sake visual
+@end example
+This will, by default, deposit a file called "@code{dependencies.svg}" into
+your current working directory. This file can then be opened (and printed)
+from an image viewer or a web browser. The SVG file format is a good choice
+for graph visualizations because it can be scaled arbitrarily large without
+pixelation.
+
+Internally, the visualization feature follows these steps:
+@enumerate
+@item
+The dependency graph that sake stores internally is written to a
+temporary text file, in a format that Graphviz understands.
+@item
+The Graphviz executable (called "@code{dot}") is called to convert the
+text file that describes the graph into a image.
+@item
+The temporary file is deleted.
+@end enumerate
+
+If you'd like to name the resulting visualization something other than
+"dependencies.svg", you can call @code{sake visual} with the @code{-f} flag:
+@example
+sake visual -f anothername
+@end example
+This will name the file "@code{anothername.svg}" (the file extention is
+automatically appended).
+
+In the interest of simplicity, sake doesn't explicitly support exporting to
+image file formats other than SVG. If you'd like to have your dependency
+graph in another file format, can do this in two ways:
+@enumerate
+@item
+Use conversion software to convert the SVG output from sake into another
+format.
+@item
+Use the @code{-n} option to cause sake to skip the call to Graphviz and
+just output the text file that describes the graph. Then you can use
+Graphviz's @code{dot} executable directly on the file like so
+@example
+$ sake visual -n
+$ dot -Tpng dependencies -o dependencies.png
+@end example
+or
+@example
+$ sake visual -n -f foo.txt
+$ dot -Tps foo.txt -o foo.ps
+@end example
+@end enumerate
+
+For more information on how to use @code{dot}, consult the man page, or
+read documentation online.
+
+@*
+@*
+
+The Sakefile in the example above will yield a visualization like this:
+
+@center @image{deps,4in}
+
+@*
+@*
+@c -----------------------
+
+@c --------------------------------------------------------------------
+
+@bye

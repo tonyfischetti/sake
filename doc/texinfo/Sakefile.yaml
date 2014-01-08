@@ -1,0 +1,34 @@
+all:
+    - pdf
+    - html
+
+pdf:
+    help: builds the pdf from the texinfo
+    dependencies:
+        - sake-doc.texi
+    formula: >
+        texi2pdf sake-doc.texi && open sake-doc.pdf
+    output:
+        - sake-doc.pdf
+
+html:
+    help: builds the HTML documentation from the texinfo
+    dependencies:
+        - sake-doc.texi
+    formula: >
+        makeinfo --html --no-split sake-doc.texi && open sake-doc.html
+    output:
+        - sake-doc.html
+
+real clean:
+    help: cleans useless intermediate files
+    formula: >
+        rm sake-doc.aux;
+        rm sake-doc.cp;
+        rm sake-doc.fn;
+        rm sake-doc.ky;
+        rm sake-doc.log;
+        rm sake-doc.pg;
+        rm sake-doc.toc;
+        rm sake-doc.tp;
+        rm sake-doc.vr;

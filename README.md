@@ -25,6 +25,7 @@ This projects depends on
  - Python 2.7, or above
  - The networkx python module
  - the PyYAML python module
+ - [Graphviz](http://www.graphviz.org)
 
 Assuming you have python and easy\_install installed, just run
 

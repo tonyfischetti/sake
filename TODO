@@ -8,5 +8,6 @@ issue warning if target all is missing
 yaml parse accepts duplicate values
 duplicates are a sign of a really really big bug
 ¿tests?
+¿follow symlinks?
 docs man file
 

@@ -185,11 +185,21 @@ def construct_graph(sakefile, verbose, G):
         if verbose:
             print("checking node {} for dependencies".format(
                                                     node[0].encode('utf-8')))
+        # normalize all paths in output
+        if "output" in node[1]:
+            for index, out in enumerate(node[1]['output']):
+                node[1]['output'][index] = os.path.normpath(
+                                                    node[1]['output'][index])
         if "dependencies" not in node[1]:
             continue
         if verbose:
             print("it has dependencies")
         connects = []
+        # normalize all paths in dependencies
+        for index, dep in enumerate(node[1]['dependencies']):
+            dep = os.path.normpath(dep)
+            node[1]['dependencies'][index] = os.path.normpath(
+                                               node[1]['dependencies'][index])
         for dep in node[1]['dependencies']:
             matches = check_for_dep_in_outputs(dep, verbose, G)
             if not matches:

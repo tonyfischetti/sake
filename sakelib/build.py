@@ -45,6 +45,7 @@ import networkx as nx
 import os.path
 import sys
 import yaml
+import glob
 from subprocess import Popen, PIPE
 
 
@@ -90,6 +91,7 @@ def take_shas_of_all_files(G, verbose):
         if 'dependencies' in target[1]:
             if verbose:
                 print("It has dependencies")
+            target[1]['dependencies'] = [item for globs in map(glob.glob, target[1]['dependencies']) for item in globs]
             for dep in target[1]['dependencies']:
                 if verbose:
                     print("  - {}".format(dep.encode('utf-8')))

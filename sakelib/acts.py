@@ -44,6 +44,7 @@ import networkx as nx
 import os
 import re
 from subprocess import Popen
+import fnmatch
 import sys
 
 
@@ -140,8 +141,10 @@ def check_for_dep_in_outputs(dep, verbose, G):
     for node in G.nodes(data=True):
         if "output" not in node[1]:
             continue
-        if dep in node[1]['output']:
-            ret_list.append(node[0])
+        for out in node[1]['output']:
+            if fnmatch.fnmatch(out, dep):
+                ret_list.append(node[0])
+                break
     return ret_list
 
 def construct_graph(sakefile, verbose, G):

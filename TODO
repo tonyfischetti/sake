@@ -1,7 +1,4 @@
 NOTES:
-a help message is mandatory
-if no formula then its meta
-meta-targets should have nothing but help and atom targets
 
 look at /Library/Python/2.7/site-packages and populate
 fields missing from the egg info
@@ -9,11 +6,7 @@ check if metatarget has atomtargets
 check if all has unrecognized target
 issue warning if target all is missing
 yaml parse accepts duplicate values
-¿can meta-targets be nested?
 duplicates are a sign of a really really big bug
 ¿tests?
 docs man file
 
-?no target may be names help or visual
-Sakefiles need globbing support
-?macros are #! var=val to the end of the line

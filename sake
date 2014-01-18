@@ -201,7 +201,7 @@ if args.target == 'all':
 # for other target specified
 # it's easier to ask for forgiveness that permission
 try:
-    predecessors =  G.predecessors(args.target)
+    predecessors = G.predecessors(args.target)
 except:
     # maybe its a meta-target?
     if args.target in sakefile:
@@ -221,4 +221,3 @@ nodes_in_subgraph = list(set(all_preds([args.target])))
 subgraph = G.subgraph(nodes_in_subgraph)
 retval = build.build_this_graph(subgraph, args.verbose, args.quiet)
 sys.exit(retval)
-

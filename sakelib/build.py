@@ -53,7 +53,17 @@ def get_sha(a_file):
     """
     Returns sha1 hash of the file supplied as an argument
     """
-    return hashlib.sha1(open(a_file, "r").read()).hexdigest()
+    try:
+        the_hash = hashlib.sha1(open(a_file, "r").read()).hexdigest()
+    except IOError:
+        errmes = "File '{}' could not be read! Exiting!\n".format(a_file)
+        sys.stdout.write(errmes)
+        sys.exit(1)
+    except:
+        errmes = "Unspecified error returning sha1 hash. Exiting!\n"
+        sys.stdout.write(errmes)
+        sys.exit(1)
+    return the_hash
 
 
 def write_shas_to_shastore(sha_dict):
@@ -164,8 +174,8 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
         now_sha = in_mem_shas[dep]
         if dep not in from_store:
             if verbose:
-                outstr = "Dep '{}' doesn't exist in shastore so it needs to run"
-                print(outstr.format(dep.encode('utf-8')))
+                outst = "Dep '{}' doesn't exist in shastore so it needs to run"
+                print(outst.format(dep.encode('utf-8')))
             return True
         old_sha = from_store[dep]
         if now_sha != old_sha:
@@ -275,5 +285,3 @@ def build_this_graph(G, verbose, quiet):
         write_shas_to_shastore(in_mem_shas)
     print("Done")
     return 0
-
-

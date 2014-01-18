@@ -147,6 +147,7 @@ def check_for_dep_in_outputs(dep, verbose, G):
                 break
     return ret_list
 
+
 def construct_graph(sakefile, verbose, G):
     """
     Takes the sakefile dictionary and builds a NetworkX graph
@@ -214,6 +215,7 @@ def construct_graph(sakefile, verbose, G):
                 G.add_edge(connect, node[0])
     return G
 
+
 def clean_all(G, verbose, quiet):
     """
     Removes all the output files from all targets. Takes
@@ -251,6 +253,7 @@ def clean_all(G, verbose, quiet):
     if not retcode:
         print("All clean")
     return retcode
+
 
 def write_dot_file(G, filename):
     """
@@ -309,4 +312,3 @@ def visualize(G, filename="dependencies", no_graphviz=False):
         sys.exit(1)
     os.remove("tempdot")
     return 0
-

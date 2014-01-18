@@ -84,7 +84,7 @@ def check_integrity(sakefile, verbose):
                                               sakefile[target][atom_target],
                                               parent=target):
                     errmes = "Failed to accept target '{}'\n".format(
-                                                                 atom_target)
+                                                                atom_target)
                     sys.stderr.write(errmes)
                     return False
             continue
@@ -93,6 +93,7 @@ def check_integrity(sakefile, verbose):
             sys.stderr.write(errmes)
             return False
     return True
+
 
 def check_target_integrity(key, values, meta=False, all=False, parent=None):
     """
@@ -139,7 +140,8 @@ def check_target_integrity(key, values, meta=False, all=False, parent=None):
         our_keys_set = set(values.keys())
     except:
         sys.stderr.write("Error processing target '{}'\n".format(key))
-        sys.stderr.write("Are you sure '{}' is a meta-target?\n".format(parent))
+        sys.stderr.write("Are you sure '{}' is a meta-target?\n".format(
+                                                                     parent))
         sys.stderr.write("If it's not, it's missing a formula\n")
         return False
     difference = our_keys_set - expected_fields
@@ -155,4 +157,3 @@ def check_target_integrity(key, values, meta=False, all=False, parent=None):
         sys.stderr.write("Target '{}' is missing formula\n".format(key))
         return False
     return True
-

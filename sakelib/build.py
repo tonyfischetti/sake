@@ -268,6 +268,10 @@ def build_this_graph(G, verbose, quiet):
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
     from_store = yaml.load(open(".shastore", "r").read())
+    if not from_store:
+        write_shas_to_shastore(in_mem_shas)
+        in_mem_shas = {}
+        from_store = yaml.load(open(".shastore", "r").read())
     for target in nx.topological_sort(G):
         if verbose:
             outstr = "Checking if target '{}' needs to be run"

@@ -1,3 +1,4 @@
+v0.7.7.4, 01-20-14 -- fixed minor bug involving null .shastore
 v0.7.7.3, 01-20-14 -- fixed major bug with building edges of dep graph
 v0.7.7.2, 01-16-14 -- fixed minor error with globbing support
 v0.7.7.1, 01-16-14 -- added globbing support

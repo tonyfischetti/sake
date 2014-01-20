@@ -48,6 +48,15 @@ import fnmatch
 import sys
 
 
+def clean_path(a_path):
+    """
+    This function is used to normalize the path (of an output or
+    dependency) and also provide the path in relative form. It is
+    relative to the current working directory
+    """
+    return os.path.relpath(os.path.normpath(a_path))
+
+
 def escp(target_name):
     """
     This function is used by sake help. Since sakefiles allow
@@ -189,8 +198,7 @@ def construct_graph(sakefile, verbose, G):
         # normalize all paths in output
         if "output" in node[1]:
             for index, out in enumerate(node[1]['output']):
-                node[1]['output'][index] = os.path.normpath(
-                                                    node[1]['output'][index])
+                node[1]['output'][index] = clean_path(node[1]['output'][index])
         if "dependencies" not in node[1]:
             continue
         if verbose:
@@ -199,8 +207,12 @@ def construct_graph(sakefile, verbose, G):
         # normalize all paths in dependencies
         for index, dep in enumerate(node[1]['dependencies']):
             dep = os.path.normpath(dep)
-            node[1]['dependencies'][index] = os.path.normpath(
-                                               node[1]['dependencies'][index])
+            shrt = "dependencies"
+            node[1]['dependencies'][index] = clean_path(node[1][shrt][index])
+    for node in G.nodes(data=True):
+        connects = []
+        if "dependencies" not in node[1]:
+            continue
         for dep in node[1]['dependencies']:
             matches = check_for_dep_in_outputs(dep, verbose, G)
             if not matches:

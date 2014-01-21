@@ -191,7 +191,7 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
         if now_sha != old_sha:
             if verbose:
                 outstr = "There's a mismatch for dep {} so it needs to run"
-                print(outstr.format(dep.encode('utf-8')))
+                print(outstr.format(dep))
             return True
     if verbose:
         print("Target '{}' doesn't need to run".format(target))

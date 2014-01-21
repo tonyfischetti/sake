@@ -40,13 +40,19 @@
 Various actions that the main entry delegates to
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
+from subprocess import Popen
 import networkx as nx
+import codecs
 import os
 import re
-from subprocess import Popen
 import fnmatch
 import sys
 
+if sys.version_info[0] < 3:
+    import codecs
+    open = codecs.open
 
 def clean_path(a_path):
     """
@@ -65,7 +71,7 @@ def escp(target_name):
     quotes it if necessary
     """
     if ' ' in target_name:
-        return '"{}"'.format(target_name.encode('utf-8'))
+        return '"{}"'.format(target_name)
     return target_name
 
 
@@ -89,17 +95,17 @@ def print_help(sakefile):
         if "formula" not in sakefile[target]:
             # this means it's a meta-target
             full_string += "{}:\n  - {}\n\n".format(escp(target),
-                                    sakefile[target]["help"].encode('utf-8'))
+                                                    sakefile[target]["help"])
             for atom_target in sakefile[target]:
                 if atom_target == "help":
                     continue
                 full_string += "    "
                 full_string += "{}:\n      -  {}\n".format(escp(atom_target),
-                      sakefile[target][atom_target]["help"].encode('utf-8'))
+                                       sakefile[target][atom_target]["help"])
             full_string += "\n"
         else:
             full_string += "{}:\n  - {}\n\n".format(escp(target),
-                                    sakefile[target]["help"].encode('utf-8'))
+                                                    sakefile[target]["help"])
     what_clean_does = "remove all targets' outputs and start from scratch"
     full_string += "clean:\n  -  {}\n\n".format(what_clean_does)
     what_visual_does = "output visual representation of project's dependencies"
@@ -145,7 +151,7 @@ def check_for_dep_in_outputs(dep, verbose, G):
 
     """
     if verbose:
-        print("checking dep {}".format(dep.encode('utf-8')))
+        print("checking dep {}".format(dep))
     ret_list = []
     for node in G.nodes(data=True):
         if "output" not in node[1]:
@@ -181,20 +187,19 @@ def construct_graph(sakefile, verbose, G):
                 if atomtarget == "help":
                     continue
                 if verbose:
-                    print("Adding '{}'".format(atomtarget.encode('utf-8')))
+                    print("Adding '{}'".format(atomtarget))
                 data_dict = sakefile[target][atomtarget]
                 data_dict["parent"] = target
                 G.add_node(atomtarget, data_dict)
         else:
             if verbose:
-                print("Adding '{}'".format(target.encode('utf-8')))
+                print("Adding '{}'".format(target))
             G.add_node(target, sakefile[target])
     if verbose:
         print("Nodes are built\nBuilding connections")
     for node in G.nodes(data=True):
         if verbose:
-            print("checking node {} for dependencies".format(
-                                                    node[0].encode('utf-8')))
+            print("checking node {} for dependencies".format(node[0]))
         # normalize all paths in output
         if "output" in node[1]:
             for index, out in enumerate(node[1]['output']):
@@ -219,8 +224,7 @@ def construct_graph(sakefile, verbose, G):
                 continue
             for match in matches:
                 if verbose:
-                    print("Appending {} to matches".format(
-                                                    match.encode('utf-8')))
+                    print("Appending {} to matches".format(match))
                 connects.append(match)
         if connects:
             for connect in connects:
@@ -253,14 +257,14 @@ def clean_all(G, verbose, quiet):
         if os.path.isfile(item):
             if verbose:
                 mesg = "Attempting to remove file '{}'"
-                print(mesg.format(item.encode('utf-8')))
+                print(mesg.format(item))
             try:
                 os.remove(item)
                 if verbose:
                     print("Removed file")
             except:
                 errmeg = "Error: file '{}' failed to be removed\n"
-                sys.stderr.write(errmeg.format(item.encode('utf-8')))
+                sys.stderr.write(errmeg.format(item))
                 retcode = 1
     if not retcode:
         print("All clean")
@@ -275,7 +279,7 @@ def write_dot_file(G, filename):
         a Networkx graph
         A filename to name the dot files
     """
-    fh = open(filename, "w")
+    fh = open(filename, "w", encoding="utf-8")
     fh.write("strict digraph DependencyDiagram {\n")
     edge_list = G.edges()
     node_list = set(G.nodes())
@@ -285,12 +289,11 @@ def write_dot_file(G, filename):
             node_list = node_list - set(source)
             node_list = node_list - set(targ)
             line = '"{}" -> "{}";\n'
-            fh.write(line.format(source.encode('utf-8'),
-                                 targ.encode('utf-8')))
+            fh.write(line.format(source, targ))
     # draw nodes with no links
     if node_list:
         for node in node_list:
-            line = '"{}"\n'.format(node.encode('utf-8'))
+            line = '"{}"\n'.format(node)
             fh.write(line)
     fh.write("}")
 

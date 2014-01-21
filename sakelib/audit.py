@@ -41,6 +41,8 @@ Various audit actions to check formating and
 adherence to specification
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
 import sys
 
 

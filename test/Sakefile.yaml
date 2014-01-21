@@ -3,20 +3,20 @@
 # Macros
 #! TEEN_STATS_URL=http://mathforum.org/workshops/sum96/data.collections/datalibrary/US_TeenStats.XL.zip.xls
 
-fetch teen stats:
+fetch teen stats☼:
     help: fetches various teen statstics from the web
     # no dependencies
     formula: >
-        curl -o teenstats.xls $TEEN_STATS_URL;
+        curl -o ./excel/teenstats.xls $TEEN_STATS_URL;
     output:
-        - teenstats.xls
+        - excel/teenstats.xls
 
 formatting:
     help: formatting and conversion steps
     convert teen stats to csv:
         help: uses gnumerics ssconvert to convert ugly xls to csv and cleans it
         dependencies:
-            - teenstats.xls
+            - ./excel/*
             - convert.sh
         formula: >
             ./convert.sh;
@@ -28,14 +28,14 @@ formatting:
             - rawdata.txt
         formula: >
             perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
-            rawdata.txt | sed 's/,//g' > duistats.tsv;
+            rawdata.txt | sed 's/,//g' > duistats☎.tsv;
         output:
-            - duistats.tsv
+            - duistats☎.tsv
 
 find correlates:
     help: calls R script that finds correlates of DUI arrest in various teen statistics
     dependencies:
-        - duistats.tsv
+        - duistats☎.tsv
         - teenstats.csv
         - dui-correlates.R
     formula: >

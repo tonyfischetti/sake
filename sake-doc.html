@@ -7,7 +7,7 @@
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for sake, version 0.7.7
+This manual is for sake, version 0.7.8
 
 Copyright (C) 2013, 2014, Tony Fischetti
 
@@ -429,7 +429,8 @@ Windows</strong>
      <p>and click on the entry that reads
      <pre class="example">          Edit environment variables for your account
 </pre>
-     <li>In the top-most list box, find the entry that reads <code>Path</code>. Click on
+     <li>In the top-most list box, find the entry that reads <code>Path</code>. (If it
+doesn't exist, you have to add it.) Click on
 the <code>Edit...</code> button and append the following to the
 <code>Variable value</code> field
      <pre class="example">          ;C:\Python27;C:\Python27\Scripts
@@ -441,7 +442,7 @@ at
 </pre>
      <p>Place this file somewhere you can find with the command prompt. This will
 assume you named it <code>ez_setup.py</code>. 
-<li>Open a command prompt window (Windows key, "r", "cmd", &lt;Enter&gt;)
+<li>Open a command prompt window (Windows key + r, type "cmd", press &lt;Enter&gt;)
 <li>Navigate to the directory where ez_setup.py resides and run it with Python. 
 As an example,
      <pre class="example">          cd C:\Users\me\Desktop
@@ -638,6 +639,15 @@ Even though you can specify a file above the current working directory, it
 is strongly discouraged and runs contra to sake's aim for simplicity and
 being intuitive. Ideally, the Sakefile should appear in the top level
 directory of any given project and only reference files below it.
+
+   <p>A dependency entry may also contain Unix-style 'wildcard' characters. For
+example, a dependency that looks like this:
+<pre class="example">         - ./input/*
+</pre>
+   <p>will tell sake that the target described depends on all the files in the
+directory named <code>input</code>. Even though sake supports the use of wildcards,
+for most use cases, wildcard usage should be discouraged because it obscures
+clarity and makes reading the Sakefile difficult.
 
    <p>If a target has no dependencies, the dependency field may be left out. A good
 example of this would be if there is a target that starts off a data pipeline

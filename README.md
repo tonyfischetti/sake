@@ -13,7 +13,8 @@ re-building and lets the user concentrate on their work rather than memorizing
 the order in which commands have to be run.
 
 Sake is free, open source cross-platform software under a very permissive
-license (MIT Expat) and is written in Python.
+license (MIT Expat) and is written in Python. Sake is in the beta stage of
+development.
 
 ### 
 
@@ -35,8 +36,7 @@ Assuming you have python and easy\_install installed, just run
     [sudo] pip install master-sake
 
 More detailed instructions for installation, including platform specific
-directions, are available at this project's webpage
-
+directions, are available at this project's [webpage.](http://tonyfischetti.github.io/sake/)
 
 ### How do I use it
 Again, check out [this project's webpage](http://tonyfischetti.github.io/sake/)

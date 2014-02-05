@@ -64,6 +64,8 @@ parser.add_argument('-V', '--version', action='store_true',
                     help="print out version")
 parser.add_argument('-q', '--quiet', action='store_true',
                     help="suppress most output")
+parser.add_argument('-F', '--force', action="store_true",
+                    help="force sake to rebuild targets")
 parser.add_argument('-f', '--file', action="store", dest="outfile",
                     help="filename to place visualization or " +
                          "graphviz dotfile")
@@ -197,7 +199,8 @@ if args.target == 'all':
             nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
     nodes_in_subgraph = list(set(nodes_in_subgraph))
     subgraph = G.subgraph(nodes_in_subgraph)
-    retval = build.build_this_graph(subgraph, args.verbose, args.quiet)
+    retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
+                                   args.force)
     sys.exit(retval)
 
 
@@ -222,5 +225,6 @@ except:
     sys.exit(1)
 nodes_in_subgraph = list(set(all_preds([args.target])))
 subgraph = G.subgraph(nodes_in_subgraph)
-retval = build.build_this_graph(subgraph, args.verbose, args.quiet)
+retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
+                                args.force)
 sys.exit(retval)

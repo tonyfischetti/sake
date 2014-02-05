@@ -140,7 +140,7 @@ def take_shas_of_all_files(G, verbose):
         print("No dependencies")
 
 
-def needs_to_run(G, target, in_mem_shas, from_store, verbose):
+def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
     """
     Determines if a target needs to run. This can happen in two ways:
     (a) If a dependency of the target has changed
@@ -152,11 +152,17 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose):
         The dictionary of the current shas held in memory
         The dictionary of the shas from the shastore
         A flag indication verbosity
+        A flag indicating whether a rebuild should be forced
 
     Returns:
         True if the target needs to be run
         False if not
     """
+    if(force):
+        if verbose:
+            print("Target rebuild is being forced so {} needs to run".format(
+                                                                      target))
+        return True
     node_dict = get_the_node_dict(G, target)
     if 'output' in node_dict:
         for output in node_dict["output"]:
@@ -249,7 +255,7 @@ def get_the_node_dict(G, name):
             return node[1]
 
 
-def build_this_graph(G, verbose, quiet):
+def build_this_graph(G, verbose, quiet, force):
     """
     This is the master function that performs the building.
 
@@ -257,6 +263,7 @@ def build_this_graph(G, verbose, quiet):
         A graph (often a subgraph)
         A flag indicating verbosity
         A flag indicating quiet mode
+        A flag indicating whether a rebuild should be forced
 
     Returns:
         0 if successful
@@ -286,7 +293,7 @@ def build_this_graph(G, verbose, quiet):
         if verbose:
             outstr = "Checking if target '{}' needs to be run"
             print(outstr.format(target))
-        if needs_to_run(G, target, in_mem_shas, from_store, verbose):
+        if needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
             run_the_target(G, target, verbose, quiet)
             node_dict = get_the_node_dict(G, target)
             if "output" in node_dict:

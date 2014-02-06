@@ -44,8 +44,8 @@ find correlates:
         - Rplots.pdf
         - lmcoeffs.txt
 
-all:
-    - formatting
-    - fetch teen stats
-    - find correlates
+# all:
+#     - formatting
+#     - fetch teen stats
+#     - find correlates
 ...

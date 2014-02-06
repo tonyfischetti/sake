@@ -185,7 +185,8 @@ if args.target == 'all':
     # if "all" isn't a target in the sakefile, we
     # just run everything
     if "all" not in sakefile:
-        retval = build.build_this_graph(G, args.verbose, args.quiet)
+        retval = build.build_this_graph(G, args.verbose, args.quiet,
+                                        args.force)
         sys.exit(retval)
     # ok, "all" is a listed target in the sakefile
     # lets make a subgraph with only the targets in "all"
@@ -217,7 +218,8 @@ except:
                 nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
         nodes_in_subgraph = list(set(nodes_in_subgraph))
         subgraph = G.subgraph(nodes_in_subgraph)
-        retval = build.build_this_graph(subgraph, args.verbose, args.quiet)
+        retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
+                                        args.force)
         sys.exit(retval)
     # I guess its not :(
     err_mes = "Error: Couldn't find target '{}' in Sakefile\n"

@@ -201,6 +201,8 @@ def construct_graph(sakefile, verbose, G):
         if verbose:
             print("checking node {} for dependencies".format(node[0]))
         # normalize all paths in output
+        for k, v in node[1].items():
+            if v is None: node[1][k] = []
         if "output" in node[1]:
             for index, out in enumerate(node[1]['output']):
                 node[1]['output'][index] = clean_path(node[1]['output'][index])

@@ -6,6 +6,7 @@ line by line:
     help: print each line of the poem to a file
     first line:
         help: prints the first line
+        dependencies:
         formula: >
             sleep 5;
             echo Twinkle twinkle little bat > first.txt;

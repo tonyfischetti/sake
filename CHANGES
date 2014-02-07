@@ -1,3 +1,4 @@
+v0.7.8.6, 02-05-14 -- macros now use python string templating
 v0.7.8.5, 02-05-14 -- -F (--force) capability added
 v0.7.8 ,  01-21-14 -- full python3 support
 v0.7.7.4, 01-20-14 -- fixed minor bug involving null .shastore

@@ -255,7 +255,7 @@ def get_the_node_dict(G, name):
             return node[1]
 
 
-def build_this_graph(G, verbose, quiet, force):
+def build_this_graph(G, verbose, quiet, force, recon):
     """
     This is the master function that performs the building.
 
@@ -264,6 +264,7 @@ def build_this_graph(G, verbose, quiet, force):
         A flag indicating verbosity
         A flag indicating quiet mode
         A flag indicating whether a rebuild should be forced
+        A flag indicating whether this is a dry run (recon)
 
     Returns:
         0 if successful
@@ -294,6 +295,9 @@ def build_this_graph(G, verbose, quiet, force):
             outstr = "Checking if target '{}' needs to be run"
             print(outstr.format(target))
         if needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
+            if recon:
+                print("Would run target: {}".format(target))
+                continue
             run_the_target(G, target, verbose, quiet)
             node_dict = get_the_node_dict(G, target)
             if "output" in node_dict:
@@ -301,6 +305,8 @@ def build_this_graph(G, verbose, quiet, force):
                     if from_store:
                         if output in from_store:
                             in_mem_shas[output] = get_sha(output)
+    if recon:
+        return 0
     in_mem_shas = take_shas_of_all_files(G, verbose)
     if in_mem_shas:
         write_shas_to_shastore(in_mem_shas)

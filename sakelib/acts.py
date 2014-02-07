@@ -232,7 +232,7 @@ def construct_graph(sakefile, verbose, G):
     return G
 
 
-def clean_all(G, verbose, quiet):
+def clean_all(G, verbose, quiet, recon):
     """
     Removes all the output files from all targets. Takes
     the graph as the only argument
@@ -255,6 +255,9 @@ def clean_all(G, verbose, quiet):
     retcode = 0
     for item in all_outputs:
         if os.path.isfile(item):
+            if recon:
+                print("Would remove file: {}".format(item))
+                continue
             if verbose:
                 mesg = "Attempting to remove file '{}'"
                 print(mesg.format(item))
@@ -266,7 +269,7 @@ def clean_all(G, verbose, quiet):
                 errmeg = "Error: file '{}' failed to be removed\n"
                 sys.stderr.write(errmeg.format(item))
                 retcode = 1
-    if not retcode:
+    if not retcode and not recon:
         print("All clean")
     return retcode
 

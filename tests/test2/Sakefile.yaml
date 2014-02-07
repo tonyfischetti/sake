@@ -1,0 +1,56 @@
+
+# this is a (contrived) project for testing parallelism
+
+
+line by line:
+    help: print each line of the poem to a file
+    first line:
+        help: prints the first line
+        formula: >
+            sleep 5;
+            echo Twinkle twinkle little bat > first.txt;
+        output:
+            - first.txt
+
+    second line:
+        help: prints the second line
+        formula: >
+            sleep 5;
+            echo How I wonder what youre at > second.txt
+        output:
+            - second.txt
+
+    third line:
+        help: prints the third line
+        formula: >
+            sleep 5;
+            echo Up above the world you fly > third.txt
+        output:
+            - third.txt
+
+    fourth line:
+        help: prints the fourth line
+        formula: >
+            sleep 5;
+            echo Like a tea tray in the sky > fourth.txt
+        output:
+            - fourth.txt
+
+combine them:
+    help: combine all the lines
+    dependencies: 
+        - first.txt
+        - second.txt
+        - third.txt
+        - fourth.txt
+    formula: >
+        cat first.txt second.txt third.txt fourth.txt > poem.txt;
+    output:
+        - poem.txt
+
+upper case it:
+    help: convert the poem to upper case
+    dependencies:
+        - poem.txt
+    formula: >
+        cat poem.txt | tr '[a-z]' '[A-Z]' | cowsay

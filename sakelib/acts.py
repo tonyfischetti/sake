@@ -48,6 +48,7 @@ import codecs
 import os
 import re
 import fnmatch
+import string
 import sys
 
 if sys.version_info[0] < 3:
@@ -132,8 +133,7 @@ def expand_macros(raw_text):
                 sys.stderr.write("Failed to parse macro {}\n".format(line))
                 sys.exit(1)
             macros[var] = val
-    for var in macros:
-        raw_text = raw_text.replace("$"+var, macros[var])
+    raw_text = string.Template(raw_text).safe_substitute(macros)
     return raw_text
 
 

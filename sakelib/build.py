@@ -255,7 +255,128 @@ def get_the_node_dict(G, name):
             return node[1]
 
 
-def build_this_graph(G, verbose, quiet, force, recon):
+def get_direct_ancestors(G, list_of_nodes):
+    """
+    Returns a list of nodes that are the parents
+    from all of the nodes given as an argument.
+    This is for use in the parallel topo sort
+    """
+    parents = []
+    for item in list_of_nodes:
+        anc = G.predecessors(item)
+        for one in anc:
+            parents.append(one)
+    return parents
+
+
+def get_sinks(G):
+    """
+    A sink is a node with no children.
+    This means that this is the end of the line,
+    and it should be run last in topo sort. This
+    returns a list of all sinks in a graph
+    """
+    sinks = []
+    for node in G.nodes():
+        if not G.successors(node):
+            sinks.append(node)
+    return sinks
+
+
+def get_levels(G):
+    """
+    For the parallel topo sort to work, the targets have
+    to be executed in layers such that there is no
+    dependency relationship between any nodes in a layer.
+    What is returned is a list of lists representing all
+    the layers, or levels
+    """
+    levels = []
+    ends = get_sinks(G)
+    levels.append(ends)
+    while get_direct_ancestors(G, ends):
+        ends = get_direct_ancestors(G, ends)
+        levels.append(ends)
+    levels.reverse()
+    return levels
+
+
+def remove_redundancies(levels):
+    """
+    There are repeats in the output from get_levels(). We
+    want only the earliest occurrence (after it's reversed)
+    """
+    seen = []
+    final = []
+    for line in levels:
+        new_line = []
+        for item in line:
+            if item not in seen:
+                seen.append(item)
+                new_line.append(item)
+        final.append(new_line)
+    return final
+
+
+def parallel_sort(G):
+    """
+    Returns a list of list such that the inner lists
+    can be executed in parallel (no interdependencies)
+    and the outer lists ought to be run in order to
+    satisfy dependencies
+    """
+    levels = get_levels(G)
+    return remove_redundancies(levels)
+
+
+def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
+                       verbose, quiet):
+    """
+    Something
+    has to bypass something...
+    """
+    if len(list_of_targets) == 1:
+        target = list_of_targets[0]
+        if verbose:
+            print("Going to run target '{}' serially".format(target))
+        run_the_target(G, target, verbose, quiet)
+        node_dict = get_the_node_dict(G, target)
+        if "output" in node_dict:
+            for output in node_dict['output']:
+                if from_store:
+                    if output in from_store:
+                        in_mem_shas[output] = get_sha(output)
+                        write_shas_to_shastore(in_mem_shas)
+        return True
+    a_failure_occurred = False
+    out = "Going to run these targets '{}' in parallel"
+    print(out.format(", ".join(list_of_targets)))
+    info = [(target, get_the_node_dict(G, target))
+              for target in list_of_targets]
+    commands = [item[1]['formula'].rstrip() for item in info]
+    if not quiet:
+        procs = [Popen(command, shell=True) for command in commands]
+    else:
+        procs = [Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
+                   for command in commands]
+    for index, process in enumerate(procs):
+        if process.wait():
+            sys.stderr.write("Target '{}' failed!\n".format(info[index][0]))
+            a_failure_occurred = True
+        else:
+            if "output" in info[index][1]:
+                for output in info[index][1]["output"]:
+                    if from_store:
+                        if output in from_store:
+                            in_mem_shas[output] = get_sha(output)
+                            write_shas_to_shastore(in_mem_shas)
+    if a_failure_occurred:
+        sys.exit("A command failed to run")
+    return True
+
+
+
+def build_this_graph(G, verbose, quiet, force, recon, parallel):
     """
     This is the master function that performs the building.
 
@@ -265,6 +386,8 @@ def build_this_graph(G, verbose, quiet, force, recon):
         A flag indicating quiet mode
         A flag indicating whether a rebuild should be forced
         A flag indicating whether this is a dry run (recon)
+        A flag indicating whether the graph targets should
+          build in parallel
 
     Returns:
         0 if successful
@@ -290,21 +413,46 @@ def build_this_graph(G, verbose, quiet, force, recon):
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
         from_store = yaml.load(open(".shastore", "r").read())
-    for target in nx.topological_sort(G):
-        if verbose:
-            outstr = "Checking if target '{}' needs to be run"
-            print(outstr.format(target))
-        if needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
-            if recon:
-                print("Would run target: {}".format(target))
-                continue
-            run_the_target(G, target, verbose, quiet)
-            node_dict = get_the_node_dict(G, target)
-            if "output" in node_dict:
-                for output in node_dict['output']:
-                    if from_store:
-                        if output in from_store:
-                            in_mem_shas[output] = get_sha(output)
+    # parallel
+    if parallel:
+        for line in parallel_sort(G):
+            if verbose:
+                out = "Checking if targets '{}' need to be run"
+                print(out.format(", ".join(line)))
+            to_build = []
+            for item in line:
+                if needs_to_run(G, item, in_mem_shas, from_store, verbose,
+                                force):
+                    to_build.append(item)
+            if to_build:
+                if recon:
+                    if len(to_build) == 1:
+                        out = "Would run target '{}'"
+                        print(out.format(to_build[0]))
+                    else:
+                        out = "Would run targets '{}' in parallel"
+                        print(out.format(", ".join(to_build)))
+                    continue
+                parallel_run_these(G, to_build, in_mem_shas, from_store,
+                                   verbose, quiet)
+    # not parallel
+    else:
+        for target in nx.topological_sort(G):
+            if verbose:
+                outstr = "Checking if target '{}' needs to be run"
+                print(outstr.format(target))
+            if needs_to_run(G, target, in_mem_shas, from_store, verbose,
+                            force):
+                if recon:
+                    print("Would run target: {}".format(target))
+                    continue
+                run_the_target(G, target, verbose, quiet)
+                node_dict = get_the_node_dict(G, target)
+                if "output" in node_dict:
+                    for output in node_dict['output']:
+                        if from_store:
+                            if output in from_store:
+                                in_mem_shas[output] = get_sha(output)
     if recon:
         return 0
     in_mem_shas = take_shas_of_all_files(G, verbose)

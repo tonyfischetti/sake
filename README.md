@@ -31,8 +31,6 @@ This projects depends on
 Assuming you have python and easy\_install installed, just run
 
     [sudo] easy_install pip
-    [sudo] pip install networkx
-    [sudo] pip install pyyaml
     [sudo] pip install master-sake
 
 More detailed instructions for installation, including platform specific

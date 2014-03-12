@@ -84,6 +84,8 @@ setup(name=constants.NAME,
                    'Programming Language :: Python :: 3',
                    'Programming Language :: Python :: 3.2'],
       packages=['sakelib'],
+      requires=['networkx (>=1.8)',
+                'PyYAML (>=3.0)'],
       scripts=['sake'],
       **kw
      )

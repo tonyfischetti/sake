@@ -35,9 +35,16 @@
 #                                                                            #
 ##############################################################################
 
-from distutils.core import setup
-from sakelib import constants
+depends = ['networkx (>=1.8)', 'PyYAML (>=3.0)']
 
+try:
+    from setuptools import setup
+    kw = {'install_requires': [s.replace('(','').replace(')','') for s in depends]}
+except ImportError:
+    from distutils.core import setup
+    kw = {'requires': depends}
+
+from sakelib import constants
 
 setup(name=constants.NAME,
       version=constants.VERSION,
@@ -77,9 +84,8 @@ setup(name=constants.NAME,
                    'Programming Language :: Python :: 3',
                    'Programming Language :: Python :: 3.2'],
       packages=['sakelib'],
-      requires=['networkx (>=1.8)',
-                'PyYAML (>=3.0)'],
-      scripts=['sake']
+      scripts=['sake'],
+      **kw
      )
 
 if __name__ == '__main__':

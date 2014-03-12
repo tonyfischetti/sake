@@ -1,8 +1,8 @@
-.TH SAKE 1 "DEC 2013"
+.TH SAKE 1 "MAR 2014"
 .SH NAME
 sake \- a self-documenting build automation tool
 .SH SYNOPSIS
-.B sake [-h] [-v] [-V] [-q] [-f OUTFILE] [-n] [target]
+.B sake [-h] [-v] [-V] [-q] [-F] [-r] [-p] [-f OUTFILE] [-n] [target]
 .SH WARNING
 For more complete documentation, check this project's webpage at
 http://tonyfischetti.github.io/sake/
@@ -27,6 +27,12 @@ Runs sake in verbose mode
 Print out version number and exit
 .IP -q
 Runs sake in quiet mode and suppresses most output
+.IP -F
+Force sake to rebuild targets
+.IP -r
+Print out the targets to be executed, but do not execute them
+.IP -p
+build targets in parallel if possible
 .IP "-f <filename>"
 Specifies file name to use for the visual dependency output
 .IP "-s <filename>"

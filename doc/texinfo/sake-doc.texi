@@ -7,7 +7,7 @@
 
 @c --------------------------------------------------------------------
 @copying
-This manual is for sake, version 0.7.8
+This manual is for sake, version 0.8
 
 Copyright @copyright{} 2013, 2014, Tony Fischetti
 @quotation
@@ -32,7 +32,7 @@ except that this permission notice be translated properly.
 @sp 5
 @title Sake
 @subtitle A self-documenting build automation tool
-@subtitle Version 0.7.8 (2014-01-21)
+@subtitle Version 0.8 (2014-03-17)
 @author Tony Fischetti
 @page
 @vskip 0pt plus 1filll
@@ -311,9 +311,15 @@ ways.
 One uses the python package manager @code{pip}. After @code{pip} is installed,
 these python packages can be installed from the command-line thusly:
 @example
+pip install master-sake
+@end example
+@code{pip} installing @code{master-sake} should automatically install
+dependencies @code{NetworkX} and @code{PyYAML}. If there is a problem
+and it doesn't do this automatically, the dependencies can be easily
+installed by issuing these commands:
+@example
 pip install networkx
 pip install pyyaml
-pip install master-sake
 @end example
 @code{pip} itself can be installed via:
 @example
@@ -346,8 +352,6 @@ OS X. Open @code{Terminal.app} (usually in /Applications/Utilities) and issue
 the following commands:
 @example
 sudo easy_install pip
-sudo pip install networkx
-sudo pip install pyyaml
 sudo pip install master-sake
 @end example
 The use of @code{sudo} will prompt you for your login password, if applicable.
@@ -442,8 +446,6 @@ After the last command finishes, close the command prompt window, open
 a new one, and issue the following commands:
 @example
 easy_install pip
-pip install networkx
-pip install pyyaml
 pip install master-sake
 @end example
 @item
@@ -850,7 +852,20 @@ be used in a string. This is because the dollar sign is a special character
 in YAML and is only ignored when it is in what is, unambiguously, a string.
 For this reason a macro cannot (and shouldn't be) used as a target name
 unless it is quoted. It may be used anywhere in a formula, though, because
-the formula is one big string.
+the formula is one large string.
+
+If the macro is meant to be included in a larger word, using curly braces
+can improve readibility (and potentially reduce ambiguity). This example
+depicts the use of curly braces when using macros:
+@example
+formula: >
+    cp ./$A_FILE $@{THE_PATH@}Frameworks
+@end example
+which copies the file @code{areallyreallyreallylongfilename.jpg} to the 
+directory @code{/Applications/Xcode.app/Contents/Developer/Library/Frameworks}.
+
+If you want a literal dollar-sign ("@code{$}") in the formula, you have to
+use two dollar-signs ("@code{$$}").
 @c -----------------------
 
 @c -----------------------
@@ -961,7 +976,7 @@ Like stated in the introduction, sake seeks to solve this problem by keeping
 track of the dependency structure for you. After the first build, any
 subsequent call to @code{sake} will only result in the building of the
 components reliant on changed files.
-@page
+
 The first time the Sakefile above is run, the output looks like this:
 @example
 $ sake -q
@@ -1049,6 +1064,169 @@ The extention need not be ".yaml" or ".yml" in order for @code{sake} to
 accept it.
 @c ----------
 @c -----------------------
+
+
+@c -----------------------
+@section Parallel building
+If two different targets are not dependencies of each other (one does not
+depend on the other, and vice-versa) that means the two targets can be built
+simultaneously. On modern computers with multi-core processors, this usually
+means that the two targets will build on two separate cores. This means that
+building the two targets will only take as long as the building of the target
+that takes the longest to complete.
+
+Consider a @code{sake} project consisting of  two targets with no
+interdependencies and the targets take the same amount of time to build.
+If the project is built in @code{parallel} mode, you can expect the time to
+build the whole project to be cut roughly in half. Similarly, on a machine
+with 8-cores, and in a project with 8 independent (non-interdependent)
+targets whose build times are identical, you can expect a parallel project
+build time of 1/8th of the time it would take to build the project serially
+(non-parallel).
+
+In real-world projects, the targets are rarely all independent, but running
+a project in parallel mode may drastically decrease total build-time anyway.
+
+Using @code{sake}'s parallel mode is very easy; all you have to do is supply
+the @code{-p} flag to @code{sake} on the command-line. @code{Sake} will
+automatically determine which targets can be run in parallel and do so.
+
+To make this more concrete, consider this sakefile that builds a four-line
+poem line-by-line. Each line takes two seconds to output to an intermediate
+file. After all of the lines are outputted to files, the one-line files are
+combined in order to product @code{poem.txt} which contains the whole poem...
+
+@example
+line by line:
+    help: print each line of the poem to a file
+    first line:
+        help: prints the first line
+        dependencies:
+        formula: >
+            sleep 5;
+            echo Twinkle twinkle little bat > first.txt;
+        output:
+            - first.txt
+
+    second line:
+        help: prints the second line
+        formula: >
+            sleep 5;
+            echo How I wonder what youre at > second.txt
+        output:
+            - second.txt
+
+    third line:
+        help: prints the third line
+        formula: >
+            sleep 5;
+            echo Up above the world you fly > third.txt
+        output:
+            - third.txt
+
+    fourth line:
+        help: prints the fourth line
+        formula: >
+            sleep 5;
+            echo Like a tea tray in the sky > fourth.txt
+        output:
+            - fourth.txt
+
+combine them:
+    help: combine all the lines
+    dependencies: 
+        - first.txt
+        - second.txt
+        - third.txt
+        - fourth.txt
+    formula: >
+        cat first.txt second.txt third.txt fourth.txt > poem.txt;
+    output:
+        - poem.txt
+@end example
+
+Building this project by just issuing the @code{sake} command takes 20.24
+seconds on my machine. This is because each target (taking 5 seconds) is run
+one after another. If the project is build in parallel mode, however...
+
+@example
+sake -p
+@end example
+
+it takes only 5.24 seconds to build.
+
+The example project above is a bit of an unatural example that was only
+constructed for pedagogical purposes; it was purposely designed to benefit
+greatly from parallel building. Nevertheless, in many real-world
+projects, using parallel mode can save an enormous amount of time.
+
+A drawback of using parallel building is that the output of the commands that
+build the targets will become garbled because there are two or more processes
+printing output to the screen simultaneously. For this reason, when using
+parallel building, you may want to also use @code{sake} in @code{quiet} mode.
+@c -----------------------
+
+
+
+@c -----------------------
+@section Other Options
+
+@c ----------
+@subsection "Recon" mode
+When coming back to building a project after changing a few files,
+particularly if it is a large project, it can also be helpful to know which
+targets sake will build/rebuild (and in what order) @emph{before} you actually
+build them. This can be helpful for planning purposes as well as for
+debugging.
+
+Sake allows you to do just this with @code{recon} mode. To use it, just supply
+the @code{-r} argument to the sake command. Instead of executing the commands
+in each target's formula, it will just print the name of the targets it
+@emph{would} build. For example, after running @code{sake clean} on the
+Sakefile introduced in the previous section, running sake in recon mode will
+look like this:
+
+@example
+# @strong{sake -r}
+Would run target: third line
+Would run target: fourth line
+Would run target: first line
+Would run target: second line
+Would run target: combine them
+@end example
+
+You can also combine parallel mode and recon mode to learn how sake will
+approach the parallel building:
+
+@example
+# @strong{sake -r -p}
+Would run targets 'second line, first line, fourth line, third line' in parallel
+Would run target 'combine them'
+@end example
+
+In a project that has already been built before, after changing a couple of
+files, @code{recon} mode can be an invaluable tool to investigate the impact
+of your changes. 
+
+You should be aware that recon mode cannot @emph{a priori} tell all the
+changes that will happen down the road, though. For example, if @code{recon}
+mode indicates that a certain target will be re-run, if that target will
+change any output files that are dependencies of other targets, sake cannot
+know that and recon mode will not detect it.
+@c ----------
+
+@c ----------
+@subsection Forcing building
+If @code{sake} doesn't build a target, it is because none of its dependencies
+have changed. However, if you want @code{sake} to rebuild the target anyway,
+the best way to do this is to use @code{force} mode by supplying the
+@code{-F} command-line flag. This can be applied to just one target (or
+meta-target) or the whole project. If @code{force} mode is used to rebuild
+the whole project, it is roughly equivalent to running @code{sake clean}
+and then @code{sake} again.
+@c ----------
+@c -----------------------
+
 
 
 @c -----------------------

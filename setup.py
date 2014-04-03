@@ -35,7 +35,7 @@
 #                                                                            #
 ##############################################################################
 
-depends = ['networkx (>=1.8)', 'PyYAML (>=3.0)']
+depends = ['networkx (>=1.0)', 'PyYAML (>=3.0)']
 
 try:
     from setuptools import setup

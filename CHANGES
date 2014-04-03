@@ -1,3 +1,4 @@
+v0.8.1    04-03-14 -- updated oldest possible dependencies in setup.py
 v0.8      03-12-14 -- reached new level of maturity
 v0.7.9.8, 02-08-14 -- introduced support for parallel builds
 v0.7.8.7, 02-05-14 -- fixed bug with blank dependencies field

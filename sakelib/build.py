@@ -375,6 +375,18 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
     return True
 
 
+def merge_from_store_and_in_mems(from_store, in_mem_shas):
+    """
+    If we don't merge the shas from the sha store and if we build a
+    subgraph, the .shastore will only contain the shas of the files
+    from the subgraph and the rest of the graph will have to be
+    rebuilt
+    """
+    for key in from_store:
+        if key not in in_mem_shas:
+            in_mem_shas[key] = from_store[key]
+    return in_mem_shas
+
 
 def build_this_graph(G, verbose, quiet, force, recon, parallel):
     """
@@ -457,6 +469,8 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
         return 0
     in_mem_shas = take_shas_of_all_files(G, verbose)
     if in_mem_shas:
+        in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas)
         write_shas_to_shastore(in_mem_shas)
     print("Done")
     return 0
+

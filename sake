@@ -201,6 +201,8 @@ if args.target == 'all':
     # lets make a subgraph with only the targets in "all"
     # ah! but wait! it needs to have all the predecessors of
     # those targets, as well
+    if not sakefile["all"]:
+        sys.exit(0)
     nodes_in_subgraph = []
     for node in G.nodes(data=True):
         if node[0] in sakefile["all"]:

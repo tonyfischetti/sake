@@ -332,8 +332,21 @@ def parallel_sort(G):
 def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
                        verbose, quiet):
     """
-    Something
-    has to bypass something...
+    The parallel equivalent of "run_this_target()"
+    It receives a list of targets to execute in parallel.
+    Unlike "run_this_target()" it has to update the shas
+    (in memory and in the store) withing the function.
+    This is because one of the targets may fail but many can
+    succeed, and those outputs need to be updated
+
+    Args:
+        G
+        A graph
+        A list of targets that we need to build in parallel
+        The dictionary containing the in-memory sha store
+        The dictionary containing the contents of the .shastore file
+        A flag indicating verbosity
+        A flag indicating quiet mode
     """
     if len(list_of_targets) == 1:
         target = list_of_targets[0]

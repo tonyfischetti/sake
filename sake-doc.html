@@ -7,7 +7,7 @@
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for sake, version 0.8
+This manual is for sake, version 0.9
 
 Copyright (C) 2013, 2014, Tony Fischetti
 
@@ -662,10 +662,17 @@ and just downloads a CSV from the internet.
 
    <p>Sake determines which targets have to be run by whether any of its
 dependencies' content has changed. If a target has no dependencies,
-<code>sake</code> has to assume that the target needs to be rebuilt everytime it
+<code>sake</code> has to assume that the target needs to be rebuilt every time it
 is run. To stop this behavior, you can create a dummy dependency for the
 target that never changes, or changes only when you want to explicitly
-re-run the target. 
+re-run the target. Alternatively, you can include the dependency field but
+leave it blank, like so
+<pre class="example">         dependencies:
+         formula: &gt;
+         ....
+</pre>
+   <p>This will also stop sake from running the target every time <code>sake</code> is
+called. 
 <!--  -->
 
 <!--  -->
@@ -707,6 +714,8 @@ structure.
 <li>It provides useful information to someone (a human) reading the Sakefile so
 they can tell where a file came from and why it's there.
         </ol>
+As with the <code>dependencies</code> entries, output entries may contain wildcard
+characters but, again, this may obscure clarity. 
 <!--  -->
 
 <!--  -->

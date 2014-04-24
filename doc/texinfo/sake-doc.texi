@@ -7,7 +7,7 @@
 
 @c --------------------------------------------------------------------
 @copying
-This manual is for sake, version 0.8
+This manual is for sake, version 0.9
 
 Copyright @copyright{} 2013, 2014, Tony Fischetti
 @quotation
@@ -32,7 +32,7 @@ except that this permission notice be translated properly.
 @sp 5
 @title Sake
 @subtitle A self-documenting build automation tool
-@subtitle Version 0.8 (2014-03-17)
+@subtitle Version 0.9 (2014-04-24)
 @author Tony Fischetti
 @page
 @vskip 0pt plus 1filll
@@ -670,10 +670,18 @@ and just downloads a CSV from the internet.
 
 Sake determines which targets have to be run by whether any of its
 dependencies' content has changed. If a target has no dependencies,
-@code{sake} has to assume that the target needs to be rebuilt everytime it
+@code{sake} has to assume that the target needs to be rebuilt every time it
 is run. To stop this behavior, you can create a dummy dependency for the
 target that never changes, or changes only when you want to explicitly
-re-run the target.
+re-run the target. Alternatively, you can include the dependency field but
+leave it blank, like so
+@example
+    dependencies:
+    formula: >
+    ....
+@end example
+This will also stop sake from running the target every time @code{sake} is
+called.
 @c ----------
 
 @c ----------
@@ -716,6 +724,8 @@ structure.
 It provides useful information to someone (a human) reading the Sakefile so
 they can tell where a file came from and why it's there.
 @end enumerate
+As with the @code{dependencies} entries, output entries may contain wildcard
+characters but, again, this may obscure clarity.
 @c ----------
 
 @c ----------

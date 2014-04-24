@@ -51,6 +51,8 @@ import yaml
 import glob
 from subprocess import Popen, PIPE
 
+import acts
+
 if sys.version_info[0] < 3:
     import codecs
     old_open = open
@@ -127,7 +129,7 @@ def take_shas_of_all_files(G, verbose):
         if 'output' in target[1]:
             if verbose:
                 print("It has outputs")
-            for out in get_all_outputs(target[1]):
+            for out in acts.get_all_outputs(target[1]):
                 if verbose:
                     print("  - {}".format(out))
                 all_files.append(out)
@@ -138,25 +140,6 @@ def take_shas_of_all_files(G, verbose):
         return sha_dict
     if verbose:
         print("No dependencies")
-
-
-def get_all_outputs(node_dict):
-    """
-    This function takes a node dictionary and returns a list of
-    the node's output files. Some of the entries in the 'output'
-    attribute may be globs, and without this function, sake won't
-    know how to handle that. This will unglob all globs and return
-    the true list of *all* outputs.
-    """
-    outlist = []
-    for item in node_dict['output']:
-        glist = glob.glob(item)
-        if glist:
-            for oneglob in glist:
-                outlist.append(oneglob)
-        else:
-            outlist.append(item)
-    return outlist
 
 
 def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
@@ -184,7 +167,7 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
         return True
     node_dict = get_the_node_dict(G, target)
     if 'output' in node_dict:
-        for output in get_all_outputs(node_dict):
+        for output in acts.get_all_outputs(node_dict):
             if not os.path.isfile(output):
                 if verbose:
                     outstr = "Output file '{}' is missing so it needs to run"
@@ -374,7 +357,7 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
         run_the_target(G, target, verbose, quiet)
         node_dict = get_the_node_dict(G, target)
         if "output" in node_dict:
-            for output in get_all_outputs(node_dict):
+            for output in acts.get_all_outputs(node_dict):
                 if from_store:
                     if output in from_store:
                         in_mem_shas[output] = get_sha(output)
@@ -397,7 +380,7 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
             a_failure_occurred = True
         else:
             if "output" in info[index][1]:
-                for output in get_all_outputs(info[index][1]):
+                for output in acts.get_all_outputs(info[index][1]):
                     if from_store:
                         if output in from_store:
                             in_mem_shas[output] = get_sha(output)
@@ -493,7 +476,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
                 run_the_target(G, target, verbose, quiet)
                 node_dict = get_the_node_dict(G, target)
                 if "output" in node_dict:
-                    for output in get_all_outputs(node_dict):
+                    for output in acts.get_all_outputs(node_dict):
                         if from_store:
                             if output in from_store:
                                 in_mem_shas[output] = get_sha(output)

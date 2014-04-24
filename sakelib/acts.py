@@ -49,6 +49,7 @@ import os
 import re
 import fnmatch
 import string
+import glob
 import sys
 
 if sys.version_info[0] < 3:
@@ -234,6 +235,25 @@ def construct_graph(sakefile, verbose, G):
     return G
 
 
+def get_all_outputs(node_dict):
+    """
+    This function takes a node dictionary and returns a list of
+    the node's output files. Some of the entries in the 'output'
+    attribute may be globs, and without this function, sake won't
+    know how to handle that. This will unglob all globs and return
+    the true list of *all* outputs.
+    """
+    outlist = []
+    for item in node_dict['output']:
+        glist = glob.glob(item)
+        if glist:
+            for oneglob in glist:
+                outlist.append(oneglob)
+        else:
+            outlist.append(item)
+    return outlist
+
+
 def clean_all(G, verbose, quiet, recon):
     """
     Removes all the output files from all targets. Takes
@@ -251,7 +271,7 @@ def clean_all(G, verbose, quiet, recon):
     all_outputs = []
     for node in G.nodes(data=True):
         if "output" in node[1]:
-            for item in node[1]["output"]:
+            for item in get_all_outputs(node[1]):
                 all_outputs.append(item)
     all_outputs.append(".shastore")
     retcode = 0
@@ -271,6 +291,9 @@ def clean_all(G, verbose, quiet, recon):
                 errmeg = "Error: file '{}' failed to be removed\n"
                 sys.stderr.write(errmeg.format(item))
                 retcode = 1
+        else:
+            warningmesg = "Can't remove item {}... it's not a file"
+            print(warningmesg.format(item))
     if not retcode and not recon:
         print("All clean")
     return retcode

@@ -1,4 +1,5 @@
-v0.9.0    05-24-14 -- fixed big globbing bug
+v0.9.1    05-06-14 -- fixed relative import bug
+v0.9.0    04-24-14 -- fixed big globbing bug
 v0.8.3    04-07-14 -- fixed bug with building subgraphs
 v0.8.1    04-03-14 -- updated oldest possible dependencies in setup.py
 v0.8      03-12-14 -- reached new level of maturity

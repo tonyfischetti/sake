@@ -51,7 +51,7 @@ import yaml
 import glob
 from subprocess import Popen, PIPE
 
-import sakelib.acts
+from . import acts
 
 if sys.version_info[0] < 3:
     import codecs

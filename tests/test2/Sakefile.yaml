@@ -6,6 +6,9 @@ line by line:
     help: print each line of the poem to a file
     first line:
         help: prints the first line
+        achtung: >
+            because this has an empty (but present) dependencies
+            field, it should not run everytime sake is called
         dependencies:
         formula: >
             sleep 5;

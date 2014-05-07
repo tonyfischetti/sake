@@ -397,6 +397,8 @@ def merge_from_store_and_in_mems(from_store, in_mem_shas):
     from the subgraph and the rest of the graph will have to be
     rebuilt
     """
+    if not from_store:
+        return in_mem_shas
     for key in from_store:
         if key not in in_mem_shas:
             in_mem_shas[key] = from_store[key]

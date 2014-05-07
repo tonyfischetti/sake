@@ -291,9 +291,6 @@ def clean_all(G, verbose, quiet, recon):
                 errmeg = "Error: file '{}' failed to be removed\n"
                 sys.stderr.write(errmeg.format(item))
                 retcode = 1
-        else:
-            warningmesg = "Can't remove item {}... it's not a file"
-            print(warningmesg.format(item))
     if not retcode and not recon:
         print("All clean")
     return retcode

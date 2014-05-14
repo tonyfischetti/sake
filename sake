@@ -226,7 +226,10 @@ except:
         nodes_in_subgraph = []
         for node in G.nodes(data=True):
             if "parent" in node[1] and node[1]["parent"] == args.target:
-                nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
+                if args.force:
+                    nodes_in_subgraph.append(node[0])
+                else:
+                    nodes_in_subgraph = nodes_in_subgraph+all_preds([node[0]])
         nodes_in_subgraph = list(set(nodes_in_subgraph))
         subgraph = G.subgraph(nodes_in_subgraph)
         retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
@@ -236,8 +239,11 @@ except:
     err_mes = "Error: Couldn't find target '{}' in Sakefile\n"
     sys.stderr.write(err_mes.format(args.target))
     sys.exit(1)
-nodes_in_subgraph = list(set(all_preds([args.target])))
-subgraph = G.subgraph(nodes_in_subgraph)
+if args.force:
+    subgraph = G.subgraph(args.target)
+else:
+    nodes_in_subgraph = list(set(all_preds([args.target])))
+    subgraph = G.subgraph(nodes_in_subgraph)
 retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
                                 args.force, args.recon, args.parallel)
 sys.exit(retval)

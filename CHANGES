@@ -1,3 +1,4 @@
+v0.9.4    05-14-14 -- fixed issue with --force building more targets
 v0.9.3    05-06-14 -- fixed minor bug with sha1 merging
 v0.9.2    05-06-14 -- really fixed relative import bug and cleaning bug
 v0.9.1    05-06-14 -- fixed relative import bug

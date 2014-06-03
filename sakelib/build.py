@@ -66,7 +66,14 @@ def get_sha(a_file):
     Returns sha1 hash of the file supplied as an argument
     """
     try:
-        the_hash = hashlib.sha1(old_open(a_file, "rb").read()).hexdigest()
+        BLOCKSIZE = 65536
+        hasher = hashlib.sha1()
+        with old_open(a_file, "rb") as fh:
+            buf = fh.read(BLOCKSIZE)
+            while len(buf) > 0:
+                hasher.update(buf)
+                buf = fh.read(BLOCKSIZE)
+        the_hash = hasher.hexdigest()
     except IOError:
         errmes = "File '{}' could not be read! Exiting!\n".format(a_file)
         sys.stdout.write(errmes)
@@ -83,13 +90,12 @@ def write_shas_to_shastore(sha_dict):
     Writes a sha1 dictionary stored in memory to
     the .shastore file
     """
-    fh = open(".shastore", "w", encoding="utf-8")
-    fh.write("---\n")
-    if sha_dict:
-        for key in sha_dict:
-            fh.write("{}: {}\n".format(key, sha_dict[key]))
-    fh.write("...")
-    fh.close()
+    with open(".shastore", "w", encoding="utf-8") as fh:
+        fh.write("---\n")
+        if sha_dict:
+            for key in sha_dict:
+                fh.write("{}: {}\n".format(key, sha_dict[key]))
+        fh.write("...")
 
 
 def take_shas_of_all_files(G, verbose):
@@ -437,11 +443,16 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
-    from_store = yaml.load(open(".shastore", "r").read())
+    with open(".shastore", "r") as fh:
+        shas_on_disk = fh.read()
+    from_store = yaml.load(shas_on_disk)
     if not from_store:
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
-        from_store = yaml.load(open(".shastore", "r").read())
+        with open(".shastore", "r") as fh:
+            shas_on_disk = fh.read()
+        from_store = yaml.load(shas_on_disk)
+    sys.stdout.flush()
     # parallel
     if parallel:
         for line in parallel_sort(G):

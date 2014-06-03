@@ -1,3 +1,4 @@
+v0.9.4.2  06-03-14 -- safer hashing, performance improvements
 v0.9.4    05-14-14 -- fixed issue with --force building more targets
 v0.9.3    05-06-14 -- fixed minor bug with sha1 merging
 v0.9.2    05-06-14 -- really fixed relative import bug and cleaning bug
@@ -6,16 +7,16 @@ v0.9.0    04-24-14 -- fixed big globbing bug
 v0.8.3    04-07-14 -- fixed bug with building subgraphs
 v0.8.1    04-03-14 -- updated oldest possible dependencies in setup.py
 v0.8      03-12-14 -- reached new level of maturity
-v0.7.9.8, 02-08-14 -- introduced support for parallel builds
-v0.7.8.7, 02-05-14 -- fixed bug with blank dependencies field
-v0.7.8.7, 02-05-14 -- introduced recon mode / flag
-v0.7.8.6, 02-05-14 -- macros now use python string templating
-v0.7.8.5, 02-05-14 -- -F (--force) capability added
-v0.7.8 ,  01-21-14 -- full python3 support
-v0.7.7.4, 01-20-14 -- fixed minor bug involving null .shastore
-v0.7.7.3, 01-20-14 -- fixed major bug with building edges of dep graph
-v0.7.7.2, 01-16-14 -- fixed minor error with globbing support
-v0.7.7.1, 01-16-14 -- added globbing support
-v0.7.7 ,  01-03-14 -- fixed visualization bugs
-v0.7.6 ,  12-30-13 -- utf-8 support and bug fixes
-v0.7.5 ,  12-20-13 -- initial release
+v0.7.9.8  02-08-14 -- introduced support for parallel builds
+v0.7.8.7  02-05-14 -- fixed bug with blank dependencies field
+v0.7.8.7  02-05-14 -- introduced recon mode / flag
+v0.7.8.6  02-05-14 -- macros now use python string templating
+v0.7.8.5  02-05-14 -- -F (--force) capability added
+v0.7.8    01-21-14 -- full python3 support
+v0.7.7.4  01-20-14 -- fixed minor bug involving null .shastore
+v0.7.7.3  01-20-14 -- fixed major bug with building edges of dep graph
+v0.7.7.2  01-16-14 -- fixed minor error with globbing support
+v0.7.7.1  01-16-14 -- added globbing support
+v0.7.7    01-03-14 -- fixed visualization bugs
+v0.7.6    12-30-13 -- utf-8 support and bug fixes
+v0.7.5    12-20-13 -- initial release

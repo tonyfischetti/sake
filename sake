@@ -114,10 +114,9 @@ else:
         sys.exit(1)
 
 # expand macros
-fh = io.open(fname, "r")
-raw_text = fh.read()
-sake_text = acts.expand_macros(raw_text)
-fh.close()
+with io.open(fname, "r") as fh:
+    raw_text = fh.read()
+    sake_text = acts.expand_macros(raw_text)
 
 try:
     sakefile = yaml.load(sake_text)

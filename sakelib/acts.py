@@ -304,23 +304,23 @@ def write_dot_file(G, filename):
         a Networkx graph
         A filename to name the dot files
     """
-    fh = open(filename, "w", encoding="utf-8")
-    fh.write("strict digraph DependencyDiagram {\n")
-    edge_list = G.edges()
-    node_list = set(G.nodes())
-    if edge_list:
-        for edge in G.edges():
-            source, targ = edge
-            node_list = node_list - set(source)
-            node_list = node_list - set(targ)
-            line = '"{}" -> "{}";\n'
-            fh.write(line.format(source, targ))
-    # draw nodes with no links
-    if node_list:
-        for node in node_list:
-            line = '"{}"\n'.format(node)
-            fh.write(line)
-    fh.write("}")
+    with open(filename, "w", encoding="utf-8") as fh:
+        fh.write("strict digraph DependencyDiagram {\n")
+        edge_list = G.edges()
+        node_list = set(G.nodes())
+        if edge_list:
+            for edge in G.edges():
+                source, targ = edge
+                node_list = node_list - set(source)
+                node_list = node_list - set(targ)
+                line = '"{}" -> "{}";\n'
+                fh.write(line.format(source, targ))
+        # draw nodes with no links
+        if node_list:
+            for node in node_list:
+                line = '"{}"\n'.format(node)
+                fh.write(line)
+        fh.write("}")
 
 
 def visualize(G, filename="dependencies", no_graphviz=False):

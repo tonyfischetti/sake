@@ -10,6 +10,18 @@ from sakelib import acts
 
 class TestActsFunction(unittest.TestCase):
 
+    def setUp(self):
+        # for mock sakefile 1
+        lines = ["---", "#!ask=shyness is nice",
+                 "  ", "#!rusholme = at the last night      ",
+                 "panic #! streets= london, burmingham",
+                 " #! asleep =sing me to sleep",
+                 "..."]
+        self.mock_sakefile_1 = "\n".join(lines)
+        print(self.mock_sakefile_1)
+        print(acts.gather_macros(self.mock_sakefile_1))
+
+
     def test_escp(self):
         has_no_space = "ask"
         has_one_space = "rusholme ruffians"

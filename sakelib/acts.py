@@ -115,15 +115,13 @@ def print_help(sakefile):
     print(full_string)
 
 
-def expand_macros(raw_text):
+def gather_macros(raw_text):
     """
-    This gets called before the Sakefile is parsed. It looks for
-    macros defined anywhere in the Sakefile (the start of the line
-    is '#!') and then replaces all occurences of '$variable' with the
-    value defined in the macro. It then returns the contents of the
-    file with the macros expanded
+    this gets called before the sakefile is parsed. it looks for
+    macros defined anywhere in the sakefile (the start of the line
+    is '#!') and then stuffs them into a lookup dictionary for
+    processing by "expand_macros"
     """
-    # gather macros
     macros = {}
     for line in raw_text.split("\n"):
         if re.search("^#!", line):
@@ -134,8 +132,17 @@ def expand_macros(raw_text):
                 sys.stderr.write("Failed to parse macro {}\n".format(line))
                 sys.exit(1)
             macros[var] = val
-    raw_text = string.Template(raw_text).safe_substitute(macros)
-    return raw_text
+    return macros
+
+
+def expand_macros(raw_text, macros):
+    """
+    this takes both the Sakefile raw text and  the macro lookup
+    dictionary from "gather_macros" and then replaces all
+    occurences of '$variable' with the value defined in the macro.
+    it then returns the contents of the file with the macros expanded
+    """
+    return string.Template(raw_text).safe_substitute(macros)
 
 
 def check_for_dep_in_outputs(dep, verbose, G):

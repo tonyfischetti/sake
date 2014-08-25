@@ -116,7 +116,7 @@ else:
 # expand macros
 with io.open(fname, "r") as fh:
     raw_text = fh.read()
-    sake_text = acts.expand_macros(raw_text)
+    sake_text = acts.expand_macros(raw_text, acts.gather_macros(raw_text))
 
 try:
     sakefile = yaml.load(sake_text)

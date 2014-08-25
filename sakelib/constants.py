@@ -39,7 +39,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 # Version number
-VERSION = "0.9.4.2"
+VERSION = "0.9.4.2.0.0.1"
 
 # Name of application
 NAME = 'master-sake'

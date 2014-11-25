@@ -1,6 +1,9 @@
 # Sake
 
 
+[![Build Status](https://travis-ci.org/tonyfischetti/sake.svg?branch=master)](https://travis-ci.org/tonyfischetti/sake)
+
+
 ### What is it?
 Sake is a way to easily design, share, build, and visualize workflows with
 intricate interdependencies. Sake is self-documenting because the

@@ -8,6 +8,9 @@ import ntpath
 import posixpath
 
 
+# test UNICODE!!!
+
+
 class TestActsFunction(unittest.TestCase):
 
     def setUp(self):

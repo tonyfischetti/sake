@@ -143,7 +143,8 @@ def gather_macros(raw_text):
     macros = {}
     for line in raw_text.split("\n"):
         if re.search("^#!", line):
-            match = re.search("^#!\s*(\w+)\s*=\s*(.+$)", line)
+            pattern = re.compile("^#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
+            match = re.search(pattern, line)
             if match is None:
                 raise InvalidMacroError("Failed to parse macro {}\n".format(line))
             try:

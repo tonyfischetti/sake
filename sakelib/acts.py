@@ -125,12 +125,13 @@ def gather_macros(raw_text):
     macros = {}
     for line in raw_text.split("\n"):
         if re.search("^#!", line):
+            match = re.search("^#!\s*(\w+)\s*=\s*(.+$)", line)
+            if match is None:
+                raise InvalidMacroError("Failed to parse macro {}\n".format(line))
             try:
-                var, val = re.search("^#!\s*(\w+)\s*=\s*(.+$)",
-                                     line).group(1, 2)
+                var, val = match.group(1, 2)
             except:
-                sys.stderr.write("Failed to parse macro {}\n".format(line))
-                sys.exit(1)
+                raise InvalidMacroError("Failed to parse macro {}\n".format(line))
             macros[var] = val
     return macros
 
@@ -359,3 +360,18 @@ def visualize(G, filename="dependencies", no_graphviz=False):
         sys.exit(1)
     os.remove("tempdot")
     return 0
+
+
+
+#####################
+##  CUSTOM ERRORS  ##
+#####################
+
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
+
+class InvalidMacroError(Error):
+    def __init__(self, message):
+        self.message = message
+

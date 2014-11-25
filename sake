@@ -116,7 +116,16 @@ else:
 # expand macros
 with io.open(fname, "r") as fh:
     raw_text = fh.read()
-    sake_text = acts.expand_macros(raw_text, acts.gather_macros(raw_text))
+    try:
+        sake_text = acts.expand_macros(raw_text, acts.gather_macros(raw_text))
+    except acts.InvalidMacroError as err:
+        sys.stderr.write(err.message)
+        sys.exit(1)
+    except:
+        sys.stderr.write("unspecified error")
+        sys.exit(1)
+
+
 
 try:
     sakefile = yaml.load(sake_text)

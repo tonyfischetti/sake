@@ -3,6 +3,7 @@
 
 import unittest
 from sakelib import acts
+import yaml
 import ntpath
 import posixpath
 
@@ -20,6 +21,41 @@ class TestActsFunction(unittest.TestCase):
                  " #! asleep =sing me to sleep",                # not valid
                  "..."]
         self.mock_sakefile_for_macros = "\n".join(lines)
+        lines = ['first☼:',
+                 '    help: this is first',
+                 '    formula: >',
+                 '        echo "this is first" > first.txt',
+                 '    output:',
+                 '        - first.txt',
+                 '', 
+                 'outer:',
+                 '    help: >',
+                 '        this is an outer one',
+                 '    inner:',
+                 '        help: this is the inner',
+                 '        dependencies:',
+                 '            - first.txt',
+                 '        formula: echo "this is the inner"']
+        self.mock_sakefile_for_help = "\n".join(lines)
+        lines = ["You can 'sake' one of the following...",
+                 "",
+                 "first☼:",
+                 "  - this is first",
+                 "",
+                 "outer:",
+                 "  - this is an outer one",
+                 "",
+                 "    inner:",
+                 "      -  this is the inner",
+                 "",
+                 "clean:",
+                 "  -  remove all targets' outputs and start from scratch",
+                 "",
+                 "visual:",
+                 "  -  output visual representation of project's dependencies",
+                 ""]
+        self.expected_help = "\n".join(lines)
+        
 
     def test_clean_path(self):
         unixpath1 = "/home/krsone/Pictures/../Desktop/"
@@ -74,6 +110,9 @@ class TestActsFunction(unittest.TestCase):
                                  acts.gather_macros(self.mock_sakefile_for_macros)),
                          solution)
 
+    def test_get_help(self):
+        self.assertEqual(acts.get_help(yaml.load(self.mock_sakefile_for_help)),
+                         self.expected_help)
 
 
 if __name__ == '__main__':

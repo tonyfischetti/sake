@@ -1,14 +1,11 @@
 #!/usr/bin/env python -tt
-
+# -*- coding: utf-8 -*-
 
 import unittest
 from sakelib import acts
 import yaml
 import ntpath
 import posixpath
-
-
-# test UNICODE!!!
 
 
 class TestActsFunction(unittest.TestCase):

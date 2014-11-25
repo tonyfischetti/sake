@@ -2,6 +2,7 @@
 
 
 [![Build Status](https://travis-ci.org/tonyfischetti/sake.svg?branch=master)](https://travis-ci.org/tonyfischetti/sake)
+[![Downloads](https://pypip.in/download/master-sake/badge.svg)](https://pypi.python.org/pypi/master-sake/)
 
 
 ### What is it?

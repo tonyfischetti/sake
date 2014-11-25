@@ -122,7 +122,7 @@ with io.open(fname, "r") as fh:
         sys.stderr.write(err.message)
         sys.exit(1)
     except:
-        sys.stderr.write("unspecified error")
+        sys.stderr.write("Unspecified error trying to expand macros")
         sys.exit(1)
 
 
@@ -144,8 +144,9 @@ if args.verbose:
 
 # if target is "help"
 if args.target == "help":
-    ret_val = acts.print_help(sakefile)
-    sys.exit(ret_val)
+    help_string = acts.get_help(sakefile)
+    print(help_string)
+    sys.exit(0)
 
 
 # get the graph representation

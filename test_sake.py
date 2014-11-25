@@ -12,10 +12,10 @@ class TestActsFunction(unittest.TestCase):
 
     def setUp(self):
         # for mock sakefile 1
-        lines = ["---", "#!ask=$hyness is nice",
-                 "  ", "#!rΩsholme = at the last night      ",
-                 "panic #! streets= london, burmingham",
-                 " #! asleep =sing me to sleep",
+        lines = ["---", "#!ask=$hyness is nice",                # valid
+                 "  ", "#!rΩsholme = at the last night      ",  # valid
+                 "panic #! streets= london, burmingham",        # not valid
+                 " #! asleep =sing me to sleep",                # not valid
                  "..."]
         self.mock_sakefile_for_macros = "\n".join(lines)
 
@@ -34,6 +34,12 @@ class TestActsFunction(unittest.TestCase):
         self.assertEqual(acts.gather_macros(self.mock_sakefile_for_macros),
                          {"ask": "$hyness is nice",
                           "rΩsholme": "at the last night      "})
+        self.assertRaises(acts.InvalidMacroError,
+                          acts.gather_macros, 
+                          "---\n#!f4I7 ur3=this should fail\n...")
+        self.assertRaises(acts.InvalidMacroError,
+                          acts.gather_macros, 
+                          "---\n#!===...")
         self.assertFalse(acts.gather_macros("---\nhandsome devil\n..."))
 
     def test_expand_macros(self):

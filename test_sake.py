@@ -23,7 +23,20 @@ class TestActsFunction(unittest.TestCase):
         self.mock_sakefile_for_macros = utobjs.mock_sakefile_for_macros
         self.mock_sakefile_for_help = utobjs.mock_sakefile_for_help
         self.expected_help = utobjs.expected_help
+        # to hell with mock objects
+        os.mkdir("./tmp")
+        with open("./tmp/file1.txt", "w") as fh:
+            fh.write("1")
+        with open("./tmp/file2.txt", "w") as fh:
+            fh.write("2")
+        with open("./tmp/file1.json", "w") as fh:
+            fh.write("1")
         
+    def tearDown(self):
+        del self.mock_sakefile_for_macros 
+        del self.mock_sakefile_for_help 
+        del self.expected_help 
+        shutil.rmtree('./tmp/')
 
     def test_clean_path(self):
         unixpath1 = "/home/krsone/Pictures/../Desktop/"
@@ -83,13 +96,6 @@ class TestActsFunction(unittest.TestCase):
                          self.expected_help)
 
     def test_get_all_outputs(self):
-        # to hell with mock objects
-        with open("./tmp/file1.txt", "w") as fh:
-            fh.write("1")
-        with open("./tmp/file2.txt", "w") as fh:
-            fh.write("2")
-        with open("./tmp/file1.json", "w") as fh:
-            fh.write("1")
         self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/*']})),
                          sorted(['./tmp/file1.txt',
                                  './tmp/file2.txt',
@@ -109,7 +115,6 @@ class TestActsFunction(unittest.TestCase):
                          ['./tmp/sile123'])
         self.assertEqual(acts.get_all_outputs({'output': ['./tmp/sile1.*']}),
                          ['./tmp/sile1.*'])
-        shutil.rmtree('./tmp/')
 
 
 

@@ -9,6 +9,8 @@ import yaml
 import ntpath
 import posixpath
 
+from testlib import utobjs
+
 
 # test UNICODE!!!
 
@@ -16,54 +18,16 @@ import posixpath
 class TestActsFunction(unittest.TestCase):
 
     def setUp(self):
-        # for mock sakefile 1
-        lines = ["---", "#!ask=$hyness is nice",                # valid
-                 "  ", "#!rΩsholme = at the last night      ",  # valid
-                 "panic #! streets= london, burmingham",        # not valid
-                 " #! asleep =sing me to sleep",                # not valid
-                 "..."]
-        self.mock_sakefile_for_macros = "\n".join(lines)
-        lines = ['first☼:',
-                 '    help: this is first',
-                 '    formula: >',
-                 '        echo "this is first" > first.txt',
-                 '    output:',
-                 '        - first.txt',
-                 '', 
-                 'outer:',
-                 '    help: >',
-                 '        this is an outer one',
-                 '    inner:',
-                 '        help: this is the inner',
-                 '        dependencies:',
-                 '            - first.txt',
-                 '        formula: echo "this is the inner"']
-        self.mock_sakefile_for_help = "\n".join(lines)
-        lines = ["You can 'sake' one of the following...",
-                 "",
-                 "first☼:",
-                 "  - this is first",
-                 "",
-                 "outer:",
-                 "  - this is an outer one",
-                 "",
-                 "    inner:",
-                 "      -  this is the inner",
-                 "",
-                 "clean:",
-                 "  -  remove all targets' outputs and start from scratch",
-                 "",
-                 "visual:",
-                 "  -  output visual representation of project's dependencies",
-                 ""]
-        self.expected_help = "\n".join(lines)
+        self.mock_sakefile_for_macros = utobjs.mock_sakefile_for_macros
+        self.mock_sakefile_for_help = utobjs.mock_sakefile_for_help
+        self.expected_help = utobjs.expected_help
         
 
     def test_clean_path(self):
         unixpath1 = "/home/krsone/Pictures/../Desktop/"
         unixpath2 = "/home/krsone/Pictures/./me.jpg"
-        windowspath1 = "C:/User/scottlarack/Pictures/../Desktop/"
-        windowspath2 = "C:\\User/scottlarack/Pictures/./me.png"
+        windowspath1 = "C:/User/scottlarock/Pictures/../Desktop/"
+        windowspath2 = "C:\\User/scottlarock/Pictures/./me.png"
         self.assertEqual(acts.clean_path(unixpath2,
                                          force_os="posix",
                                          force_start=posixpath.normpath(unixpath1)),

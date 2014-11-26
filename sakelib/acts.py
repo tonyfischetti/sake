@@ -191,18 +191,18 @@ def check_for_dep_in_outputs(dep, verbose, G):
     return ret_list
 
 
-def construct_graph(sakefile, verbose, G):
+def construct_graph(sakefile, verbose):
     """
     Takes the sakefile dictionary and builds a NetworkX graph
 
     Args:
         A dictionary that is the parsed Sakefile (from sake.py)
         A flag indication verbosity
-        A NetworkX GiGraph object to populate
 
     Returns:
         A NetworkX graph
     """
+    G = nx.DiGraph()
     if verbose:
         print("Going to construct Graph")
     for target in sakefile:

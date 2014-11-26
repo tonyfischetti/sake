@@ -152,7 +152,7 @@ if args.target == "help":
 # get the graph representation
 G = nx.DiGraph()
 try:
-    G = acts.construct_graph(sakefile, args.verbose, G)
+    G = acts.construct_graph(sakefile, args.verbose)
 except:
     sys.stderr.write("Unspecified error constructing dependency graph\n")
     sys.exit(1)

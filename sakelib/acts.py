@@ -370,11 +370,30 @@ def visualize(G, filename="dependencies", no_graphviz=False):
         write_dot_file(G, filename)
         return 0
     write_dot_file(G, "tempdot")
-    command = "dot -Tsvg tempdot -o {}.svg".format(filename)
+    renderer = "svg"
+    if re.search("\.jpg$", filename, re.IGNORECASE):
+        renderer = "jpg"
+    elif re.search("\.jpeg$", filename, re.IGNORECASE):
+        renderer = "jpg"
+    elif re.search("\.svg$", filename, re.IGNORECASE):
+        renderer = "svg"
+    elif re.search("\.png$", filename, re.IGNORECASE):
+        renderer = "png"
+    elif re.search("\.gif$", filename, re.IGNORECASE):
+        renderer = "gif"
+    elif re.search("\.ps$", filename, re.IGNORECASE):
+        renderer = "ps"
+    elif re.search("\.pdf$", filename, re.IGNORECASE):
+        renderer = "pdf"
+    else:
+        renderer = "svg"
+        filename += ".svg"
+    command = "dot -T{} tempdot -o {}".format(renderer, filename)
     p = Popen(command, shell=True)
     p.communicate()
     if p.returncode:
         errmes = "Either graphviz is not installed, or its not on PATH"
+        os.remove("tempdot")
         sys.stderr.write(errmes)
         sys.exit(1)
     os.remove("tempdot")

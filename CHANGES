@@ -1,3 +1,4 @@
+v0.9.4.4  11-26-14 -- added support for other image formats for sake visual
 v0.9.4.2  06-03-14 -- safer hashing, performance improvements
 v0.9.4    05-14-14 -- fixed issue with --force building more targets
 v0.9.3    05-06-14 -- fixed minor bug with sha1 merging

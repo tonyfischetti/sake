@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 import unittest
 from sakelib import acts
 import yaml
+import os
+import shutil
 import ntpath
 import posixpath
 
@@ -79,6 +81,36 @@ class TestActsFunction(unittest.TestCase):
     def test_get_help(self):
         self.assertEqual(acts.get_help(yaml.load(self.mock_sakefile_for_help)),
                          self.expected_help)
+
+    def test_get_all_outputs(self):
+        # to hell with mock objects
+        with open("./tmp/file1.txt", "w") as fh:
+            fh.write("1")
+        with open("./tmp/file2.txt", "w") as fh:
+            fh.write("2")
+        with open("./tmp/file1.json", "w") as fh:
+            fh.write("1")
+        self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/*']})),
+                         sorted(['./tmp/file1.txt',
+                                 './tmp/file2.txt',
+                                 './tmp/file1.json']))
+        self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/file1.*']})),
+                         sorted(['./tmp/file1.txt',
+                                 './tmp/file1.json']))
+        self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/*.txt']})),
+                         sorted(['./tmp/file1.txt',
+                                 './tmp/file2.txt']))
+        self.assertEqual(acts.get_all_outputs({'output': ['./tmp/*.json']}),
+                         ['./tmp/file1.json'])
+        self.assertEqual(acts.get_all_outputs({'output': ['./tmp/file2.txt']}),
+                         ['./tmp/file2.txt'])
+        # these are not proper globs so they just return the thing
+        self.assertEqual(acts.get_all_outputs({'output': ['./tmp/sile123']}),
+                         ['./tmp/sile123'])
+        self.assertEqual(acts.get_all_outputs({'output': ['./tmp/sile1.*']}),
+                         ['./tmp/sile1.*'])
+        shutil.rmtree('./tmp/')
+
 
 
 if __name__ == '__main__':

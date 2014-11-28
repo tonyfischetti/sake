@@ -62,18 +62,6 @@ class TestActsFunction(unittest.TestCase):
         self.assertEqual("\"shakespeare's  sister\"", acts.escp(has_two_cons_spaces))
         self.assertEqual("\" well i wønder\"", acts.escp(has_more_spaces_and_unicode))
 
-    def test_gather_macros(self):
-        self.assertEqual(acts.gather_macros(self.mock_sakefile_for_macros),
-                         {"ask": "$hyness is nice",
-                          "rΩsholme": "at the last night      "})
-        self.assertRaises(acts.InvalidMacroError,
-                          acts.gather_macros,
-                          "---\n#!f4I7 ur3=this should fail\n...")
-        self.assertRaises(acts.InvalidMacroError,
-                          acts.gather_macros,
-                          "---\n#!===...")
-        self.assertFalse(acts.gather_macros("---\nhandsome devil\n..."))
-
     def test_expand_macros(self):
         # ATTENTION:
         #   there is a bug in python's template substitution that
@@ -82,14 +70,12 @@ class TestActsFunction(unittest.TestCase):
         temp = ["---", "#!ask=shyness is nice", "$ask me, ask me, $ask me",
                 "there are ruffians in $rusholme ($rΩsholme) and they steal $$",
                 "$askme, ${ask}me", "..."]
-        temp = "\n".join(temp)
-        solution = ["---", "#!ask=shyness is nice", "$hyness is nice me, ask me, $hyness is nice me",
+        temp = self.mock_sakefile_for_macros+"\n".join(temp)
+        solution = ["---", "#!ask=shyness is nice", "shyness is nice me, ask me, shyness is nice me",
                     "there are ruffians in $rusholme ($rΩsholme) and they steal $",
-                    "$askme, $hyness is niceme", "..."]
-        solution = "\n".join(solution)
-        self.assertEqual(acts.expand_macros(temp,
-                                 acts.gather_macros(self.mock_sakefile_for_macros)),
-                         solution)
+                    "$askme, shyness is niceme", "..."]
+        solution = self.mock_sakefile_for_macros+"\n".join(solution)
+        self.assertEqual(acts.expand_macros(temp)[0], solution)
 
     def test_get_help(self):
         self.assertEqual(acts.get_help(yaml.load(self.mock_sakefile_for_help)),

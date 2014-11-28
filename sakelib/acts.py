@@ -51,10 +51,26 @@ import fnmatch
 import string
 import glob
 import sys
+import yaml
 
 if sys.version_info[0] < 3:
     import codecs
     open = codecs.open
+
+
+def parse(file, text, includes):
+    try:
+        sakefile = yaml.load(text) or {}
+    except yaml.YAMLError as exc:
+        sys.stderr.write("Error: {} failed to parse as valid YAML\n".format(file))
+        if hasattr(exc, 'problem_mark'):
+            mark = exc.problem_mark
+            sys.stderr.write("Error near line {}\n".format(str(mark.line+1)))
+        sys.exit(1)
+    for filename, (subdata, subincludes) in includes.items():
+        sakefile.update(parse(filename, subdata, subincludes))
+    return sakefile
+
 
 def clean_path(a_path, force_os=None, force_start=None):
     """
@@ -114,7 +130,7 @@ def get_help(sakefile):
             for atom_target in sakefile[target]:
                 if atom_target == "help":
                     continue
-                inner += "    {}:\n      -  {}\n\n".format(escp(atom_target), 
+                inner += "    {}:\n      -  {}\n\n".format(escp(atom_target),
                                                          sakefile[target][atom_target]["help"])
             middle_lines.append(inner)
         else:
@@ -133,36 +149,42 @@ def get_help(sakefile):
     return full_string
 
 
-def gather_macros(raw_text):
+def expand_macros(raw_text, macros={}):
     """
     this gets called before the sakefile is parsed. it looks for
     macros defined anywhere in the sakefile (the start of the line
-    is '#!') and then stuffs them into a lookup dictionary for
-    processing by "expand_macros"
+    is '#!') and then replaces all occurences of '$variable' with the
+    value defined in the macro. it then returns the contents of the
+    file with the macros expanded.
     """
-    macros = {}
+    includes = {}
+    result = []
+    pattern = re.compile("#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
+    ipattern = re.compile("#<\s*(.+$)")
     for line in raw_text.split("\n"):
-        if re.search("^#!", line):
-            pattern = re.compile("^#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
-            match = re.search(pattern, line)
-            if match is None:
-                raise InvalidMacroError("Failed to parse macro {}\n".format(line))
+        line = string.Template(line).safe_substitute(macros)
+        # note that the line is appended to result before it is checked for macros
+        # this prevents macros expanding into themselves
+        result.append(line)
+        if line.startswith("#!"):
+            match = pattern.match(line)
             try:
                 var, val = match.group(1, 2)
             except:
                 raise InvalidMacroError("Failed to parse macro {}\n".format(line))
             macros[var] = val
-    return macros
-
-
-def expand_macros(raw_text, macros):
-    """
-    this takes both the Sakefile raw text and  the macro lookup
-    dictionary from "gather_macros" and then replaces all
-    occurences of '$variable' with the value defined in the macro.
-    it then returns the contents of the file with the macros expanded
-    """
-    return string.Template(raw_text).safe_substitute(macros)
+        elif line.startswith("#<"):
+            match = ipattern.match(line)
+            try:
+                filename = match.group(1)
+            except:
+                raise IncludeError("Failed to parse include {}\n".format(line))
+            try:
+                with open(filename, 'r') as f:
+                    includes[filename] = expand_macros(f.read(), macros)
+            except IOError:
+                raise IncludeError("Nonexistent include {}\n".format(filename))
+    return "\n".join(result), includes
 
 
 def check_for_dep_in_outputs(dep, verbose, G):
@@ -410,6 +432,8 @@ class Error(Exception):
     pass
 
 class InvalidMacroError(Error):
-    def __init__(self, message):
-        self.message = message
+    pass
+
+class IncludeError(Error):
+    pass
 

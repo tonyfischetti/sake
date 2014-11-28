@@ -117,24 +117,20 @@ else:
 with io.open(fname, "r") as fh:
     raw_text = fh.read()
     try:
-        sake_text = acts.expand_macros(raw_text, acts.gather_macros(raw_text))
+        sake_text, includes = acts.expand_macros(raw_text)
     except acts.InvalidMacroError as err:
         sys.stderr.write(err.message)
         sys.exit(1)
+    except acts.IncludeError as err:
+        sys.stderr.write(err.message)
+        sys.exit(1)
     except:
-        sys.stderr.write("Unspecified error trying to expand macros")
+        sys.stderr.write("Unspecified error trying to expand macros\n")
         sys.exit(1)
 
 
 
-try:
-    sakefile = yaml.load(sake_text)
-except yaml.YAMLError as exc:
-    sys.stderr.write("Error: Sakefile failed to parse as valid YAML\n")
-    if hasattr(exc, 'problem_mark'):
-        mark = exc.problem_mark
-        sys.stderr.write("Error near line {}\n".format(str(mark.line+1)))
-        sys.exit(1)
+sakefile = acts.parse(fname, sake_text, includes)
 if not audit.check_integrity(sakefile, args.verbose):
     sys.stderr.write("Error: Sakefile isn't written to specification\n")
     sys.exit(1)

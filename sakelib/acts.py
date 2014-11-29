@@ -432,8 +432,10 @@ class Error(Exception):
     pass
 
 class InvalidMacroError(Error):
-    pass
+    def __init__(self, message):
+        self.message = message
 
 class IncludeError(Error):
-    pass
+    def __init__(self, message):
+        self.message = message
 

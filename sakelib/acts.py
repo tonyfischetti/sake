@@ -160,7 +160,7 @@ def expand_macros(raw_text, macros={}):
     includes = {}
     result = []
     pattern = re.compile("#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
-    ipattern = re.compile("#<\s*(.+$)")
+    ipattern = re.compile("#<\s*(\S+)\s+(optional|or\s+(.+))?$")
     for line in raw_text.split("\n"):
         line = string.Template(line).safe_substitute(macros)
         # note that the line is appended to result before it is checked for macros
@@ -183,7 +183,11 @@ def expand_macros(raw_text, macros={}):
                 with open(filename, 'r') as f:
                     includes[filename] = expand_macros(f.read(), macros)
             except IOError:
-                raise IncludeError("Nonexistent include {}\n".format(filename))
+                if match.group(2):
+                    if match.group(2).startswith('or '):
+                        print(match.group(3))
+                else:
+                    raise IncludeError("Nonexistent include {}\n".format(filename))
     return "\n".join(result), includes
 
 

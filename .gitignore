@@ -22,3 +22,4 @@ sake-doc.pg
 sake-doc.toc
 sake-doc.tp
 sake-doc.vr
+*.o

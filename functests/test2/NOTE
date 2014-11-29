@@ -1,0 +1,5 @@
+
+This example is meant to showcase parallel (asyncronous builds with
+the -p flag).
+
+Without that flag, this example will take 20 seconds–with it, it will take 5

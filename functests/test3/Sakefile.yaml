@@ -1,0 +1,53 @@
+
+#< config.yaml
+
+#! CFLAGS=-Wall -O2 -I./include
+#! LDFLAGS=-lm
+
+compile graphfuncs:
+    help: compiles the graphing functions
+    dependencies:
+        - ./graphfuncs.c
+    formula: >
+        $CC -c -o graphfuncs.o graphfuncs.c $CFLAGS
+    output:
+        - graphfuncs.o
+
+compile infuncs:
+    help: compiles the input functions
+    dependencies:
+        - ./infuncs.c
+    formula: >
+        $CC -c -o infuncs.o infuncs.c $CFLAGS
+    output:
+        - infuncs.o
+
+compile statfuncs:
+    help: compiles the statistics functions
+    dependencies:
+        - ./statfuncs.c
+    formula: >
+        $CC -c -o statfuncs.o statfuncs.c $CFLAGS
+    output:
+        - statfuncs.o
+
+compile qstats driver:
+    help: compiles the qstats driver c program
+    dependencies:
+        - ./qstats.c
+    formula: >
+        $CC -c -o qstats.o qstats.c $CFLAGS
+    output:
+        - qstats.o
+
+build binary:
+    help: uses the object files and compiles the final qstats binary
+    dependencies:
+        - ./statfuncs.o
+        - ./infuncs.o
+        - ./graphfuncs.o
+        - ./qstats.o
+    formula: >
+        $CC -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o $CFLAGS $LDFLAGS
+    output:
+        - qstats

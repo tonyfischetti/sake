@@ -51,11 +51,17 @@ import fnmatch
 import string
 import glob
 import sys
+import itertools
+import collections
 import yaml
 
 if sys.version_info[0] < 3:
     import codecs
     open = codecs.open
+
+
+class PatternTemplate(string.Template):
+    delimiter = "%"
 
 
 def parse(file, text, includes):
@@ -217,6 +223,72 @@ def check_for_dep_in_outputs(dep, verbose, G):
     return ret_list
 
 
+def get_patterns(dep):
+    engine = PatternTemplate(dep)
+    empty = True
+    patterns = []
+    for match in engine.pattern.finditer(dep):
+        text = match.group("named") or match.group("braced")
+        if text:
+            empty = False
+            patterns.append(text)
+    if empty:
+        return None, None
+    else:
+        return engine, patterns
+
+
+def expand_patterns(name, target):
+    data = collections.OrderedDict()
+    if not target["dependencies"]:
+        return [(name, target)]
+    for dep in target["dependencies"]:
+        engine, patterns = get_patterns(dep)
+        if not patterns:
+            continue
+        subs = {}
+        for pat in patterns:
+            subs[pat] = "(?P<%s>.+?)" % pat
+        try:
+            matcher = engine.substitute(dict(zip(patterns,itertools.repeat('*'))))
+            expanded = engine.substitute(subs)
+        except:
+            sys.exit("Error parsing dependency patterns for target %s" % name)
+        regex = re.compile(expanded)
+        files = []
+        for f in glob.iglob(matcher):
+            match = regex.match(f)
+            assert match
+            for k, v in match.groupdict().items():
+                if k not in data:
+                    data[k] = [v]
+                else:
+                    data[k].append(v)
+    if not data:
+        return [(name, target)]
+    # based on http://stackoverflow.com/a/5228294/2097780
+    rand = (dict(zip(data, x)) for x in itertools.product(*data.values()))
+    res = []
+    for sub in rand:
+        new_outputs = []
+        new_deps = []
+        new_name = PatternTemplate(name).safe_substitute(sub)
+        if new_name == name:
+            sys.exit("Target '%s' that has pattern in dependencies must have "\
+                     "pattern in name" % name)
+        new_help = PatternTemplate(target["help"]).safe_substitute(sub)
+        new_formula = PatternTemplate(target["formula"]).safe_substitute(sub)
+        for dep in target["dependencies"]:
+            new_deps.append(PatternTemplate(dep).safe_substitute(sub))
+        for out in target["output"]:
+            new_outputs.append(PatternTemplate(out).safe_substitute(sub))
+        res.append((new_name, {"help": target["help"],
+                               "output": new_outputs,
+                               "dependencies": new_deps,
+                               "formula": new_formula}))
+    return res
+
+
 def construct_graph(sakefile, verbose):
     """
     Takes the sakefile dictionary and builds a NetworkX graph
@@ -248,7 +320,7 @@ def construct_graph(sakefile, verbose):
         else:
             if verbose:
                 print("Adding '{}'".format(target))
-            G.add_node(target, sakefile[target])
+            G.add_nodes_from(expand_patterns(target, sakefile[target]))
     if verbose:
         print("Nodes are built\nBuilding connections")
     for node in G.nodes(data=True):

@@ -138,6 +138,12 @@ if args.verbose:
     print("Sakefile passes integrity test")
 
 
+# expand patterns
+for k, v in list(sakefile.items()):
+    sakefile.pop(k)
+    sakefile.update(acts.expand_patterns(k, v))
+
+
 # if target is "help"
 if args.target == "help":
     help_string = acts.get_help(sakefile)

@@ -241,7 +241,7 @@ def get_patterns(dep):
 def expand_patterns(name, target):
     data = collections.OrderedDict()
     if not target["dependencies"]:
-        return [(name, target)]
+        return {name: target}
     for dep in target["dependencies"]:
         engine, patterns = get_patterns(dep)
         if not patterns:
@@ -251,7 +251,8 @@ def expand_patterns(name, target):
             subs[pat] = "(?P<%s>.+?)" % pat
         try:
             matcher = engine.substitute(dict(zip(patterns,itertools.repeat('*'))))
-            expanded = engine.substitute(subs)
+            expanded = PatternTemplate(re.escape(dep).replace(r'\%', '%'))\
+                       .substitute(subs)
         except:
             sys.exit("Error parsing dependency patterns for target %s" % name)
         regex = re.compile(expanded)
@@ -265,11 +266,11 @@ def expand_patterns(name, target):
                 else:
                     data[k].append(v)
     if not data:
-        return [(name, target)]
+        return {name: target}
     # based on http://stackoverflow.com/a/5228294/2097780
-    rand = (dict(zip(data, x)) for x in itertools.product(*data.values()))
-    res = []
-    for sub in rand:
+    product = (dict(zip(data, x)) for x in itertools.product(*data.values()))
+    res = {}
+    for sub in product:
         new_outputs = []
         new_deps = []
         new_name = PatternTemplate(name).safe_substitute(sub)
@@ -282,10 +283,10 @@ def expand_patterns(name, target):
             new_deps.append(PatternTemplate(dep).safe_substitute(sub))
         for out in target["output"]:
             new_outputs.append(PatternTemplate(out).safe_substitute(sub))
-        res.append((new_name, {"help": target["help"],
-                               "output": new_outputs,
-                               "dependencies": new_deps,
-                               "formula": new_formula}))
+        res[new_name] = {"help": target["help"],
+                         "output": new_outputs,
+                         "dependencies": new_deps,
+                         "formula": new_formula}
     return res
 
 
@@ -320,7 +321,7 @@ def construct_graph(sakefile, verbose):
         else:
             if verbose:
                 print("Adding '{}'".format(target))
-            G.add_nodes_from(expand_patterns(target, sakefile[target]))
+            G.add_node(target, sakefile[target])
     if verbose:
         print("Nodes are built\nBuilding connections")
     for node in G.nodes(data=True):

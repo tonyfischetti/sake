@@ -240,6 +240,8 @@ def get_patterns(dep):
 
 def expand_patterns(name, target):
     data = collections.OrderedDict()
+    if not target["dependencies"]:
+        return [(name, target)]
     for dep in target["dependencies"]:
         engine, patterns = get_patterns(dep)
         if not patterns:

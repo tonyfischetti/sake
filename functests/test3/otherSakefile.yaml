@@ -1,0 +1,27 @@
+
+#! CC=gcc
+#! CFLAGS=-Wall -O2 -I./include
+#! LDFLAGS=-lm
+
+compile %objects:
+    help: compile all c files into object files
+    dependencies:
+        - "objects.c"
+    formula: >
+        $CC -c -o %objects.o %objects.c $CFLAGS
+    output:
+        - "%objects.o"
+
+
+build binary:
+    help: uses the object files and compiles the final qstats binary
+    dependencies:
+        - ./statfuncs.o
+        - ./infuncs.o
+        - ./graphfuncs.o
+        - ./qstats.o
+    formula: >
+        $CC -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o $CFLAGS $LDFLAGS
+    output:
+        - qstats
+

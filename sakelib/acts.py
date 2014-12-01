@@ -240,7 +240,18 @@ def get_patterns(dep):
 
 def expand_patterns(name, target):
     data = collections.OrderedDict()
-    if not target["dependencies"]:
+    if name == "all":
+        return {name: target}
+    elif "formula" not in target:
+        # a meta-target
+        res = {}
+        for subname, subtarget in target.items():
+            if subname == "help":
+                res["help"] = subtarget
+            else:
+                res.update(expand_patterns(subname, subtarget))
+        return {name: res}
+    if "dependencies" not in target or not target["dependencies"]:
         return {name: target}
     for dep in target["dependencies"]:
         engine, patterns = get_patterns(dep)
@@ -250,9 +261,9 @@ def expand_patterns(name, target):
         for pat in patterns:
             subs[pat] = "(?P<%s>.+?)" % pat
         try:
-            matcher = engine.substitute(dict(zip(patterns,itertools.repeat('*'))))
-            expanded = PatternTemplate(re.escape(dep).replace(r'\%', '%'))\
-                       .substitute(subs)
+            matcher = engine.substitute(dict(zip(patterns,itertools.repeat("*"))))
+            expanded = PatternTemplate(re.sub(r"\\(%|\{|\})", r"\1",
+                                              re.escape(dep))).substitute(subs)
         except:
             sys.exit("Error parsing dependency patterns for target %s" % name)
         regex = re.compile(expanded)

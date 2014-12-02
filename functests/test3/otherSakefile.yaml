@@ -6,7 +6,7 @@
 compile %objects:
     help: compile all c files into object files
     dependencies:
-        - "objects.c"
+        - "%objects.c"
     formula: >
         $CC -c -o %objects.o %objects.c $CFLAGS
     output:

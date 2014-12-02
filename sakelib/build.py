@@ -455,9 +455,8 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
     sys.stdout.flush()
     # parallel
     if parallel:
-        import pudb; pudb.set_trace()
-
         for line in parallel_sort(G):
+            line = sorted(line)
             if verbose:
                 out = "Checking if targets '{}' need to be run"
                 print(out.format(", ".join(line)))

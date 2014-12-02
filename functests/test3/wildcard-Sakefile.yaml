@@ -1,0 +1,29 @@
+
+##
+## This is to test the wildcard expansion functionality
+##
+
+#! CC=gcc
+#! CFLAGS=-Wall -O2 -I./include
+#! LDFLAGS=-lm
+
+compile c files:
+    help: compiles all c files into object files
+    dependencies:
+        - "*.c"
+    formula: >
+        $CC -c -o statfuncs.o statfuncs.c $CFLAGS;
+        $CC -c -o graphfuncs.o graphfuncs.c $CFLAGS;
+        $CC -c -o infuncs.o infuncs.c $CFLAGS;
+        $CC -c -o qstats.o qstats.c $CFLAGS;
+    output:
+        - "*.o"
+
+link all objects:
+    help: links .o files and produces final executable
+    dependencies:
+        - "*.o"
+    formula:
+        $CC -o qstats qstats.o infuncs.o graphfuncs.o statfuncs.o $CFLAGS $LDFLAGS
+    output:
+        - qstats

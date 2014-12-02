@@ -412,7 +412,7 @@ def clean_all(G, verbose, quiet, recon):
                 all_outputs.append(item)
     all_outputs.append(".shastore")
     retcode = 0
-    for item in all_outputs:
+    for item in sorted(all_outputs):
         if os.path.isfile(item):
             if recon:
                 print("Would remove file: {}".format(item))

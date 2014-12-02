@@ -455,6 +455,8 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
     sys.stdout.flush()
     # parallel
     if parallel:
+        import pudb; pudb.set_trace()
+
         for line in parallel_sort(G):
             if verbose:
                 out = "Checking if targets '{}' need to be run"
@@ -477,7 +479,13 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
                                    verbose, quiet)
     # not parallel
     else:
-        for target in nx.topological_sort(G):
+        # still have to use parallel_sort to make
+        # build order deterministic (by sorting targets)
+        targets = []
+        for line in parallel_sort(G):
+            for item in sorted(line):
+                targets.append(item)
+        for target in targets:
             if verbose:
                 outstr = "Checking if target '{}' needs to be run"
                 print(outstr.format(target))

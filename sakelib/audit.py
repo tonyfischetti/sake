@@ -146,7 +146,9 @@ def check_target_integrity(key, values, meta=False, all=False, parent=None):
                                                                      parent))
         sys.stderr.write("If it's not, it's missing a formula\n")
         return False
-    difference = our_keys_set - expected_fields
+    ignored_fields = set([field for field in our_keys_set\
+                          if field.strip().startswith("(ignore)")])
+    difference = our_keys_set - expected_fields - ignored_fields
     if difference:
         print("The following fields were not recognized and will be ignored")
         for item in difference:

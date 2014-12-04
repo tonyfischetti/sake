@@ -1,5 +1,6 @@
 
-This example is supposed to showcase using includes
+The example sakefiles are supposed to showcase using includes, widlcards,
+and patterns (stems)
 
 It compiles a small C program called 'qstats'
 

@@ -41,6 +41,7 @@ compile objects:
 
     compile qstats driver:
         help: compiles the qstats driver c program
+        (ignore) note: this is the driver
         dependencies:
             - ./qstats.c
         formula: >

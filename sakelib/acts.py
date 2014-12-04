@@ -131,14 +131,17 @@ def get_help(sakefile):
         middle_lines = []
         if "formula" not in sakefile[target]:
             # this means it's a meta-target
-            inner = "{}:\n  - {}\n\n".format(escp(target),
-                                             sakefile[target]["help"])
+            innerstr = "{}:\n  - {}\n\n".format(escp(target),
+                                                sakefile[target]["help"])
+            inner = []
             for atom_target in sakefile[target]:
                 if atom_target == "help":
                     continue
-                inner += "    {}:\n      -  {}\n\n".format(escp(atom_target),
-                                                         sakefile[target][atom_target]["help"])
-            middle_lines.append(inner)
+                inner.append("    {}:\n      -  {}\n\n".format(escp(atom_target),
+                                                               sakefile[target][atom_target]["help"]))
+            if inner:
+                innerstr += '\n'.join(sorted(inner))
+            middle_lines.append(innerstr)
         else:
             middle_lines.append("{}:\n  - {}\n\n".format(escp(target),
                                                          sakefile[target]["help"]))

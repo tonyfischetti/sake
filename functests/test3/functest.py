@@ -11,6 +11,7 @@
 import os
 import sys
 import shutil
+import time
 from subprocess import Popen, PIPE
 
 
@@ -33,8 +34,11 @@ def run(command, spit_output=False):
     #     sys.exit(1)
     if spit_output:
         print("\nTHIS WAS THE OUTPUT:\n{}\n=======".format(out.decode("utf-8")))
+        print("\nTHIS WAS THE ERR:\n{}\n=======".format(err.decode("utf-8")))
     return out.decode('utf-8'), err.decode('utf-8')
 
+def passed(whichtest):
+    print("{:>45} {:>15}".format(whichtest, "passed"))
 
 ##################
 #  start clean  ##
@@ -47,7 +51,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats")):
     FAIL("start clean failed!")
-print("start clean passed")
+passed("start clean")
 
 
 ######################
@@ -68,7 +72,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile("qstats")):
     FAIL("sake recon full failed!")
-print("sake recon full passed")
+passed("sake recon full")
 
 
 #####################
@@ -97,7 +101,7 @@ if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
     FAIL("sake build full failed!")
-print("sake build full passed")
+passed("sake build full")
 
 
 #####################
@@ -107,7 +111,7 @@ print("sake build full passed")
 out, err = run("../../sake -r")
 if out:
     FAIL("sake recon full failed!")
-print("sake recon full passed")
+passed("sake recon full")
 
 
 ######################
@@ -117,7 +121,7 @@ print("sake recon full passed")
 out, err = run("../../sake")
 if out != "Done\n":
     FAIL("sake build full failed!")
-print("sake build full passed")
+passed("sake build full")
 
 
 ###########################
@@ -138,7 +142,7 @@ if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
     not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
     FAIL("sake recon clean full failed!")
-print("sake recon clean full passed")
+passed("sake recon clean full")
 
 
 
@@ -153,7 +157,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats")):
     FAIL("sake clean full failed")
-print("sake clean full passed")
+passed("sake clean full")
 
 
 ##############################
@@ -171,7 +175,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile("qstats")):
     FAIL("sake recon parallel full failed!")
-print("sake recon parallel full passed")
+passed("sake recon parallel full")
 
 
 ########################
@@ -193,7 +197,7 @@ if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
     FAIL("sake parallel full failed!")
-print("sake parellel full passed")
+passed("sake parallel full")
 
 
 ##########################
@@ -203,7 +207,7 @@ print("sake parellel full passed")
 out, err = run('../../sake "build twinary"')
 if err != "Error: Couldn't find target 'build twinary' in Sakefile\n":
     FAIL('sake "build twinary"')
-print('sake "build twinary" passed')
+passed('sake "build twinary"')
 
 
 #########################
@@ -213,7 +217,7 @@ print('sake "build twinary" passed')
 out, err = run('../../sake "build binary"')
 if out != "Done\n":
     FAIL('sake "build binary" failed!')
-print('sake "build binary" passed')
+passed('sake "build binary"')
 
 
 ###############################
@@ -227,7 +231,7 @@ Done
 """
 if out != expected:
     FAIL('sake force "build binary" failed!')
-print('sake force "build binary" passed')
+passed('sake force "build binary"')
 
 
 ##################################
@@ -237,7 +241,7 @@ print('sake force "build binary" passed')
 out, err = run('../../sake "compile objects"')
 if out != "Done\n":
     FAIL('sake "compile objects" failed!')
-print('sake "compile objects" passed')
+passed('sake "compile objects"')
 
 
 
@@ -258,7 +262,7 @@ Done
 """
 if out != expected:
     FAIL('sake force "compile objects" failed!')
-print('sake force "compile objects" passed')
+passed('sake force "compile objects"')
 
 
 #####################
@@ -272,7 +276,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats")):
     FAIL("sake clean full failed")
-print("sake clean full passed")
+passed("sake clean full")
 
 
 ########################################
@@ -287,7 +291,7 @@ Would run target: compile statfuncs
 """
 if out != expected:
     FAIL('sake force recon "compile objects" failed!')
-print('sake force recon "compile objects" passed')
+passed('sake force recon "compile objects"')
 
 
 
@@ -309,7 +313,7 @@ if out != expected:
     FAIL('sake force "compile objects" failed!')
 if os.path.isfile("qstats"):
     FAIL('sake force "compile objects" failed!')
-print('sake force "compile objects" passed')
+passed('sake force "compile objects"')
 
 
 #####################
@@ -323,7 +327,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats")):
     FAIL("sake clean full failed")
-print("sake clean full passed")
+passed("sake clean full")
 
 
 #####################
@@ -352,7 +356,7 @@ if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
     FAIL("sake build full failed!")
-print("sake build full passed")
+passed("sake build full")
 
 
 ##################################
@@ -363,7 +367,7 @@ os.remove("qstats")
 out, err = run("../../sake -r")
 if out != "Would run target: build binary\n":
     FAIL("delete binary and sake recon failed!")
-print("delete binary and sake recon passed")
+passed("delete binary and sake recon")
 
 
 ############################
@@ -380,18 +384,18 @@ if out != expected:
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
     FAIL("delete binary and sake failed!")
-print("delete binary and sake passed")
+passed("delete binary and sake")
 
 
 ####################################
 #  touch statfuncs and sake recon  #
 ####################################
 # confirm that nothing will be rerun
-os.utime("./statfuncs.c")
+os.utime("./statfuncs.c", None)
 out, err = run("../../sake -r")
 if out:
     FAIL("touch statfuncs and sake recon failed!")
-print("touch statfuncs and sake recon passed")
+passed("touch statfuncs and sake recon")
 
 
 ###################################
@@ -408,7 +412,7 @@ with open("./statfuncs.c", "w") as fh:
 out, err = run("../../sake -r")
 if out != "Would run target: compile statfuncs\n":
     FAIL("edit statfuncs and sake recon failed!")
-print("edit statfuncs and sake recon passed")
+passed("edit statfuncs and sake recon")
 
 
 #############################
@@ -421,7 +425,7 @@ Done
 """
 if out != expected:
     FAIL("edit statfuncs and sake failed!")
-print("edit statfuncs and sake passed")
+passed("edit statfuncs and sake")
 
 
 #######################################
@@ -438,7 +442,7 @@ with open("./statfuncs.c", "w") as fh:
 out, err = run("../../sake -r")
 if out != "Would run target: compile statfuncs\n":
     FAIL("big edit statfuncs and sake recon failed!")
-print("big edit statfuncs and sake recon passed")
+passed("big edit statfuncs and sake recon")
 
 
 
@@ -458,7 +462,7 @@ if out != expected:
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "1\n":
     FAIL("big edit statfuncs and sake failed!")
-print("big edit statfuncs and sake passed")
+passed("big edit statfuncs and sake")
 
 ## MOVE BACK GOOD STATFUNCS.c
 shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
@@ -474,7 +478,7 @@ if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats")):
     FAIL("sake clean full failed")
-print("sake clean full passed")
+passed("sake clean full")
 
 
 ###########################
@@ -498,7 +502,7 @@ if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
     FAIL("sake quiet build full failed!")
-print("sake quiet build full passed")
+passed("sake quiet build full")
 
 
 ###############
@@ -534,7 +538,45 @@ visual:
 """
 if out != expected:
     FAIL("sake help failed!")
-print("sake help passed")
+passed("sake help")
+
+
+
+#########################################
+#  break target with no ancestors sake  #
+#########################################
+# this will cause an error building the
+# target "compile statfuncs" which has children
+# but no ancestors
+shutil.copy("./statfuncs.c", "./BACKUPstatfuncs.c")
+with open("./statfuncs.c", "r") as fh:
+    statfuncs = fh.read()
+statfuncs = statfuncs.replace("#include <float.h>",
+                              '#include <float.h>\n#include <deadcandance.h>')
+with open("./statfuncs.c", "w") as fh:
+    fh.write(statfuncs)
+
+
+# with open("./statfuncs.c", "r") as fh:
+#     statfuncs = fh.read()
+#     print(statfuncs)
+out, err = run("../../sake clean")
+out, err = run("../../sake")
+expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
+#include <deadcandance.h>
+         ^
+1 error generated.
+Command failed to run
+"""
+if err != expected:
+    FAIL("break target with no ancestors sake failed!")
+passed("break target with no ancestors sake")
+
+
+
+## MOVE BACK GOOD STATFUNCS.c
+shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
+
 
 ###------
 # confirm quiet (no output)

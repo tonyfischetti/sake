@@ -60,3 +60,29 @@ build binary:
         $CC -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o $CFLAGS $LDFLAGS
     output:
         - qstats
+
+generate html documentation:
+    help: uses pandoc to generate html documentation from markdown
+    dependencies:
+        - ./qstats.md
+    formula: >
+        pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+    output:
+        - qstats-documentation.html
+
+package it:
+    help: takes the final binary and documentation and puts it in a tarball
+    dependencies:
+        - qstats-documentation.html
+        - qstats
+    formula: >
+        mkdir qstats-v1.0;
+        cp qstats qstats-v1.0;
+        cp qstats-documentation.html qstats-v1.0;
+        tar cvfz qstats.tar.gz qstats-v1.0;
+        rm -rf qstats-v1.0;
+    output:
+        - qstats.tar.gz
+
+
+

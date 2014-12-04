@@ -233,7 +233,8 @@ def run_commands(commands, verbose, quiet):
         p = Popen(commands, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     if p.returncode:
-        print(err)
+        if quiet:
+            sys.stdout.write(err.decode('utf-8'))
         sys.exit("Command failed to run")
 
 

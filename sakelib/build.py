@@ -234,7 +234,7 @@ def run_commands(commands, verbose, quiet):
     out, err = p.communicate()
     if p.returncode:
         if quiet:
-            sys.stdout.write(err.decode('utf-8'))
+            sys.stderr.write(err.decode('utf-8'))
         sys.exit("Command failed to run")
 
 

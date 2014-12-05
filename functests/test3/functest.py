@@ -49,7 +49,8 @@ out, err = run("../../sake clean")
 ### check for any file
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats")):
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("start clean failed!")
 passed("start clean")
 
@@ -65,12 +66,15 @@ Would run target: compile infuncs
 Would run target: compile qstats driver
 Would run target: compile statfuncs
 Would run target: build binary
+Would run target: generate html documentation
+Would run target: package it
 """
 if out != expected:
     FAIL("sake recon full failed!")
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile("qstats")):
+    os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake recon full failed!")
 passed("sake recon full")
 
@@ -90,13 +94,18 @@ Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
 Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+Running target generate html documentation
+pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+Running target package it
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
     FAIL("sake build full failed!")
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake build full failed!")
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
@@ -133,14 +142,17 @@ expected = """Would remove file: .shastore
 Would remove file: graphfuncs.o
 Would remove file: infuncs.o
 Would remove file: qstats
+Would remove file: qstats-documentation.html
 Would remove file: qstats.o
+Would remove file: qstats.tar.gz
 Would remove file: statfuncs.o
 """
 if out != expected:
     FAIL("sake recon clean full failed!")
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake recon clean full failed!")
 passed("sake recon clean full")
 
@@ -155,7 +167,8 @@ if out != "All clean\n":
     FAIL("sake clean full failed")
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats")):
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake clean full failed")
 passed("sake clean full")
 
@@ -167,13 +180,15 @@ passed("sake clean full")
 # objects in parallel
 out, err = run("../../sake -r -p")
 expected = """Would run targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel
-Would run target 'build binary'
+Would run targets 'build binary, generate html documentation' in parallel
+Would run target 'package it'
 """
 if out != expected:
     FAIL("sake recon parallel full failed!")
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile("qstats")):
+    os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake recon parallel full failed!")
 passed("sake recon parallel full")
 
@@ -184,15 +199,17 @@ passed("sake recon parallel full")
 # confirm builds all and builds correctly
 out, err = run("../../sake -p")
 expected = """Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel
-Running target build binary
-gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+Going to run these targets 'build binary, generate html documentation' in parallel
+Running target package it
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
     FAIL("sake parallel full failed!")
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake parallel full failed!")
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
@@ -274,7 +291,8 @@ if out != "All clean\n":
     FAIL("sake clean full failed")
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats")):
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake clean full failed")
 passed("sake clean full")
 
@@ -325,7 +343,8 @@ if out != "All clean\n":
     FAIL("sake clean full failed")
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats")):
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake clean full failed")
 passed("sake clean full")
 
@@ -345,27 +364,32 @@ Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
 Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+Running target generate html documentation
+pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+Running target package it
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
     FAIL("sake build full failed!")
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake build full failed!")
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
     FAIL("sake build full failed!")
 passed("sake build full")
 
-
+##!!!!   also just tar
 ##################################
 #  delete binary and sake recon  #
 ##################################
-# confirm that only "build binary" is to be rerun
+# confirm that only "build binary" and "package it" is to be rerun
 os.remove("qstats")
 out, err = run("../../sake -r")
-if out != "Would run target: build binary\n":
+if out != "Would run target: build binary\nWould run target: package it\n":
     FAIL("delete binary and sake recon failed!")
 passed("delete binary and sake recon")
 
@@ -374,6 +398,7 @@ passed("delete binary and sake recon")
 #  delete binary and sake  #
 ############################
 # confirm that only "build binary" is rerun
+# package it isn't run because the hash is the same!
 out, err = run("../../sake")
 expected = """Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
@@ -445,16 +470,18 @@ if out != "Would run target: compile statfuncs\n":
 passed("big edit statfuncs and sake recon")
 
 
-
 ################################
 #  big edit statfuncs and sake #
 ################################
-# statfuncs should be recompiled AND qstats should be relinked
+# statfuncs should be recompiled AND qstats should be relinked AND
+# it should be repackaged
 out, err = run("../../sake")
 expected = """Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
 Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+Running target package it
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
@@ -476,7 +503,8 @@ if out != "All clean\n":
     FAIL("sake clean full failed")
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats")):
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake clean full failed")
 passed("sake clean full")
 
@@ -491,13 +519,16 @@ Running target compile infuncs
 Running target compile qstats driver
 Running target compile statfuncs
 Running target build binary
+Running target generate html documentation
+Running target package it
 Done
 """
 if out != expected:
     FAIL("sake quiet build full failed!")
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake quiet build full failed!")
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
 if out != "3\n":
@@ -529,6 +560,12 @@ expected = """You can 'sake' one of the following...
     "compile statfuncs":
       -  compiles the statistics functions
 
+"generate html documentation":
+  - uses pandoc to generate html documentation from markdown
+
+"package it":
+  - takes the final binary and documentation and puts it in a tarball
+
 clean:
   -  remove all targets' outputs and start from scratch
 
@@ -539,7 +576,6 @@ visual:
 if out != expected:
     FAIL("sake help failed!")
 passed("sake help")
-
 
 
 #########################################
@@ -555,11 +591,6 @@ statfuncs = statfuncs.replace("#include <float.h>",
                               '#include <float.h>\n#include <deadcandance.h>')
 with open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
-
-
-# with open("./statfuncs.c", "r") as fh:
-#     statfuncs = fh.read()
-#     print(statfuncs)
 out, err = run("../../sake clean")
 out, err = run("../../sake")
 expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
@@ -570,17 +601,168 @@ Command failed to run
 """
 if err != expected:
     FAIL("break target with no ancestors sake failed!")
+out, err = run("../../sake -r")
+expected = """Would run target: compile statfuncs
+Would run target: build binary
+Would run target: generate html documentation
+Would run target: package it
+"""
+if out != expected:
+    FAIL("break target with no ancestors sake failed!")
 passed("break target with no ancestors sake")
 
 
+##################################################
+#  break target with no ancestors sake parallel  #
+##################################################
+# making sure breaking behavior is correct when parallel building
+out, err = run("../../sake clean")
+out, err = run("../../sake -p")
+expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
+#include <deadcandance.h>
+         ^
+1 error generated.
+Target 'compile statfuncs' failed!
+A command failed to run
+"""
+if err != expected:
+    FAIL("break target with no ancestors sake parallel failed!")
+expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
+if out != expected:
+    FAIL("break target with no ancestors sake parallel failed!")
+out, err = run("../../sake -r -p")
+expected = """Would run target 'compile statfuncs'
+Would run targets 'build binary, generate html documentation' in parallel
+Would run target 'package it'
+"""
+if out != expected:
+    FAIL("break target with no ancestors sake parallel failed!")
+passed("break target with no ancestors sake parallel")
 
 ## MOVE BACK GOOD STATFUNCS.c
 shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
 
 
+#################################
+#  edit documentation and sake  #
+#################################
+# should only rerun "generate html documentation" and "package it"
+out, err = run("../../sake clean")
+out, err = run("../../sake")
+shutil.copy("./qstats.md", "./BACKUPqstats.md")
+with open("./qstats.md", "r") as fh:
+    themd = fh.read()
+themd = themd.replace("NAME", 'NOMBRE')
+with open("./qstats.md", "w") as fh:
+    fh.write(themd)
+
+out, err = run("../../sake -r")
+if out != "Would run target: generate html documentation\n":
+    FAIL("edit documentation and sake failed!")
+out, err = run("../../sake")
+expected = """Running target generate html documentation
+pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+Running target package it
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
+Done
+"""
+if out != expected:
+    FAIL("edit documentation and sake failed!")
+passed("edit documentation and sake")
+
+## MOVE BACK GOOD qstats.md
+shutil.move("./BACKUPqstats.md", "./qstats.md")
+
+
+####################
+#  quiet parallel  #
+####################
+out, err = run("../../sake clean")
+out, err = run("../../sake -p -q")
+expected = """Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel
+Going to run these targets 'build binary, generate html documentation' in parallel
+Running target package it
+Done
+"""
+if out != expected:
+    FAIL("quiet parallel failed")
+passed("quiet parallel")
+
+
+#################
+#  quiet error  #
+#################
+shutil.copy("./statfuncs.c", "./BACKUPstatfuncs.c")
+with open("./statfuncs.c", "r") as fh:
+    statfuncs = fh.read()
+statfuncs = statfuncs.replace("#include <float.h>",
+                              '#include <float.h>\n#include <deadcandance.h>')
+with open("./statfuncs.c", "w") as fh:
+    fh.write(statfuncs)
+out, err = run("../../sake clean")
+out, err = run("../../sake -q")
+expected = """Running target compile graphfuncs
+Running target compile infuncs
+Running target compile qstats driver
+Running target compile statfuncs
+"""
+if out != expected:
+    FAIL("quiet error failed!")
+expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
+#include <deadcandance.h>
+         ^
+1 error generated.
+Command failed to run
+"""
+if err != expected:
+    FAIL("quiet error failed!")
+passed("quiet error")
+
+
+##########################
+#  quiet error parallel  #
+##########################
+out, err = run("../../sake clean")
+out, err = run("../../sake -q -p")
+expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
+if out != expected:
+    FAIL("quiet error parallel failed!")
+expected = """Target 'compile statfuncs' failed!
+A command failed to run
+"""
+if err != expected:
+    FAIL("quiet error parallel failed!")
+passed("quiet error parallel")
+
+## MOVE BACK GOOD STATFUNCS.c
+shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
+
+
+
+#############################
+#  sake visual no graphviz  #
+#############################
+out, err = run("../../sake visual -n", spit_output=True)
+expected = """strict digraph DependencyDiagram {
+"build binary" -> "package it";
+"compile graphfuncs" -> "build binary";
+"compile infuncs" -> "build binary";
+"compile qstats driver" -> "build binary";
+"compile statfuncs" -> "build binary";
+"generate html documentation" -> "package it";
+"build binary"
+"compile graphfuncs"
+"compile infuncs"
+"compile qstats driver"
+"compile statfuncs"
+"generate html documentation"
+"package it"
+}"""
+
+
+
+
 ###------
-# confirm quiet (no output)
-# confirm sake help
 # confirm sake visual no graphiz custom filename
 # sake visual
 # sake visual other formats

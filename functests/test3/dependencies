@@ -1,0 +1,15 @@
+strict digraph DependencyDiagram {
+"build binary" -> "package it";
+"compile graphfuncs" -> "build binary";
+"compile infuncs" -> "build binary";
+"compile qstats driver" -> "build binary";
+"compile statfuncs" -> "build binary";
+"generate html documentation" -> "package it";
+"build binary"
+"compile graphfuncs"
+"compile infuncs"
+"compile qstats driver"
+"compile statfuncs"
+"generate html documentation"
+"package it"
+}

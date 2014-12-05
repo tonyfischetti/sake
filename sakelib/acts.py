@@ -449,7 +449,7 @@ def write_dot_file(G, filename):
         edge_list = G.edges()
         node_list = set(G.nodes())
         if edge_list:
-            for edge in G.edges():
+            for edge in sorted(edge_list):
                 source, targ = edge
                 node_list = node_list - set(source)
                 node_list = node_list - set(targ)
@@ -457,7 +457,7 @@ def write_dot_file(G, filename):
                 fh.write(line.format(source, targ))
         # draw nodes with no links
         if node_list:
-            for node in node_list:
+            for node in sorted(node_list):
                 line = '"{}"\n'.format(node)
                 fh.write(line)
         fh.write("}")

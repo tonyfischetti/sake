@@ -1,7 +1,7 @@
 NAME
 ====
 
-qstats - a quick and dirty statistics tool for the Unix pipeline
+qstats - a quick and dirty statistics tool for the Unix pipeline (version 1.0)
 
 SYNOPSIS
 ========

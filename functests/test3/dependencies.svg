@@ -11,18 +11,18 @@
 <polygon fill="white" stroke="none" points="-4,4 -4,-184 696.536,-184 696.536,4 -4,4"/>
 <!-- build binary -->
 <g id="node1" class="node"><title>build binary</title>
-<ellipse fill="none" stroke="black" cx="347.142" cy="-90" rx="57.3905" ry="18"/>
-<text text-anchor="middle" x="347.142" y="-86.3" font-family="Times,serif" font-size="14.00">build binary</text>
+<ellipse fill="none" stroke="black" cx="346.142" cy="-90" rx="57.3905" ry="18"/>
+<text text-anchor="middle" x="346.142" y="-86.3" font-family="Times,serif" font-size="14.00">build binary</text>
 </g>
 <!-- package it -->
 <g id="node2" class="node"><title>package it</title>
-<ellipse fill="none" stroke="black" cx="249.142" cy="-18" rx="48.1917" ry="18"/>
-<text text-anchor="middle" x="249.142" y="-14.3" font-family="Times,serif" font-size="14.00">package it</text>
+<ellipse fill="none" stroke="black" cx="364.142" cy="-18" rx="48.1917" ry="18"/>
+<text text-anchor="middle" x="364.142" y="-14.3" font-family="Times,serif" font-size="14.00">package it</text>
 </g>
 <!-- build binary&#45;&gt;package it -->
 <g id="edge1" class="edge"><title>build binary&#45;&gt;package it</title>
-<path fill="none" stroke="black" d="M324.905,-73.1159C311.309,-63.4046 293.748,-50.861 278.957,-40.2958"/>
-<polygon fill="black" stroke="black" points="280.79,-37.3045 270.619,-34.3402 276.722,-43.0007 280.79,-37.3045"/>
+<path fill="none" stroke="black" d="M350.592,-71.6966C352.597,-63.8979 355.012,-54.5085 357.244,-45.8292"/>
+<polygon fill="black" stroke="black" points="360.643,-46.6609 359.744,-36.1043 353.864,-44.9176 360.643,-46.6609"/>
 </g>
 <!-- compile graphfuncs -->
 <g id="node3" class="node"><title>compile graphfuncs</title>
@@ -31,8 +31,8 @@
 </g>
 <!-- compile graphfuncs&#45;&gt;build binary -->
 <g id="edge2" class="edge"><title>compile graphfuncs&#45;&gt;build binary</title>
-<path fill="none" stroke="black" d="M135.659,-147.503C181.514,-135.252 248.849,-117.262 295.156,-104.889"/>
-<polygon fill="black" stroke="black" points="296.235,-108.224 304.993,-102.261 294.428,-101.461 296.235,-108.224"/>
+<path fill="none" stroke="black" d="M135.775,-147.42C181.351,-135.197 248.044,-117.31 294.061,-104.968"/>
+<polygon fill="black" stroke="black" points="295.088,-108.317 303.84,-102.346 293.275,-101.555 295.088,-108.317"/>
 </g>
 <!-- compile infuncs -->
 <g id="node4" class="node"><title>compile infuncs</title>
@@ -41,8 +41,8 @@
 </g>
 <!-- compile infuncs&#45;&gt;build binary -->
 <g id="edge3" class="edge"><title>compile infuncs&#45;&gt;build binary</title>
-<path fill="none" stroke="black" d="M278.785,-144.765C290.663,-135.422 305.762,-123.546 318.747,-113.334"/>
-<polygon fill="black" stroke="black" points="321.223,-115.839 326.919,-106.906 316.895,-110.337 321.223,-115.839"/>
+<path fill="none" stroke="black" d="M278.553,-144.765C290.298,-135.422 305.227,-123.546 318.066,-113.334"/>
+<polygon fill="black" stroke="black" points="320.499,-115.87 326.146,-106.906 316.141,-110.392 320.499,-115.87"/>
 </g>
 <!-- compile qstats driver -->
 <g id="node5" class="node"><title>compile qstats driver</title>
@@ -51,8 +51,8 @@
 </g>
 <!-- compile qstats driver&#45;&gt;build binary -->
 <g id="edge4" class="edge"><title>compile qstats driver&#45;&gt;build binary</title>
-<path fill="none" stroke="black" d="M414.288,-144.411C402.614,-135.125 387.901,-123.421 375.225,-113.338"/>
-<polygon fill="black" stroke="black" points="377.247,-110.474 367.242,-106.988 372.889,-115.952 377.247,-110.474"/>
+<path fill="none" stroke="black" d="M414.051,-144.411C402.244,-135.125 387.364,-123.421 374.544,-113.338"/>
+<polygon fill="black" stroke="black" points="376.494,-110.419 366.47,-106.988 372.167,-115.921 376.494,-110.419"/>
 </g>
 <!-- compile statfuncs -->
 <g id="node6" class="node"><title>compile statfuncs</title>
@@ -61,18 +61,28 @@
 </g>
 <!-- compile statfuncs&#45;&gt;build binary -->
 <g id="edge5" class="edge"><title>compile statfuncs&#45;&gt;build binary</title>
-<path fill="none" stroke="black" d="M567.934,-148.242C520.264,-135.883 448.224,-117.206 399.511,-104.577"/>
-<polygon fill="black" stroke="black" points="400.349,-101.179 389.79,-102.057 398.592,-107.955 400.349,-101.179"/>
+<path fill="none" stroke="black" d="M568.066,-148.324C520.263,-135.976 447.828,-117.266 398.829,-104.609"/>
+<polygon fill="black" stroke="black" points="399.609,-101.196 389.052,-102.084 397.859,-107.973 399.609,-101.196"/>
 </g>
 <!-- generate html documentation -->
 <g id="node7" class="node"><title>generate html documentation</title>
-<ellipse fill="none" stroke="black" cx="152.142" cy="-90" rx="119.679" ry="18"/>
-<text text-anchor="middle" x="152.142" y="-86.3" font-family="Times,serif" font-size="14.00">generate html documentation</text>
+<ellipse fill="none" stroke="black" cx="541.142" cy="-90" rx="119.679" ry="18"/>
+<text text-anchor="middle" x="541.142" y="-86.3" font-family="Times,serif" font-size="14.00">generate html documentation</text>
 </g>
 <!-- generate html documentation&#45;&gt;package it -->
-<g id="edge6" class="edge"><title>generate html documentation&#45;&gt;package it</title>
-<path fill="none" stroke="black" d="M175.623,-72.055C188.81,-62.5387 205.395,-50.5703 219.474,-40.4105"/>
-<polygon fill="black" stroke="black" points="221.802,-43.0464 227.863,-34.3564 217.706,-37.3701 221.802,-43.0464"/>
+<g id="edge7" class="edge"><title>generate html documentation&#45;&gt;package it</title>
+<path fill="none" stroke="black" d="M500.535,-72.9406C472.017,-61.6623 434.005,-46.6291 405.354,-35.2983"/>
+<polygon fill="black" stroke="black" points="406.61,-32.0314 396.024,-31.6084 404.036,-38.5408 406.61,-32.0314"/>
+</g>
+<!-- output version textfile -->
+<g id="node8" class="node"><title>output version textfile</title>
+<ellipse fill="none" stroke="black" cx="541.142" cy="-18" rx="92.8835" ry="18"/>
+<text text-anchor="middle" x="541.142" y="-14.3" font-family="Times,serif" font-size="14.00">output version textfile</text>
+</g>
+<!-- generate html documentation&#45;&gt;output version textfile -->
+<g id="edge6" class="edge"><title>generate html documentation&#45;&gt;output version textfile</title>
+<path fill="none" stroke="black" d="M541.142,-71.6966C541.142,-63.9827 541.142,-54.7125 541.142,-46.1124"/>
+<polygon fill="black" stroke="black" points="544.643,-46.1043 541.142,-36.1043 537.643,-46.1044 544.643,-46.1043"/>
 </g>
 </g>
 </svg>

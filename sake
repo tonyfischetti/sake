@@ -227,6 +227,12 @@ if args.target == 'all':
     sys.exit(retval)
 
 
+# If you specify a target that shares a dependency with another target,
+# both targets need to be updated. This is because running one will resolve
+# the sha mismatch and sake will think that the other one doesn't have to
+# run. This is called a "tie". We need to find such "ties" at this point.
+ties = acts.get_ties(G, args.verbose)
+
 # for other target specified
 # it's easier to ask for forgiveness that permission
 try:
@@ -252,10 +258,14 @@ except:
                 if args.force:
                     # force will not build any predecessors
                     nodes_in_subgraph.append(node[0])
+                    my_ties = acts.get_tied_targets(nodes_in_subgraph, ties)
+                    subgraph = G.subgraph(my_ties)
                 else:
                     nodes_in_subgraph = nodes_in_subgraph+all_preds([node[0]])
-        nodes_in_subgraph = list(set(nodes_in_subgraph))
-        subgraph = G.subgraph(nodes_in_subgraph)
+                    nodes_in_subgraph = list(set(nodes_in_subgraph))
+                    my_ties = acts.get_tied_targets(nodes_in_subgraph, ties)
+                    nodes_in_subgraph = list(set(all_preds(my_ties)))
+                    subgraph = G.subgraph(nodes_in_subgraph)
         retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
                                         args.force, args.recon, args.parallel,
                                        dont_update_shas_of=no_sha_update)
@@ -266,9 +276,13 @@ except:
     sys.exit(1)
 # force will not build any predecessors
 if args.force:
-    subgraph = G.subgraph(args.target)
+    # check for need to run ties
+    my_ties = acts.get_tied_targets([args.target], ties)
+    subgraph = G.subgraph(my_ties)
 else:
     nodes_in_subgraph = list(set(all_preds([args.target])))
+    my_ties = acts.get_tied_targets(nodes_in_subgraph, ties)
+    nodes_in_subgraph = list(set(all_preds(my_ties)))
     subgraph = G.subgraph(nodes_in_subgraph)
 
 retval = build.build_this_graph(subgraph, args.verbose, args.quiet,

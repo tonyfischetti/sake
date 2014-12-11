@@ -85,13 +85,17 @@ package it:
         - qstats.tar.gz
 
 
-output version text file:
+output wrapper:
     help: >
-        this is a silly target that outputs the qstats version
-        ascii-art printed, it is needed to test the whole API
-    dependencies:
-        - qstats-documentation.html
-    formula: >
-        bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)/\1/') | figlet > VERSION.txt"
-    output:
-        - VERSION.txt
+        this is a wrapper around 'output version text file' to
+        appropriately test the entire API
+    output version text file:
+        help: >
+            this is a silly target that outputs the qstats version
+            ascii-art printed, it is needed to test the whole API
+        dependencies:
+            - qstats-documentation.html
+        formula: >
+            bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\1/') | figlet > VERSION.txt"
+        output:
+            - VERSION.txt

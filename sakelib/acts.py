@@ -304,6 +304,52 @@ def expand_patterns(name, target):
     return res
 
 
+def get_ties(G, verbose):
+    """
+    If you specify a target that shares a dependency with another target,
+    both targets need to be updated. This is because running one will resolve
+    the sha mismatch and sake will think that the other one doesn't have to
+    run. This is called a "tie". This function will find such ties.
+    """
+    # we are going to make a dictionary whose keys are every dependency
+    # and whose values are a list of all targets that use that dependency.
+    # after making the dictionary, values whose length is above one will
+    # be called "ties"
+    ties = []
+    dep_dict = {}
+    for node in G.nodes(data=True):
+        if 'dependencies' in node[1]:
+            for item in node[1]['dependencies']:
+                if item not in dep_dict:
+                    dep_dict[item] = []
+                dep_dict[item].append(node[0])
+    for item in dep_dict:
+        if len(list(set(dep_dict[item]))) > 1:
+            ties.append(list(set(dep_dict[item])))
+    return ties
+
+
+def get_tied_targets(original_targets, the_ties):
+    """
+    This function gets called when a target is specified to ensure
+    that all 'tied' targets also get included in the subgraph to
+    be built
+    """
+    my_ties = []
+    for original_target in original_targets:
+        for item in the_ties:
+            if original_target in item:
+                for thing in item:
+                    my_ties.append(thing)
+    my_ties = list(set(my_ties))
+    if my_ties:
+        print("The following targets share dependencies and must be run together:")
+        for item in my_ties:
+            print("  - {}".format(item))
+        return list(set(my_ties+original_targets))
+    return original_targets
+
+
 def construct_graph(sakefile, verbose):
     """
     Takes the sakefile dictionary and builds a NetworkX graph

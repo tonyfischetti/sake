@@ -264,7 +264,8 @@ def expand_patterns(name, target):
         for pat in patterns:
             subs[pat] = "(?P<%s>.+?)" % pat
         try:
-            matcher = engine.substitute(dict(zip(patterns,itertools.repeat("*"))))
+            matcher = engine.substitute(dict(zip(patterns,
+                                                 itertools.repeat("*"))))
             expanded = PatternTemplate(re.sub(r"\\(%|\{|\})", r"\1",
                                               re.escape(dep))).substitute(subs)
         except:

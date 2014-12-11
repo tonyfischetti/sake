@@ -52,6 +52,7 @@ import glob
 from subprocess import Popen, PIPE
 
 from . import acts
+from . import constants
 
 if sys.version_info[0] < 3:
     import codecs
@@ -59,6 +60,22 @@ if sys.version_info[0] < 3:
     open = codecs.open
 else:
     old_open = open
+
+
+def check_shastore_version(from_store, verbose):
+    """
+    This function gives us the option to emit errors or warnings
+    after sake upgrades
+    """
+    if verbose:
+        print("checking .shastore version for potential incompatibilities")
+    if 'sake version' not in from_store:
+        errmes = ["Since you've used this project last, a new version of ",
+                  "sake was installed that introduced backwards incompatible",
+                  " changes. Run 'sake clean', and rebuild before continuing\n"]
+        errmes = " ".join(errmes) 
+        sys.stderr.write(errmes)
+        sys.exit(1)
 
 
 def get_sha(a_file):
@@ -92,9 +109,9 @@ def write_shas_to_shastore(sha_dict):
     """
     with open(".shastore", "w", encoding="utf-8") as fh:
         fh.write("---\n")
+        fh.write('sake version: {}\n'.format(constants.VERSION))
         if sha_dict:
-            for key in sha_dict:
-                fh.write("{}: {}\n".format(key, sha_dict[key]))
+            fh.write(yaml.dump(sha_dict))
         fh.write("...")
 
 
@@ -141,9 +158,10 @@ def take_shas_of_all_files(G, verbose, dont_update_shas_of):
                     print("  - {}".format(out))
                 all_files.append(out)
     if len(all_files):
+        sha_dict['files'] = {}
         for item in all_files:
             if os.path.isfile(item) and item not in dont_update_shas_of:
-                sha_dict[item] = get_sha(item)
+                sha_dict['files'][item] = {'sha': get_sha(item)}
         return sha_dict
     if verbose:
         print("No dependencies")
@@ -191,18 +209,20 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
         # its possible that the dependency's sha doesn't exist
         # in the current "in_mem" dictionary. If this is the case,
         # then the target needs to run
-        if dep not in in_mem_shas:
+        if ('files' in in_mem_shas and dep not in in_mem_shas['files'] or
+            'files' not in in_mem_shas):
             if verbose:
                 outstr = "Dep '{}' doesn't exist in memory so it needs to run"
                 print(outstr.format(dep))
             return True
-        now_sha = in_mem_shas[dep]
-        if dep not in from_store:
+        now_sha = in_mem_shas['files'][dep]['sha']
+        if ('files' in from_store and dep not in from_store['files'] or
+            'files' not in from_store):
             if verbose:
                 outst = "Dep '{}' doesn't exist in shastore so it needs to run"
                 print(outst.format(dep))
             return True
-        old_sha = from_store[dep]
+        old_sha = from_store['files'][dep]['sha']
         if now_sha != old_sha:
             if verbose:
                 outstr = "There's a mismatch for dep {} so it needs to run"
@@ -390,9 +410,9 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
         else:
             if "output" in info[index][1]:
                 for output in acts.get_all_outputs(info[index][1]):
-                    if from_store:
-                        if output in from_store and output not in dont_update_shas_of:
-                            in_mem_shas[output] = get_sha(output)
+                    if from_store and 'files' in from_store:
+                        if output in from_store['files'] and output not in dont_update_shas_of:
+                            in_mem_shas['files'][output] = get_sha(output)
                             write_shas_to_shastore(in_mem_shas)
     if a_failure_occurred:
         sys.exit("A command failed to run")
@@ -408,9 +428,9 @@ def merge_from_store_and_in_mems(from_store, in_mem_shas):
     """
     if not from_store:
         return in_mem_shas
-    for key in from_store:
-        if key not in in_mem_shas:
-            in_mem_shas[key] = from_store[key]
+    for key in from_store['files']:
+        if key not in in_mem_shas['files']:
+            in_mem_shas['files'][key] = from_store['files'][key]
     return in_mem_shas
 
 
@@ -454,6 +474,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
     with open(".shastore", "r") as fh:
         shas_on_disk = fh.read()
     from_store = yaml.load(shas_on_disk)
+    check_shastore_version(from_store, verbose)
     if not from_store:
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}

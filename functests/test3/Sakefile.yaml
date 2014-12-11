@@ -85,7 +85,7 @@ package it:
         - qstats.tar.gz
 
 
-output version textfile:
+output version text file:
     help: >
         this is a silly target that outputs the qstats version
         ascii-art printed, it is needed to test the whole API

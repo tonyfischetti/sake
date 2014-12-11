@@ -98,13 +98,14 @@ def write_shas_to_shastore(sha_dict):
         fh.write("...")
 
 
-def take_shas_of_all_files(G, verbose):
+def take_shas_of_all_files(G, verbose, dont_update_shas_of):
     """
     Takes sha1 hash of all dependencies and outputs of all targets
 
     Args:
         The graph we are going to build
         A flag indicating verbosity
+        A list of files to not update the shas for
 
     Returns:
         A dictionary where the keys are the filenames and the
@@ -141,7 +142,7 @@ def take_shas_of_all_files(G, verbose):
                 all_files.append(out)
     if len(all_files):
         for item in all_files:
-            if os.path.isfile(item):
+            if os.path.isfile(item) and item not in dont_update_shas_of:
                 sha_dict[item] = get_sha(item)
         return sha_dict
     if verbose:
@@ -339,7 +340,7 @@ def parallel_sort(G):
 
 
 def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
-                       verbose, quiet):
+                       verbose, quiet, dont_update_shas_of):
     """
     The parallel equivalent of "run_this_target()"
     It receives a list of targets to execute in parallel.
@@ -356,6 +357,7 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
         The dictionary containing the contents of the .shastore file
         A flag indicating verbosity
         A flag indicating quiet mode
+        A list of outputs to not update shas of
     """
     if len(list_of_targets) == 1:
         target = list_of_targets[0]
@@ -389,7 +391,7 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
             if "output" in info[index][1]:
                 for output in acts.get_all_outputs(info[index][1]):
                     if from_store:
-                        if output in from_store:
+                        if output in from_store and output not in dont_update_shas_of:
                             in_mem_shas[output] = get_sha(output)
                             write_shas_to_shastore(in_mem_shas)
     if a_failure_occurred:
@@ -412,7 +414,8 @@ def merge_from_store_and_in_mems(from_store, in_mem_shas):
     return in_mem_shas
 
 
-def build_this_graph(G, verbose, quiet, force, recon, parallel):
+def build_this_graph(G, verbose, quiet, force, recon, parallel,
+                     dont_update_shas_of=None):
     """
     This is the master function that performs the building.
 
@@ -424,11 +427,15 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
         A flag indicating whether this is a dry run (recon)
         A flag indicating whether the graph targets should
           build in parallel
+        An optional list of files to not update the shas of
+          (needed when building specific targets)
 
     Returns:
         0 if successful
         UN-success results in a fatal error so it will return 0 or nothing
     """
+    if not dont_update_shas_of:
+        dont_update_shas_of = []
     if verbose:
         print("Checking that graph is directed acyclic")
     if not nx.is_directed_acyclic_graph(G):
@@ -439,7 +446,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
         sys.exit(1)
     if verbose:
         print("Dependency resolution is possible")
-    in_mem_shas = take_shas_of_all_files(G, verbose)
+    in_mem_shas = take_shas_of_all_files(G, verbose, dont_update_shas_of)
     from_store = {}
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
@@ -476,7 +483,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
                         print(out.format(", ".join(to_build)))
                     continue
                 parallel_run_these(G, to_build, in_mem_shas, from_store,
-                                   verbose, quiet)
+                                   verbose, quiet, dont_update_shas_of)
     # not parallel
     else:
         # still have to use parallel_sort to make
@@ -499,11 +506,11 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel):
                 if "output" in node_dict:
                     for output in acts.get_all_outputs(node_dict):
                         if from_store:
-                            if output in from_store:
+                            if output in from_store and output not in dont_update_shas_of:
                                 in_mem_shas[output] = get_sha(output)
     if recon:
         return 0
-    in_mem_shas = take_shas_of_all_files(G, verbose)
+    in_mem_shas = take_shas_of_all_files(G, verbose, dont_update_shas_of)
     if in_mem_shas:
         in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas)
         write_shas_to_shastore(in_mem_shas)

@@ -8,7 +8,7 @@
 #! LDFLAGS=-lm
 
 compile %objects:
-    help: compile all c files (%object) into object files
+    help: compile all c files (%objects) into object files
     dependencies:
         - "%objects.c"
     formula: >

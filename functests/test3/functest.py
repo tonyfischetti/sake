@@ -708,7 +708,7 @@ Command failed to run
 """
 if err != expected:
     FAIL("break target with no ancestors sake failed!")
-out, err = run("../../sake -r")
+out, err = run("../../sake -r", spit_output=True)
 expected = """Would run target: compile statfuncs
 Would run target: build binary
 Would run target: generate html documentation

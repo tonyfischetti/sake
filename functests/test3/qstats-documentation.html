@@ -1,0 +1,50 @@
+<h1 id="name">NAME</h1>
+<p>qstats - a quick and dirty statistics tool for the Unix pipeline (version 1.0)</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><code>qstats -smhl -f&lt;breaks&gt; -b&lt;breaks&gt; file</code></p>
+<h1 id="description">DESCRIPTION</h1>
+<p><code>qstats</code> This tool reads one column of numeric data from either a file (or multiple files) or from stdin, and computes various summary statistics on it. Although it can be used directly on file(s), this is meant to be used mostly as the final command on a shell pipeline combining cut1, tail1, awk1, etc. on a tabular data file.</p>
+<h1 id="options">OPTIONS</h1>
+<dl>
+<dt>-m</dt>
+<dd><p>computes the mean</p>
+</dd>
+<dt>-s</dt>
+<dd><p>computes various summary statistics including min, max, quartiles, mean, median, range, standard deviation (population), and length. This is the default behavior if no flags are used.</p>
+</dd>
+<dt>-l</dt>
+<dd><p>outputs the length (equivalent to wc -l)</p>
+</dd>
+<dt>-h</dt>
+<dd><p>prints the help and usage</p>
+</dd>
+<dt>-f&lt;breaks&gt;</dt>
+<dd><p>creates a frequncy tabulation of the data points contained in 'breaks' number of equally spaced bins. If no number if provided, then Sturge's Rule is used to estimate the appropriate number of bins.</p>
+</dd>
+<dt>-b&lt;breaks&gt;</dt>
+<dd><p>creates an ASCII-art histogram (horizontal bar chart) representation of the density of the data points contained in 'breaks' number of equally spaced bins. If no number if provided, then Sturge's Rule is used to estimate the appropriate number of bins.</p>
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<dl>
+<dt>echo -e '5\n1\n3' | qstats -m</dt>
+<dd><p>Compute a simple mean of a small number of numerics. This uses `echo` to produce a small column of numerics which then gets processed by qstats.</p>
+</dd>
+<dt>qstats -s a_file.dat another.dat</dt>
+<dd><p>Compute summary statistics on two files, each containing only a column of numeric data, and print them both out preceded by the filename (so you know which one is which)</p>
+</dd>
+<dt>grep 'COND1' mycsv.csv | cut -d , -f 2 | tail +2 | qstats -s</dt>
+<dd><p>Only process lines in a CSV that includes the string 'COND1' (subset the CSV), extract to 2nd column, remove the first line (very often a non-numeric header string) and compute summary statistics on it.</p>
+</dd>
+<dt>tr , '\n' &lt; file.txt | qstats</dt>
+<dd><p>qstats does not handle data that is not in column format. Given a file that contains numeric data separated by commas, the `tr` command with these arguments will convert the commas into newlines so that qstats can process it.</p>
+</dd>
+</dl>
+<h1 id="bugs">BUGS</h1>
+<ul>
+<li>only takes in numerics that do not exceed 50 digits long - only is able to import and compute statistics on data that can fit within memory</li>
+</ul>
+<h1 id="author">AUTHOR</h1>
+<p>Tony Fischetti &lt;tony.fischetti at gmail.com&gt;</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>awk1, cut1, tail1, bc1,</p>

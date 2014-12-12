@@ -7,7 +7,7 @@
 ###< optional.yaml or this was optional anyways
 #< optional.yaml optional
 
-#! CFLAGS=-Wall -O2 -I./include
+#! CFLAGS=-w -O2 -I./include
 #! LDFLAGS=-lm
 
 compile objects:

@@ -4,9 +4,14 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq build-essential pandoc figlet
 # command to install dependencies
 install:
   - pip install .
   - pip install -r ./testlib/test_reqs.txt
 # command to run tests
-script: python ./test_sake.py
+script:
+    - python ./test_sake.py
+    - cd functests/test3/ && python ./functest.py

@@ -115,14 +115,13 @@ def write_shas_to_shastore(sha_dict):
         fh.write("...")
 
 
-def take_shas_of_all_files(G, verbose, dont_update_shas_of):
+def take_shas_of_all_files(G, verbose):
     """
     Takes sha1 hash of all dependencies and outputs of all targets
 
     Args:
         The graph we are going to build
         A flag indicating verbosity
-        A list of files to not update the shas for
 
     Returns:
         A dictionary where the keys are the filenames and the
@@ -160,7 +159,7 @@ def take_shas_of_all_files(G, verbose, dont_update_shas_of):
     if len(all_files):
         sha_dict['files'] = {}
         for item in all_files:
-            if os.path.isfile(item) and item not in dont_update_shas_of:
+            if os.path.isfile(item):
                 sha_dict['files'][item] = {'sha': get_sha(item)}
         return sha_dict
     if verbose:
@@ -419,7 +418,7 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
     return True
 
 
-def merge_from_store_and_in_mems(from_store, in_mem_shas):
+def merge_from_store_and_in_mems(from_store, in_mem_shas, dont_update_shas_of):
     """
     If we don't merge the shas from the sha store and if we build a
     subgraph, the .shastore will only contain the shas of the files
@@ -427,10 +426,16 @@ def merge_from_store_and_in_mems(from_store, in_mem_shas):
     rebuilt
     """
     if not from_store:
+        for item in dont_update_shas_of:
+            if item in in_mem_shas['files']:
+                del in_mem_shas['files'][item]
         return in_mem_shas
     for key in from_store['files']:
-        if key not in in_mem_shas['files']:
+        if key not in in_mem_shas['files'] and key not in dont_update_shas_of:
             in_mem_shas['files'][key] = from_store['files'][key]
+    for item in dont_update_shas_of:
+        if item in in_mem_shas['files']:
+            del in_mem_shas['files'][item]
     return in_mem_shas
 
 
@@ -466,7 +471,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         sys.exit(1)
     if verbose:
         print("Dependency resolution is possible")
-    in_mem_shas = take_shas_of_all_files(G, verbose, dont_update_shas_of)
+    in_mem_shas = take_shas_of_all_files(G, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
@@ -531,9 +536,9 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
                                 in_mem_shas[output] = get_sha(output)
     if recon:
         return 0
-    in_mem_shas = take_shas_of_all_files(G, verbose, dont_update_shas_of)
+    in_mem_shas = take_shas_of_all_files(G, verbose)
     if in_mem_shas:
-        in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas)
+        in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas, dont_update_shas_of)
         write_shas_to_shastore(in_mem_shas)
     print("Done")
     return 0

@@ -36,7 +36,7 @@
 
 
 const char *header_text = 
-    "\nqstats v1.1 -- quick and dirty statistics tool for the "
+    "\nqstats v1.0 -- quick and dirty statistics tool for the "
     "Unix pipeline\n";
 
 const char *usage_text =

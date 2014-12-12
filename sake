@@ -193,6 +193,7 @@ def all_preds(preds):
             else:
                 return preds
         car, cdr = preds[0], preds[1:]
+        sys.stdout.flush()
         return all_preds(G.predecessors(car)) + all_preds(car) + all_preds(cdr)
     else:
         return [preds]
@@ -258,14 +259,20 @@ except:
                 if args.force:
                     # force will not build any predecessors
                     nodes_in_subgraph.append(node[0])
-                    my_ties = acts.get_tied_targets(nodes_in_subgraph, ties)
                     subgraph = G.subgraph(my_ties)
                 else:
                     nodes_in_subgraph = nodes_in_subgraph+all_preds([node[0]])
                     nodes_in_subgraph = list(set(nodes_in_subgraph))
-                    my_ties = acts.get_tied_targets(nodes_in_subgraph, ties)
-                    nodes_in_subgraph = list(set(all_preds(my_ties)))
                     subgraph = G.subgraph(nodes_in_subgraph)
+        my_ties, ties_message = acts.get_tied_targets(nodes_in_subgraph, ties)
+        for tie in my_ties:
+            preds = list(set(all_preds([tie])))
+            for pred in preds:
+                nodes_in_subgraph.append(pred)
+        nodes_in_subgraph = list(set(nodes_in_subgraph))
+        subgraph = G.subgraph(nodes_in_subgraph)
+        if ties_message:
+            print(ties_message)
         retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
                                         args.force, args.recon, args.parallel,
                                        dont_update_shas_of=no_sha_update)
@@ -277,11 +284,15 @@ except:
 # force will not build any predecessors
 if args.force:
     # check for need to run ties
-    my_ties = acts.get_tied_targets([args.target], ties)
+    my_ties, ties_message = acts.get_tied_targets([args.target], ties)
+    if ties_message:
+        print(ties_message)
     subgraph = G.subgraph(my_ties)
 else:
     nodes_in_subgraph = list(set(all_preds([args.target])))
-    my_ties = acts.get_tied_targets(nodes_in_subgraph, ties)
+    my_ties, ties_message = acts.get_tied_targets(nodes_in_subgraph, ties)
+    if ties_message:
+        print(ties_message)
     nodes_in_subgraph = list(set(all_preds(my_ties)))
     subgraph = G.subgraph(nodes_in_subgraph)
 

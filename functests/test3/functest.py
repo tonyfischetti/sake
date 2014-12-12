@@ -119,7 +119,7 @@ passed("sake recon full")
 #  sake build full  #
 #####################
 # let's make sure it builds everything
-out, err = run("../../sake", spit_output=True)
+out, err = run("../../sake")
 expected = """Running target compile graphfuncs
 gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
 Running target compile infuncs
@@ -137,7 +137,7 @@ Running target ensure version match
 Running target output version text file
 bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\\1/') | figlet > VERSION.txt"
 Running target package it
-mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
@@ -459,7 +459,7 @@ Running target ensure version match
 Running target output version text file
 bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\\1/') | figlet > VERSION.txt"
 Running target package it
-mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
@@ -574,7 +574,7 @@ gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
 Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
 Running target package it
-mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:
@@ -777,7 +777,7 @@ Running target ensure version match
 Running target output version text file
 bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\\1/') | figlet > VERSION.txt"
 Running target package it
-mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
 if out != expected:

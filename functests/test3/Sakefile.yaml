@@ -79,7 +79,7 @@ package it:
         mkdir qstats-v1.0;
         cp qstats qstats-v1.0;
         cp qstats-documentation.html qstats-v1.0;
-        tar cvfz qstats.tar.gz qstats-v1.0;
+        tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1;
         rm -rf qstats-v1.0;
     output:
         - qstats.tar.gz

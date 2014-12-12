@@ -289,12 +289,33 @@ if out != expected:
 passed('sake recon "compile objects"')
 
 
+########################################
+#  sake force recon "compile objects"  #
+########################################
+out, err = run('../../sake -F -r "compile objects"')
+expected = """The following targets share dependencies and must be run together:
+  - compile qstats driver
+  - ensure version match
+Would run target: compile graphfuncs
+Would run target: compile infuncs
+Would run target: compile qstats driver
+Would run target: compile statfuncs
+Would run target: ensure version match
+"""
+if out != expected:
+    FAIL('sake force recon "compile objects" failed!')
+passed('sake force recon "compile objects"')
+
+
 ##################################
 #  sake force "compile objects"  #
 ##################################
 # force compile the four c files into objects
-out, err = run('../../sake -F -r "compile objects"', spit_output=True)
-expected = """Running target compile graphfuncs
+out, err = run('../../sake -F "compile objects"')
+expected = """The following targets share dependencies and must be run together:
+  - compile qstats driver
+  - ensure version match
+Running target compile graphfuncs
 gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
 Running target compile infuncs
 gcc -c -o infuncs.o infuncs.c -Wall -O2 -I./include
@@ -302,6 +323,8 @@ Running target compile qstats driver
 gcc -c -o qstats.o qstats.c -Wall -O2 -I./include
 Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+Running target ensure version match
+./ensure_version_match.sh
 Done
 """
 if out != expected:
@@ -327,24 +350,30 @@ passed("sake clean full")
 ########################################
 #  sake force recon "compile objects"  #
 ########################################
-# corfirm would compile all objects but nothing else
 out, err = run('../../sake -F -r "compile objects"')
-expected = """Would run target: compile graphfuncs
+expected = """The following targets share dependencies and must be run together:
+  - compile qstats driver
+  - ensure version match
+Would run target: compile graphfuncs
 Would run target: compile infuncs
 Would run target: compile qstats driver
 Would run target: compile statfuncs
+Would run target: ensure version match
 """
 if out != expected:
     FAIL('sake force recon "compile objects" failed!')
 passed('sake force recon "compile objects"')
 
 
-
 ##################################
 #  sake force "compile objects"  #
 ##################################
+# force compile the four c files into objects
 out, err = run('../../sake -F "compile objects"')
-expected = """Running target compile graphfuncs
+expected = """The following targets share dependencies and must be run together:
+  - compile qstats driver
+  - ensure version match
+Running target compile graphfuncs
 gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
 Running target compile infuncs
 gcc -c -o infuncs.o infuncs.c -Wall -O2 -I./include
@@ -352,14 +381,13 @@ Running target compile qstats driver
 gcc -c -o qstats.o qstats.c -Wall -O2 -I./include
 Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+Running target ensure version match
+./ensure_version_match.sh
 Done
 """
 if out != expected:
     FAIL('sake force "compile objects" failed!')
-if os.path.isfile("qstats"):
-    FAIL('sake force "compile objects" failed!')
 passed('sake force "compile objects"')
-
 
 #####################
 #  sake clean full  #
@@ -371,6 +399,7 @@ if out != "All clean\n":
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("./VERSION.txt") or
     os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake clean full failed")
 passed("sake clean full")
@@ -393,6 +422,10 @@ Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
 Running target generate html documentation
 pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+Running target ensure version match
+./ensure_version_match.sh
+Running target output version text file
+bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\\1/') | figlet > VERSION.txt"
 Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
 Done
@@ -402,6 +435,7 @@ if out != expected:
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
     not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("./VERSION.txt") or
     not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake build full failed!")
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
@@ -449,6 +483,7 @@ if out:
     FAIL("touch statfuncs and sake recon failed!")
 passed("touch statfuncs and sake recon")
 
+sys.exit(1)
 
 ###################################
 #  edit statfuncs and sake recon  #

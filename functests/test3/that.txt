@@ -1,4 +1,0 @@
-Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel
-Going to run these targets 'build binary, generate html documentation' in parallel
-Going to run these targets 'ensure version match, output version text file, package it' in parallel
-Done

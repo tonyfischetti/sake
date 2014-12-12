@@ -532,8 +532,8 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
                 if "output" in node_dict:
                     for output in acts.get_all_outputs(node_dict):
                         if from_store:
-                            if output in from_store and output not in dont_update_shas_of:
-                                in_mem_shas[output] = get_sha(output)
+                            if output in from_store['files'] and output not in dont_update_shas_of:
+                                in_mem_shas['files'][output] = {"sha": get_sha(output)}
     if recon:
         return 0
     in_mem_shas = take_shas_of_all_files(G, verbose)

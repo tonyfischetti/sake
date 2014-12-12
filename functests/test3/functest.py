@@ -121,15 +121,15 @@ passed("sake recon full")
 # let's make sure it builds everything
 out, err = run("../../sake", spit_output=True)
 expected = """Running target compile graphfuncs
-gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
+gcc -c -o graphfuncs.o graphfuncs.c -w -O2 -I./include
 Running target compile infuncs
-gcc -c -o infuncs.o infuncs.c -Wall -O2 -I./include
+gcc -c -o infuncs.o infuncs.c -w -O2 -I./include
 Running target compile qstats driver
-gcc -c -o qstats.o qstats.c -Wall -O2 -I./include
+gcc -c -o qstats.o qstats.c -w -O2 -I./include
 Running target compile statfuncs
-gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target build binary
-gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Running target generate html documentation
 pandoc -f markdown -t html qstats.md -o qstats-documentation.html
 Running target ensure version match
@@ -293,7 +293,7 @@ passed('sake "build binary"')
 # confirm that it forces a build of binary
 out, err = run('../../sake -F "build binary"')
 expected = """Running target build binary
-gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Done
 """
 if out != expected:
@@ -348,13 +348,13 @@ expected = """The following targets share dependencies and must be run together:
   - compile qstats driver
   - ensure version match
 Running target compile graphfuncs
-gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
+gcc -c -o graphfuncs.o graphfuncs.c -w -O2 -I./include
 Running target compile infuncs
-gcc -c -o infuncs.o infuncs.c -Wall -O2 -I./include
+gcc -c -o infuncs.o infuncs.c -w -O2 -I./include
 Running target compile qstats driver
-gcc -c -o qstats.o qstats.c -Wall -O2 -I./include
+gcc -c -o qstats.o qstats.c -w -O2 -I./include
 Running target compile statfuncs
-gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target ensure version match
 ./ensure_version_match.sh
 Done
@@ -406,13 +406,13 @@ expected = """The following targets share dependencies and must be run together:
   - compile qstats driver
   - ensure version match
 Running target compile graphfuncs
-gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
+gcc -c -o graphfuncs.o graphfuncs.c -w -O2 -I./include
 Running target compile infuncs
-gcc -c -o infuncs.o infuncs.c -Wall -O2 -I./include
+gcc -c -o infuncs.o infuncs.c -w -O2 -I./include
 Running target compile qstats driver
-gcc -c -o qstats.o qstats.c -Wall -O2 -I./include
+gcc -c -o qstats.o qstats.c -w -O2 -I./include
 Running target compile statfuncs
-gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target ensure version match
 ./ensure_version_match.sh
 Done
@@ -443,15 +443,15 @@ passed("sake clean full")
 # let's make sure it builds everything
 out, err = run("../../sake")
 expected = """Running target compile graphfuncs
-gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
+gcc -c -o graphfuncs.o graphfuncs.c -w -O2 -I./include
 Running target compile infuncs
-gcc -c -o infuncs.o infuncs.c -Wall -O2 -I./include
+gcc -c -o infuncs.o infuncs.c -w -O2 -I./include
 Running target compile qstats driver
-gcc -c -o qstats.o qstats.c -Wall -O2 -I./include
+gcc -c -o qstats.o qstats.c -w -O2 -I./include
 Running target compile statfuncs
-gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target build binary
-gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Running target generate html documentation
 pandoc -f markdown -t html qstats.md -o qstats-documentation.html
 Running target ensure version match
@@ -494,7 +494,7 @@ passed("delete binary and sake recon")
 # package it isn't run because the hash is the same!
 out, err = run("../../sake")
 expected = """Running target build binary
-gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Done
 """
 if out != expected:
@@ -538,7 +538,7 @@ passed("edit statfuncs and sake recon")
 #############################
 out, err = run("../../sake")
 expected = """Running target compile statfuncs
-gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Done
 """
 if out != expected:
@@ -570,9 +570,9 @@ passed("big edit statfuncs and sake recon")
 # it should be repackaged
 out, err = run("../../sake")
 expected = """Running target compile statfuncs
-gcc -c -o statfuncs.o statfuncs.c -Wall -O2 -I./include
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target build binary
-gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -Wall -O2 -I./include -lm
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done

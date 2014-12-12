@@ -119,7 +119,7 @@ passed("sake recon full")
 #  sake build full  #
 #####################
 # let's make sure it builds everything
-out, err = run("../../sake")
+out, err = run("../../sake", spit_output=True)
 expected = """Running target compile graphfuncs
 gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
 Running target compile infuncs

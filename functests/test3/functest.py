@@ -293,7 +293,7 @@ passed('sake recon "compile objects"')
 #  sake force "compile objects"  #
 ##################################
 # force compile the four c files into objects
-out, err = run('../../sake -F "compile objects"', spit_output=True)
+out, err = run('../../sake -F -r "compile objects"', spit_output=True)
 expected = """Running target compile graphfuncs
 gcc -c -o graphfuncs.o graphfuncs.c -Wall -O2 -I./include
 Running target compile infuncs

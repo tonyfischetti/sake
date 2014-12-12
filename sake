@@ -259,16 +259,19 @@ except:
                 if args.force:
                     # force will not build any predecessors
                     nodes_in_subgraph.append(node[0])
-                    subgraph = G.subgraph(my_ties)
+                    subgraph = G.subgraph(nodes_in_subgraph)
                 else:
                     nodes_in_subgraph = nodes_in_subgraph+all_preds([node[0]])
                     nodes_in_subgraph = list(set(nodes_in_subgraph))
                     subgraph = G.subgraph(nodes_in_subgraph)
         my_ties, ties_message = acts.get_tied_targets(nodes_in_subgraph, ties)
         for tie in my_ties:
-            preds = list(set(all_preds([tie])))
-            for pred in preds:
-                nodes_in_subgraph.append(pred)
+            if not args.force:
+                preds = list(set(all_preds([tie])))
+                for pred in preds:
+                    nodes_in_subgraph.append(pred)
+            else:
+                nodes_in_subgraph.append(tie)
         nodes_in_subgraph = list(set(nodes_in_subgraph))
         subgraph = G.subgraph(nodes_in_subgraph)
         if ties_message:

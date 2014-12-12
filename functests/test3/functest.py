@@ -706,7 +706,11 @@ expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 1 error generated.
 Command failed to run
 """
-if err != expected:
+expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+compilation terminated.
+Command failed to run
+"""
+if err != expected and err != expected2:
     FAIL("break target with no ancestors sake failed!")
 out, err = run("../../sake -r", spit_output=True)
 expected = """Would run target: compile statfuncs

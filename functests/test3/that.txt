@@ -1,0 +1,96 @@
+                                  start clean          passed
+                              sake recon full          passed
+                              sake build full          passed
+                              sake recon full          passed
+                              sake build full          passed
+                        sake recon clean full          passed
+                              sake clean full          passed
+                     sake recon parallel full          passed
+                           sake parallel full          passed
+                         sake "build twinary"          passed
+                          sake "build binary"          passed
+                    sake force "build binary"          passed
+                 sake recon "compile objects"          passed
+           sake force recon "compile objects"          passed
+                 sake force "compile objects"          passed
+                              sake clean full          passed
+           sake force recon "compile objects"          passed
+                 sake force "compile objects"          passed
+                              sake clean full          passed
+                              sake build full          passed
+                 delete binary and sake recon          passed
+                       delete binary and sake          passed
+               touch statfuncs and sake recon          passed
+                edit statfuncs and sake recon          passed
+                      edit statfuncs and sake          passed
+            big edit statfuncs and sake recon          passed
+                  big edit statfuncs and sake          passed
+                              sake clean full          passed
+
+THIS WAS THE OUTPUT:
+Running target compile graphfuncs
+Running target compile infuncs
+Running target compile qstats driver
+Running target compile statfuncs
+Running target build binary
+Running target generate html documentation
+Running target ensure version match
+Running target output version text file
+Running target package it
+Done
+
+=======
+
+THIS WAS THE ERR:
+
+=======
+                        sake quiet build full          passed
+
+THIS WAS THE OUTPUT:
+You can 'sake' one of the following...
+
+"build binary":
+  - uses the object files and compiles the final qstats binary
+
+"compile objects":
+  - compile all c files into object files
+
+    "compile graphfuncs":
+      -  compiles the graphing functions
+
+    "compile infuncs":
+      -  compiles the input functions
+
+    "compile qstats driver":
+      -  compiles the qstats driver c program
+
+    "compile statfuncs":
+      -  compiles the statistics functions
+
+"ensure version match":
+  - this is to ensure that the version from qstats.c matches the version in the html output
+
+"generate html documentation":
+  - uses pandoc to generate html documentation from markdown
+
+"output wrapper":
+  - this is a wrapper around 'output version text file' to appropriately test the entire API
+
+    "output version text file":
+      -  this is a silly target that outputs the qstats version ascii-art printed, it is needed to test the whole API
+
+"package it":
+  - takes the final binary and documentation and puts it in a tarball
+
+clean:
+  -  remove all targets' outputs and start from scratch
+
+visual:
+  -  output visual representation of project's dependencies
+
+
+=======
+
+THIS WAS THE ERR:
+
+=======

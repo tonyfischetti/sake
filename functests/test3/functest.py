@@ -8,19 +8,51 @@
 ##                                 ##
 #####################################
 
+from __future__ import unicode_literals
+from __future__ import print_function
 import os
 import sys
 import shutil
 import time
+import hashlib
 from difflib import ndiff
 from subprocess import Popen, PIPE
 
+if sys.version_info[0] < 3:
+    import codecs
+    old_open = open
+    open = codecs.open
+else:
+    old_open = open
 
 here = os.path.dirname(__file__)
 os.chdir(here)
 
 ## !!!!!!!!!!! change directory later
 
+
+def get_sha(a_file):
+    """
+    Returns sha1 hash of the file supplied as an argument
+    """
+    try:
+        BLOCKSIZE = 65536
+        hasher = hashlib.sha1()
+        with old_open(a_file, "rb") as fh:
+            buf = fh.read(BLOCKSIZE)
+            while len(buf) > 0:
+                hasher.update(buf)
+                buf = fh.read(BLOCKSIZE)
+        the_hash = hasher.hexdigest()
+    except IOError:
+        errmes = "File '{}' could not be read! Exiting!\n".format(a_file)
+        sys.stdout.write(errmes)
+        sys.exit(1)
+    except:
+        errmes = "Unspecified error returning sha1 hash. Exiting!\n"
+        sys.stdout.write(errmes)
+        sys.exit(1)
+    return the_hash
 
 def FAIL(message):
     sys.stderr.write(message + "\n")
@@ -483,7 +515,6 @@ if out:
     FAIL("touch statfuncs and sake recon failed!")
 passed("touch statfuncs and sake recon")
 
-sys.exit(1)
 
 ###################################
 #  edit statfuncs and sake recon  #
@@ -556,6 +587,7 @@ passed("big edit statfuncs and sake")
 ## MOVE BACK GOOD STATFUNCS.c
 shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
 
+
 #####################
 #  sake clean full  #
 #####################
@@ -566,6 +598,7 @@ if out != "All clean\n":
 if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
     os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
     os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("./VERSION.txt") or
     os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
     FAIL("sake clean full failed")
 passed("sake clean full")
@@ -582,6 +615,8 @@ Running target compile qstats driver
 Running target compile statfuncs
 Running target build binary
 Running target generate html documentation
+Running target ensure version match
+Running target output version text file
 Running target package it
 Done
 """
@@ -590,6 +625,7 @@ if out != expected:
 if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
     not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
     not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("./VERSION.txt") or
     not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
     FAIL("sake quiet build full failed!")
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
@@ -622,8 +658,17 @@ expected = """You can 'sake' one of the following...
     "compile statfuncs":
       -  compiles the statistics functions
 
+"ensure version match":
+  - this is to ensure that the version from qstats.c matches the version in the html output
+
 "generate html documentation":
   - uses pandoc to generate html documentation from markdown
+
+"output wrapper":
+  - this is a wrapper around 'output version text file' to appropriately test the entire API
+
+    "output version text file":
+      -  this is a silly target that outputs the qstats version ascii-art printed, it is needed to test the whole API
 
 "package it":
   - takes the final binary and documentation and puts it in a tarball
@@ -667,6 +712,8 @@ out, err = run("../../sake -r")
 expected = """Would run target: compile statfuncs
 Would run target: build binary
 Would run target: generate html documentation
+Would run target: ensure version match
+Would run target: output version text file
 Would run target: package it
 """
 if out != expected:
@@ -695,7 +742,7 @@ if out != expected:
 out, err = run("../../sake -r -p")
 expected = """Would run target 'compile statfuncs'
 Would run targets 'build binary, generate html documentation' in parallel
-Would run target 'package it'
+Would run targets 'ensure version match, output version text file, package it' in parallel
 """
 if out != expected:
     FAIL("break target with no ancestors sake parallel failed!")
@@ -708,7 +755,8 @@ shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
 #################################
 #  edit documentation and sake  #
 #################################
-# should only rerun "generate html documentation" and "package it"
+# should only rerun "generate html documentation",
+#   "ensure version match", "output version text file", and "package it"
 out, err = run("../../sake clean")
 out, err = run("../../sake")
 shutil.copy("./qstats.md", "./BACKUPqstats.md")
@@ -724,6 +772,10 @@ if out != "Would run target: generate html documentation\n":
 out, err = run("../../sake")
 expected = """Running target generate html documentation
 pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+Running target ensure version match
+./ensure_version_match.sh
+Running target output version text file
+bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\\1/') | figlet > VERSION.txt"
 Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0; rm -rf qstats-v1.0;
 Done
@@ -743,7 +795,7 @@ out, err = run("../../sake clean")
 out, err = run("../../sake -p -q")
 expected = """Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel
 Going to run these targets 'build binary, generate html documentation' in parallel
-Running target package it
+Going to run these targets 'ensure version match, output version text file, package it' in parallel
 Done
 """
 if out != expected:
@@ -800,34 +852,125 @@ passed("quiet error parallel")
 shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
 
 
-
 #############################
 #  sake visual no graphviz  #
 #############################
-out, err = run("../../sake visual -n", spit_output=True)
+out, err = run("../../sake visual -n")
 expected = """strict digraph DependencyDiagram {
 "build binary" -> "package it";
 "compile graphfuncs" -> "build binary";
 "compile infuncs" -> "build binary";
 "compile qstats driver" -> "build binary";
 "compile statfuncs" -> "build binary";
+"generate html documentation" -> "ensure version match";
+"generate html documentation" -> "output version text file";
 "generate html documentation" -> "package it";
 "build binary"
 "compile graphfuncs"
 "compile infuncs"
 "compile qstats driver"
 "compile statfuncs"
+"ensure version match"
 "generate html documentation"
+"output version text file"
 "package it"
 }"""
+with open("dependencies", "r") as fh:
+    dotfile = fh.read()
+if dotfile != expected:
+    FAIL("sake visual no graphviz failed!")
+passed("sake visual no graphviz")
+os.remove("dependencies")
 
 
+#############################################
+#  sake visual no graphviz custom filename  #
+#############################################
+out, err = run("../../sake visual -n -f custom.dot")
+expected = """strict digraph DependencyDiagram {
+"build binary" -> "package it";
+"compile graphfuncs" -> "build binary";
+"compile infuncs" -> "build binary";
+"compile qstats driver" -> "build binary";
+"compile statfuncs" -> "build binary";
+"generate html documentation" -> "ensure version match";
+"generate html documentation" -> "output version text file";
+"generate html documentation" -> "package it";
+"build binary"
+"compile graphfuncs"
+"compile infuncs"
+"compile qstats driver"
+"compile statfuncs"
+"ensure version match"
+"generate html documentation"
+"output version text file"
+"package it"
+}"""
+with open("custom.dot", "r") as fh:
+    dotfile = fh.read()
+if dotfile != expected:
+    FAIL("sake visual no graphviz custom filename failed!")
+passed("sake visual no graphviz custom filename")
+os.remove("custom.dot")
+
+
+
+##################################
+#  sake visual graphviz formats  #
+##################################
+out, err = run("../../sake visual")
+if "0ed2137c293d7f04db3dde87bed6487721e7ae62" != get_sha('dependencies.svg'):
+    FAIL("sake visual graphviz svg failed!")
+passed("sake visual graphviz svg")
+os.remove("./dependencies.svg")
+
+out, err = run("../../sake visual -f deps")
+if "0ed2137c293d7f04db3dde87bed6487721e7ae62" != get_sha('deps.svg'):
+    FAIL("sake visual graphviz custom svg failed!")
+passed("sake visual graphviz custom svg")
+os.remove("./deps.svg")
+
+out, err = run("../../sake visual -f deps.jpg")
+if "a799b75804a850c7a84424a3a3191b6357655556" != get_sha('deps.jpg'):
+    FAIL("sake visual graphviz custom jpg failed!")
+passed("sake visual graphviz custom jpg")
+os.remove("./deps.jpg")
+
+out, err = run("../../sake visual -f deps.jpeg")
+if "a799b75804a850c7a84424a3a3191b6357655556" != get_sha('deps.jpeg'):
+    FAIL("sake visual graphviz custom jpeg failed!")
+passed("sake visual graphviz custom jpeg")
+os.remove("./deps.jpeg")
+
+out, err = run("../../sake visual -f deps.png")
+if "05d908d6cc619503466b7d7b1798bfae7154b046" != get_sha('deps.png'):
+    FAIL("sake visual graphviz custom png failed!")
+passed("sake visual graphviz custom png")
+os.remove("./deps.png")
+
+out, err = run("../../sake visual -f deps.gif")
+if "b9d5b57f3d417e51a1d2eae3d9125a961e0532e9" != get_sha('deps.gif'):
+    FAIL("sake visual graphviz custom gif failed!")
+passed("sake visual graphviz custom gif")
+os.remove("./deps.gif")
+
+out, err = run("../../sake visual -f deps.ps")
+if "76506d3d1a329c8d2c8f3f43bfb6a787b0571b97" != get_sha('deps.ps'):
+    FAIL("sake visual graphviz custom ps failed!")
+passed("sake visual graphviz custom ps")
+os.remove("./deps.ps")
+
+out, err = run("../../sake visual -f deps.pdf")
+if "c2b0ae4e755a3e24bd17e96c8e5984ac4d6bf479" != get_sha('deps.pdf'):
+    FAIL("sake visual graphviz custom pdf failed!")
+passed("sake visual graphviz custom pdf")
+os.remove("./deps.pdf")
 
 
 ###------
 # confirm sake visual no graphiz custom filename
 # sake visual
 # sake visual other formats
-
-
-
+#
+# most recent bug fixes
+# get rid of tar.gz and rebuild

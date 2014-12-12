@@ -699,7 +699,7 @@ statfuncs = statfuncs.replace("#include <float.h>",
 with open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake clean")
-out, err = run("../../sake")
+out, err = run("../../sake", spit_output=True)
 expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 #include <deadcandance.h>
          ^

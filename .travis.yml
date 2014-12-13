@@ -6,7 +6,7 @@ python:
   - "3.4"
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq build-essential pandoc figlet
+ - sudo apt-get install -qq build-essential pandoc figlet graphviz
 # command to install dependencies
 install:
   - pip install .

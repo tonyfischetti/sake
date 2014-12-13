@@ -15,6 +15,7 @@ import sys
 import shutil
 import time
 import hashlib
+import platform
 from difflib import ndiff
 from subprocess import Popen, PIPE
 

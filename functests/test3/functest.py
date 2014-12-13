@@ -730,7 +730,7 @@ passed("break target with no ancestors sake")
 ##################################################
 # making sure breaking behavior is correct when parallel building
 out, err = run("../../sake clean")
-out, err = run("../../sake -p", spit_output=True)
+out, err = run("../../sake -p")
 expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 #include <deadcandance.h>
          ^
@@ -823,7 +823,7 @@ statfuncs = statfuncs.replace("#include <float.h>",
 with open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake clean")
-out, err = run("../../sake -q")
+out, err = run("../../sake -q", spit_output=True)
 expected = """Running target compile graphfuncs
 Running target compile infuncs
 Running target compile qstats driver
@@ -837,7 +837,11 @@ expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 1 error generated.
 Command failed to run
 """
-if err != expected:
+expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+compilation terminated.
+Command failed to run
+"""
+if err != expected and err != expected2:
     FAIL("quiet error failed!")
 passed("quiet error")
 
@@ -846,7 +850,7 @@ passed("quiet error")
 #  quiet error parallel  #
 ##########################
 out, err = run("../../sake clean")
-out, err = run("../../sake -q -p")
+out, err = run("../../sake -q -p", spit_output=True)
 expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
 if out != expected:
     FAIL("quiet error parallel failed!")

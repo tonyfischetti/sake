@@ -119,7 +119,7 @@ passed("sake recon full")
 #  sake build full  #
 #####################
 # let's make sure it builds everything
-out, err = run("../../sake", spit_output=True)
+out, err = run("../../sake")
 expected = """Running target compile graphfuncs
 gcc -c -o graphfuncs.o graphfuncs.c -w -O2 -I./include
 Running target compile infuncs
@@ -699,7 +699,7 @@ statfuncs = statfuncs.replace("#include <float.h>",
 with open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake clean")
-out, err = run("../../sake", spit_output=True)
+out, err = run("../../sake")
 expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 #include <deadcandance.h>
          ^
@@ -712,7 +712,7 @@ Command failed to run
 """
 if err != expected and err != expected2:
     FAIL("break target with no ancestors sake failed!")
-out, err = run("../../sake -r", spit_output=True)
+out, err = run("../../sake -r")
 expected = """Would run target: compile statfuncs
 Would run target: build binary
 Would run target: generate html documentation
@@ -730,7 +730,7 @@ passed("break target with no ancestors sake")
 ##################################################
 # making sure breaking behavior is correct when parallel building
 out, err = run("../../sake clean")
-out, err = run("../../sake -p")
+out, err = run("../../sake -p", spit_output=True)
 expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 #include <deadcandance.h>
          ^
@@ -738,7 +738,14 @@ expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 Target 'compile statfuncs' failed!
 A command failed to run
 """
-if err != expected:
+expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+#include <deadcandance.h>
+         ^
+1 error generated.
+Target 'compile statfuncs' failed!
+A command failed to run
+"""
+if err != expected and err != expected2:
     FAIL("break target with no ancestors sake parallel failed!")
 expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
 if out != expected:

@@ -739,9 +739,7 @@ Target 'compile statfuncs' failed!
 A command failed to run
 """
 expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
-#include <deadcandance.h>
-         ^
-1 error generated.
+compilation terminated.
 Target 'compile statfuncs' failed!
 A command failed to run
 """

@@ -728,7 +728,9 @@ It provides useful information to someone (a human) reading the Sakefile so
 they can tell where a file came from and why it's there.
 @end enumerate
 As with the @code{dependencies} entries, output entries may contain wildcard
-characters but, again, this may obscure clarity.
+characters but, again, this may obscure clarity. It is also potentially
+dangerous, as @code{sake clean} will remove files that match the wildcard
+that may be unintended.
 @c ----------
 
 @c ----------
@@ -763,7 +765,7 @@ by adding "@code{(ignore)}" in front of the attribute name, as in this example:
 @example
 format raw data:
     help: format raw (copy and pasted) data using perl
-    (ignore) WARNING: the regular expression need to be rewritten for readibility
+    (ignore) WARNING: the regular expression need to be rewritten...
     ...
 @end example
 
@@ -1049,6 +1051,11 @@ It is important to note that even if they haven't been named, sake will
 @emph{not} ignore targets if they are dependencies of the target that was
 asked to be built. Only the targets that don't have anything to do with the
 target that was asked to be built will be ignored.
+
+In some project configurations, if a specific target is named, sake will
+require that another target/targets run as well. This occurs when two
+targets share dependencies and building one without the other will
+break project integrity.
 @c ----------
 
 @c ----------
@@ -1289,30 +1296,15 @@ sake visual -f anothername
 This will name the file "@code{anothername.svg}" (the file extention is
 automatically appended).
 
-In the interest of simplicity, sake doesn't explicitly support exporting to
-image file formats other than SVG. If you'd like to have your dependency
-graph in another file format, can do this in two ways:
-@enumerate
-@item
-Use conversion software to convert the SVG output from sake into another
-format.
-@item
-Use the @code{-n} option to cause sake to skip the call to Graphviz and
-just output the text file that describes the graph. Then you can use
-Graphviz's @code{dot} executable directly on the file like so
+If another image format is desired, specify a filename with the @code{-f}
+flag and include a file extension. For example, to get a jpeg representation
+of the dependency network, use:
 @example
-$ sake visual -n
-$ dot -Tpng dependencies -o dependencies.png
+sake visual -f somename.jpg
 @end example
-or
-@example
-$ sake visual -n -f foo.txt
-$ dot -Tps foo.txt -o foo.ps
-@end example
-@end enumerate
+Sake can handle the following file extentions and image formats:
+(.svg, .jpg (or .jpeg), .png, .gif, .ps, .pdf)
 
-For more information on how to use @code{dot}, consult the man page, or
-read documentation online.
 
 @*
 @*

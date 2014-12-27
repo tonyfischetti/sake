@@ -758,7 +758,9 @@ structure.
 they can tell where a file came from and why it&rsquo;s there.
 </li></ol>
 <p>As with the <code>dependencies</code> entries, output entries may contain wildcard
-characters but, again, this may obscure clarity.
+characters but, again, this may obscure clarity. It is also potentially
+dangerous, as <code>sake clean</code> will remove files that match the wildcard
+that may be unintended.
 </p>
 <a name="Ignored-attributes"></a>
 <h4 class="subsection">3.3.6 Ignored attributes</h4>
@@ -792,7 +794,7 @@ by adding &quot;<code>(ignore)</code>&quot; in front of the attribute name, as i
 </p><div class="example">
 <pre class="example">format raw data:
     help: format raw (copy and pasted) data using perl
-    (ignore) WARNING: the regular expression need to be rewritten for readibility
+    (ignore) WARNING: the regular expression need to be rewritten...
     ...
 </pre></div>
 
@@ -1070,6 +1072,11 @@ words as separate arguments, like
 asked to be built. Only the targets that don&rsquo;t have anything to do with the
 target that was asked to be built will be ignored.
 </p>
+<p>In some project configurations, if a specific target is named, sake will
+require that another target/targets run as well. This occurs when two
+targets share dependencies and building one without the other will
+break project integrity.
+</p>
 <a name="Debugging-a-Sakefile"></a>
 <h4 class="subsection">3.7.2 Debugging a Sakefile</h4>
 <p>When writing and testing any Sakefile for a project of sufficient complexity,
@@ -1298,29 +1305,16 @@ text file that describes the graph into a image.
 <p>This will name the file &quot;<code>anothername.svg</code>&quot; (the file extention is
 automatically appended).
 </p>
-<p>In the interest of simplicity, sake doesn&rsquo;t explicitly support exporting to
-image file formats other than SVG. If you&rsquo;d like to have your dependency
-graph in another file format, can do this in two ways:
-</p><ol>
-<li> Use conversion software to convert the SVG output from sake into another
-format.
-</li><li> Use the <code>-n</code> option to cause sake to skip the call to Graphviz and
-just output the text file that describes the graph. Then you can use
-Graphviz&rsquo;s <code>dot</code> executable directly on the file like so
-<div class="example">
-<pre class="example">$ sake visual -n
-$ dot -Tpng dependencies -o dependencies.png
-</pre></div>
-<p>or
+<p>If another image format is desired, specify a filename with the <code>-f</code>
+flag and include a file extension. For example, to get a jpeg representation
+of the dependency network, use:
 </p><div class="example">
-<pre class="example">$ sake visual -n -f foo.txt
-$ dot -Tps foo.txt -o foo.ps
+<pre class="example">sake visual -f somename.jpg
 </pre></div>
-</li></ol>
-
-<p>For more information on how to use <code>dot</code>, consult the man page, or
-read documentation online.
+<p>Sake can handle the following file extentions and image formats:
+(.svg, .jpg (or .jpeg), .png, .gif, .ps, .pdf)
 </p>
+
 <br>
 <br>
 

@@ -1,338 +1,375 @@
-<html lang="en">
-<head>
-<title>Sake documentation</title>
-<meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Sake documentation">
-<meta name="generator" content="makeinfo 4.13">
-<link title="Top" rel="top" href="#Top">
-<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
-<!--
-This manual is for sake, version 0.9
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for sake, version 0.9.5
 
 Copyright (C) 2013, 2014, Tony Fischetti
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
 
-     Permission is granted to make and distribute verbatim copies of
-     this manual provided the copyright notice and this permission
-     notice are preserved on all copies.
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
 
-     Permission is granted to copy and distribute modified versions of
-     this manual under the conditions for verbatim copying, provided
-     that the entire resulting derived work is distributed under the
-     terms of a permission notice identical to this one.
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice be translated properly. -->
+<!-- Created by GNU Texinfo 5.2, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Sake documentation</title>
 
-     Permission is granted to copy and distribute translations of this
-     manual into another language, under the above conditions for
-     modified versions, except that this permission notice be
-     translated properly.
-   -->
-<meta http-equiv="Content-Style-Type" content="text/css">
-<style type="text/css"><!--
-  pre.display { font-family:inherit }
-  pre.format  { font-family:inherit }
-  pre.smalldisplay { font-family:inherit; font-size:smaller }
-  pre.smallformat  { font-family:inherit; font-size:smaller }
-  pre.smallexample { font-size:smaller }
-  pre.smalllisp    { font-size:smaller }
-  span.sc    { font-variant:small-caps }
-  span.roman { font-family:serif; font-weight:normal; } 
-  span.sansserif { font-family:sans-serif; font-weight:normal; } 
---></style>
+<meta name="description" content="Sake documentation">
+<meta name="keywords" content="Sake documentation">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="#Top" rel="start" title="Top">
+<link href="#SEC_Contents" rel="contents" title="Table of Contents">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
 </head>
-<body>
-<h1 class="settitle">Sake documentation</h1>
-   <div class="contents">
-<h2>Table of Contents</h2>
-<ul>
-<li><a name="toc_Introduction" href="#Introduction">1 Introduction</a>
-<ul>
-<li><a href="#Introduction">1.1 What is it?</a>
-<li><a href="#Introduction">1.2 Who is it for?</a>
-<li><a href="#Introduction">1.3 Nomenclature</a>
-<li><a href="#Introduction">1.4 Differences from GNU Make or other <code>make</code> software</a>
-</li></ul>
-<li><a name="toc_Installation" href="#Installation">2 Installation</a>
-<ul>
-<li><a href="#Installation">2.1 Getting Sake</a>
-<li><a href="#Installation">2.2 Dependencies</a>
-<li><a href="#Installation">2.3 Generic Installation Instructions</a>
-<li><a href="#Installation">2.4 Installation for Mac OS X</a>
-<li><a href="#Installation">2.5 Installation for GNU/Linux (Debian)</a>
-<li><a href="#Installation">2.6 Installation on Windows</a>
-<li><a href="#Installation">2.7 Updating sake</a>
-</li></ul>
-<li><a name="toc_Using-Sake" href="#Using-Sake">3 Using Sake</a>
-<ul>
-<li><a href="#Using-Sake">3.1 Running Sake</a>
-<li><a href="#Using-Sake">3.2 The Sakefile</a>
-<li><a href="#Using-Sake">3.3 Anatomy of a target</a>
-<ul>
-<li><a href="#Using-Sake">3.3.1 Target title</a>
-<li><a href="#Using-Sake">3.3.2 Help</a>
-<li><a href="#Using-Sake">3.3.3 Dependencies</a>
-<li><a href="#Using-Sake">3.3.4 Formula</a>
-<li><a href="#Using-Sake">3.3.5 Output</a>
-<li><a href="#Using-Sake">3.3.6 Ignored attributes</a>
-</li></ul>
-<li><a href="#Using-Sake">3.4 Meta-targets</a>
-<li><a href="#Using-Sake">3.5 Macro definitions</a>
-<li><a href="#Using-Sake">3.6 The special "all" target</a>
-<li><a href="#Using-Sake">3.7 Building a project</a>
-<ul>
-<li><a href="#Using-Sake">3.7.1 Building specific parts of a project</a>
-<li><a href="#Using-Sake">3.7.2 Debugging a Sakefile</a>
-<li><a href="#Using-Sake">3.7.3 Choosing from different Sakefiles</a>
-</li></ul>
-<li><a href="#Using-Sake">3.8 Parallel building</a>
-<li><a href="#Using-Sake">3.9 Other Options</a>
-<ul>
-<li><a href="#Using-Sake">3.9.1 "Recon" mode</a>
-<li><a href="#Using-Sake">3.9.2 Forcing building</a>
-</li></ul>
-<li><a href="#Using-Sake">3.10 Visualization</a>
-</li></ul>
-</li></ul>
-</div>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<h1 class="settitle" align="center">Sake documentation</h1>
 
 
 
-<!--  -->
-<div class="node">
-<a name="Top"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Introduction">Introduction</a>
 
-</div>
 
-<!--  -->
-<ul class="menu">
-<li><a accesskey="1" href="#Introduction">Introduction</a>:  Introduction to Sake
-<li><a accesskey="2" href="#Installation">Installation</a>:  Installing Sake
-<li><a accesskey="3" href="#Using-Sake">Using Sake</a>:  Documentation for use
+
+<a name="SEC_Contents"></a>
+<h2 class="contents-heading">Table of Contents</h2>
+
+<div class="contents">
+<ul class="no-bullet">
+<li><a name="toc-Introduction-1" href="#Introduction">1 Introduction</a>
+<ul class="no-bullet">
+  <li><a name="toc-What-is-it_003f" href="#What-is-it_003f">1.1 What is it?</a></li>
+  <li><a name="toc-Who-is-it-for_003f" href="#Who-is-it-for_003f">1.2 Who is it for?</a></li>
+  <li><a name="toc-Nomenclature" href="#Nomenclature">1.3 Nomenclature</a></li>
+  <li><a name="toc-Differences-from-GNU-Make-or-other-make-software" href="#Differences-from-GNU-Make-or-other-make-software">1.4 Differences from GNU Make or other <code>make</code> software</a></li>
+</ul></li>
+<li><a name="toc-Installation-1" href="#Installation">2 Installation</a>
+<ul class="no-bullet">
+  <li><a name="toc-Getting-Sake" href="#Getting-Sake">2.1 Getting Sake</a></li>
+  <li><a name="toc-Dependencies" href="#Dependencies">2.2 Dependencies</a></li>
+  <li><a name="toc-Generic-Installation-Instructions" href="#Generic-Installation-Instructions">2.3 Generic Installation Instructions</a></li>
+  <li><a name="toc-Installation-for-Mac-OS-X" href="#Installation-for-Mac-OS-X">2.4 Installation for Mac OS X</a></li>
+  <li><a name="toc-Installation-for-GNU_002fLinux-_0028Debian_0029" href="#Installation-for-GNU_002fLinux-_0028Debian_0029">2.5 Installation for GNU/Linux (Debian)</a></li>
+  <li><a name="toc-Installation-on-Windows" href="#Installation-on-Windows">2.6 Installation on Windows</a></li>
+  <li><a name="toc-Updating-sake" href="#Updating-sake">2.7 Updating sake</a></li>
+</ul></li>
+<li><a name="toc-Using-Sake-1" href="#Using-Sake">3 Using Sake</a>
+<ul class="no-bullet">
+  <li><a name="toc-Running-Sake" href="#Running-Sake">3.1 Running Sake</a></li>
+  <li><a name="toc-The-Sakefile" href="#The-Sakefile">3.2 The Sakefile</a></li>
+  <li><a name="toc-Anatomy-of-a-target" href="#Anatomy-of-a-target">3.3 Anatomy of a target</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Target-title" href="#Target-title">3.3.1 Target title</a></li>
+    <li><a name="toc-Help" href="#Help">3.3.2 Help</a></li>
+    <li><a name="toc-Dependencies-1" href="#Dependencies-1">3.3.3 Dependencies</a></li>
+    <li><a name="toc-Formula" href="#Formula">3.3.4 Formula</a></li>
+    <li><a name="toc-Output" href="#Output">3.3.5 Output</a></li>
+    <li><a name="toc-Ignored-attributes" href="#Ignored-attributes">3.3.6 Ignored attributes</a></li>
+  </ul></li>
+  <li><a name="toc-Meta_002dtargets" href="#Meta_002dtargets">3.4 Meta-targets</a></li>
+  <li><a name="toc-Macro-definitions" href="#Macro-definitions">3.5 Macro definitions</a></li>
+  <li><a name="toc-The-special-_0022all_0022-target" href="#The-special-_0022all_0022-target">3.6 The special &quot;all&quot; target</a></li>
+  <li><a name="toc-Building-a-project" href="#Building-a-project">3.7 Building a project</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Building-specific-parts-of-a-project" href="#Building-specific-parts-of-a-project">3.7.1 Building specific parts of a project</a></li>
+    <li><a name="toc-Debugging-a-Sakefile" href="#Debugging-a-Sakefile">3.7.2 Debugging a Sakefile</a></li>
+    <li><a name="toc-Choosing-from-different-Sakefiles" href="#Choosing-from-different-Sakefiles">3.7.3 Choosing from different Sakefiles</a></li>
+  </ul></li>
+  <li><a name="toc-Parallel-building" href="#Parallel-building">3.8 Parallel building</a></li>
+  <li><a name="toc-Other-Options" href="#Other-Options">3.9 Other Options</a>
+  <ul class="no-bullet">
+    <li><a name="toc-_0022Recon_0022-mode" href="#g_t_0022Recon_0022-mode">3.9.1 &quot;Recon&quot; mode</a></li>
+    <li><a name="toc-Forcing-building" href="#Forcing-building">3.9.2 Forcing building</a></li>
+  </ul></li>
+  <li><a name="toc-Visualization" href="#Visualization">3.10 Visualization</a></li>
+</ul></li>
+
 </ul>
-<!--  -->
-
-<!--  -->
-<div class="node">
-<a name="Introduction"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Installation">Installation</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
-
 </div>
 
+
+<a name="Top"></a>
+<div class="header">
+<p>
+Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+</div>
+<h1 class="node-heading">Top</h1>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#Introduction" accesskey="1">Introduction</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Introduction to Sake
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Installation" accesskey="2">Installation</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing Sake
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Using-Sake" accesskey="3">Using Sake</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Documentation for use
+</td></tr>
+</table>
+
+
+
+<hr>
+<a name="Introduction"></a>
+<div class="header">
+<p>
+Next: <a href="#Installation" accesskey="n" rel="next">Installation</a>, Previous: <a href="#Top" accesskey="p" rel="prev">Top</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+</div>
+<a name="Introduction-1"></a>
 <h2 class="chapter">1 Introduction</h2>
 
-<!--  -->
+<a name="What-is-it_003f"></a>
 <h3 class="section">1.1 What is it?</h3>
-
 <p>Sake is a way to easily design, share, build, and visualize workflows with
 intricate interdependencies. Sake is self-documenting because the
 instructions for building a project also serve as the documentation of the
-project's workflow. The first time it's run, sake will build all of the
+project&rsquo;s workflow. The first time it&rsquo;s run, sake will build all of the
 components of a project in an order that automatically satisfies all
 dependencies. For all subsequent runs, sake will only rebuild the parts
 of the project that depend on changed files. This cuts down on unnecessary
 re-building and lets the user concentrate on their work rather than memorizing
 the order in which commands have to be run.
-
-   <p>Sake is free, open source cross-platform software under a very permissive
-license (MIT Expat) and is written in Python. 
-<!--  -->
-
-<!--  -->
+</p>
+<p>Sake is free, open source cross-platform software under a very permissive
+license (MIT Expat) and is written in Python.
+</p>
+<a name="Who-is-it-for_003f"></a>
 <h3 class="section">1.2 Who is it for?</h3>
-
-<p>Sake's insistence on clean formatting, explicit statement of intentions,
+<p>Sake&rsquo;s insistence on clean formatting, explicit statement of intentions,
 capacity for visuallization, ability to work on various platforms, and
 ability to rebuild only what is needed make it a great choice for
-     <ul>
-<li>Scientists that want to share their scientific workflow  with other
-researchers. Sake helps facilitate open science and reproducibility. 
-<li>Data analysts with steps in their pipeline that take hours or days to
-finish running. 
-<li>Business teams that want to share and visualize workflows amongst its
-members, even if they are using different computing platforms. 
-</ul>
-   <!--  -->
+</p><ul>
+<li> Scientists that want to share their scientific workflow  with other
+researchers. Sake helps facilitate open science and reproducibility.
+</li><li> Data analysts with steps in their pipeline that take hours or days to
+finish running.
+</li><li> Business teams that want to share and visualize workflows amongst its
+members, even if they are using different computing platforms.
+</li></ul>
 
-<!--  -->
+<a name="Nomenclature"></a>
 <h3 class="section">1.3 Nomenclature</h3>
-
 <p>To avoid confusion, it would be helpful to expound on some of the terms
 that this documentation will be using.
-     <dl>
-<dt><code>workflow</code><dd>a series of steps performed in a particular order to complete a piece of work. 
-<br><dt><code>scientific workflow</code><dd>a specific type of workflow where many or all of the steps are performed
+</p><dl compact="compact">
+<dt><code>workflow</code></dt>
+<dd><p>a series of steps performed in a particular order to complete a piece of work.
+</p></dd>
+<dt><code>scientific workflow</code></dt>
+<dd><p>a specific type of workflow where many or all of the steps are performed
 by computers. This is a growing trend in science. Data science,
 bioinformatics, cognitive science, and computational linguistics,
-in particular, make heavy use of this paradigm. 
-<br><dt><code>pipeline</code><dd>Another name for a workflow, especially one whose steps produce outputs
-that are fed, as input, into subsequent steps. 
-<br><dt><code>dependency</code><dd>An input or step that is required for another step to execute is said to
-be a <code>dependency</code> of the later step. 
-<br><dt><code>graph</code><dd>a construct in mathematics that represents a set of objects (called 'nodes'
-or 'vertices') and the connections between them (called 'links' or 'edges')
-<br><dt><code>directed graph</code><dd>A type of graph whose connections are unidirectional and can be visually
-represented as arrows. 
-<br><dt><code>directed acyclic graph</code><dd>A type of directed graph that does not contain any loops or cycles. A
+in particular, make heavy use of this paradigm.
+</p></dd>
+<dt><code>pipeline</code></dt>
+<dd><p>Another name for a workflow, especially one whose steps produce outputs
+that are fed, as input, into subsequent steps.
+</p></dd>
+<dt><code>dependency</code></dt>
+<dd><p>An input or step that is required for another step to execute is said to
+be a <code>dependency</code> of the later step.
+</p></dd>
+<dt><code>graph</code></dt>
+<dd><p>a construct in mathematics that represents a set of objects (called &rsquo;nodes&rsquo;
+or &rsquo;vertices&rsquo;) and the connections between them (called &rsquo;links&rsquo; or &rsquo;edges&rsquo;)
+</p></dd>
+<dt><code>directed graph</code></dt>
+<dd><p>A type of graph whose connections are unidirectional and can be visually
+represented as arrows.
+</p></dd>
+<dt><code>directed acyclic graph</code></dt>
+<dd><p>A type of directed graph that does not contain any loops or cycles. A
 directed graph has the property of having at least one ordering of nodes
-such that no node in the ordering 'points to' a node earlier in the ordering. 
-<br><dt><code>dependency graph</code><dd>If the nodes of a directed acyclic graph are viewed as steps in a workflow
+such that no node in the ordering &rsquo;points to&rsquo; a node earlier in the ordering.
+</p></dd>
+<dt><code>dependency graph</code></dt>
+<dd><p>If the nodes of a directed acyclic graph are viewed as steps in a workflow
 or pipeline, and the directional links are viewed as outputs that become
-another step's input, this construct of mathematics is an abstraction of a
-workflow that can be run in an order that satisfies all dependencies. 
+another step&rsquo;s input, this construct of mathematics is an abstraction of a
+workflow that can be run in an order that satisfies all dependencies.
 A visual representation of a dependency graph is an easy and intuitive way
-to view a workflow and the steps involved. 
-<br><dt><code>YAML</code><dd>A data serialization format that is extremely easy to read. 
-<br><dt><code>Sakefile</code><dd>A file written in a subset of YAML that describes a workflow. This is read and
-can be executed or visualized by <code>sake</code>. 
-<br><dt><code>target</code><dd>This is the abstraction of a step in a workflow used by the <code>sakefile</code>. 
+to view a workflow and the steps involved.
+</p></dd>
+<dt><code>YAML</code></dt>
+<dd><p>A data serialization format that is extremely easy to read.
+</p></dd>
+<dt><code>Sakefile</code></dt>
+<dd><p>A file written in a subset of YAML that describes a workflow. This is read and
+can be executed or visualized by <code>sake</code>.
+</p></dd>
+<dt><code>target</code></dt>
+<dd><p>This is the abstraction of a step in a workflow used by the <code>sakefile</code>.
 A <code>sakefile</code> is made of one or more targets. This name is borrowed
-from the <code>make</code> software. 
-<br><dt><code>build</code><dd>(Used as a verb). The execution of the commands of a step. A whole project
-can be built, or just a specific step. The 'build' can be the execution
+from the <code>make</code> software.
+</p></dd>
+<dt><code>build</code></dt>
+<dd><p>(Used as a verb). The execution of the commands of a step. A whole project
+can be built, or just a specific step. The &rsquo;build&rsquo; can be the execution
 of a script, the execution of arbitrary shell commands, the removal of
 intermediate files, the compilation of source files, etc...  A build can
-take microseconds or days to complete. 
+take microseconds or days to complete.
+</p></dd>
 </dl>
-   <!--  -->
 
-<!--  -->
+<a name="Differences-from-GNU-Make-or-other-make-software"></a>
 <h3 class="section">1.4 Differences from GNU Make or other <code>make</code> software</h3>
-
 <p>The ideas behind <code>sake</code> and <code>sakefiles</code> are borrowed heavily
 from <code>make</code> software, which is used primarily to build executables
 from various source files. A <code>makefile</code> can, more generally, be used
 to describe a process that brings one or more source files to some
-'completed' state. Probably nothing is better than <code>make</code> to compile
+&rsquo;completed&rsquo; state. Probably nothing is better than <code>make</code> to compile
 executables, but there are several reasons why using <code>sake</code> may be
 a better choice for some tasks.
-     <ul>
-<li>As a consequence of being so powerful for source code compilation,
+</p><ul>
+<li> As a consequence of being so powerful for source code compilation,
 <code>Makefiles</code> can sometimes be very hard to read and write, particularly
-to the unfamiliar. 
-<li>Most <code>make</code> software assumes that if the timestamp of a file changes,
+to the unfamiliar.
+</li><li> Most <code>make</code> software assumes that if the timestamp of a file changes,
 than all subsequent steps that depend on that file need to be run in order
 to remain up-to-date. In many cases, though, the time-stamp of a file
-can change but the contents remain the same and, thus, a rebuild isn't
-necessary. 
-<li>The syntax of <code>makefiles</code> makes it difficult to intuit the flow of a
+can change but the contents remain the same and, thus, a rebuild isn&rsquo;t
+necessary.
+</li><li> The syntax of <code>makefiles</code> makes it difficult to intuit the flow of a
 pipeline. Additionally, outside tools have to be used in order to visualize
-the flow. 
-<li>Steps like displaying help and cleaning intermediate files are not handled
-automatically by <code>make</code> and are prone to errors. 
-</ul>
-   <code>Sake</code> seeks to rectify these limitations of <code>make</code>. To wit,
-     <ul>
-<li>Sakefiles are written in a very easy-to-read-and-write markup language. 
+the flow.
+</li><li> Steps like displaying help and cleaning intermediate files are not handled
+automatically by <code>make</code> and are prone to errors.
+</li></ul>
+<p><code>Sake</code> seeks to rectify these limitations of <code>make</code>. To wit,
+</p><ul>
+<li> Sakefiles are written in a very easy-to-read-and-write markup language.
 <code>Sake</code> was also not designed with a particular application in mind, so
 the use of <code>sake</code> is just as applicable to one domain as it is to
 another. This cuts down on the number of tools a user must learn to do
-certain specialized tasks. 
-<li>Originally borne out of the frustration of rebuilding targets whenever
+certain specialized tasks.
+</li><li> Originally borne out of the frustration of rebuilding targets whenever
 a timestamp of a file changes and, therefore, being difficult to use
 for data analysis with very long time-consuming analytics, <code>sake</code>
 actually <em>reads</em> the file to determine if a re-building is really
-necessary. 
-<li>The clean nature of the <code>sakefile</code> makes it much easier to intuit
+necessary.
+</li><li> The clean nature of the <code>sakefile</code> makes it much easier to intuit
 the flow of a pipeline. Additionally, a visualization mechanism is built
 right in which produces an image of the dependency graph that is easy to
-study, to share, and is aesthetically pleasing. 
-<li>Sake handles some 'administrative' tasks for the user. This cuts down
-on hard-to-track-down errors. 
-</ul>
-   Perhaps the most fundamental difference between <code>sake</code> and the
+study, to share, and is aesthetically pleasing.
+</li><li> Sake handles some &rsquo;administrative&rsquo; tasks for the user. This cuts down
+on hard-to-track-down errors.
+</li></ul>
+<p>Perhaps the most fundamental difference between <code>sake</code> and the
 <code>make</code> system is that <code>sake</code> seeks not only to be a system that
 builds a project from start to completion (or part of a project) resolving all
 dependencies along the way; <code>sake</code> seeks to simultaneously
 <em>document</em> the project.
-
-   <p>There are some more technical differences between the two systems that may
-confuse a user that is familiar with <code>make</code>. For example, all 'targets'
-in a <code>sakefile</code> are what GNU Make considers 'phony' targets. Targets
+</p>
+<p>There are some more technical differences between the two systems that may
+confuse a user that is familiar with <code>make</code>. For example, all &rsquo;targets&rsquo;
+in a <code>sakefile</code> are what GNU Make considers &rsquo;phony&rsquo; targets. Targets
 in <code>sakefiles</code> are not filenames, but instead more human-readable
-short descriptions of the step. 
-Other differences will become clearer later in the document. 
-<!--  -->
-<!--  -->
+short descriptions of the step.
+Other differences will become clearer later in the document.
+</p>
 
-<!--  -->
-<div class="node">
+
+<hr>
 <a name="Installation"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Using-Sake">Using Sake</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Introduction">Introduction</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
-
+<div class="header">
+<p>
+Next: <a href="#Using-Sake" accesskey="n" rel="next">Using Sake</a>, Previous: <a href="#Introduction" accesskey="p" rel="prev">Introduction</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
-
+<a name="Installation-1"></a>
 <h2 class="chapter">2 Installation</h2>
-
 <p>Here we will go over obtaining the <code>sake</code> software, go over generic
 installation instructions, and discuss detailed installation instructions
 for various platforms.
-
-   <p><strong>Note: Some of the commands in this section may require root or
+</p>
+<p><strong>Note: Some of the commands in this section may require root or
 administrator privileges depending on your system</strong>
-
-<!--  -->
+</p>
+<a name="Getting-Sake"></a>
 <h3 class="section">2.1 Getting Sake</h3>
-
 <p>Since sake is a set of python modules and a python driver, there are no
-binary executables that can be downloaded. 
+binary executables that can be downloaded.
 Although, in most cases, <em>manually</em> obtaining the source code for sake
 is unecessary for installation, obtaining the sake source can be done in
 several ways:
-     <ul>
-<li>A tarball can be downloaded from <a href="http://pypi.python.org/pypi/master-sake">http://pypi.python.org/pypi/master-sake</a>. Only the most stable releases
+</p><ul>
+<li> A tarball can be downloaded from <a href="http://pypi.python.org/pypi/master-sake">http://pypi.python.org/pypi/master-sake</a>. Only the most stable releases
 get uploaded to the Python Package Index, so this is a great option for users
-that are looking for stability. 
-<li>A tarball or zip file of sake is available for download on this project's
+that are looking for stability.
+</li><li> A tarball or zip file of sake is available for download on this project&rsquo;s
 webpage at <a href="http://tonyfischetti.github.io/sake/">http://tonyfischetti.github.io/sake/</a>. This is the latest snapshot of the
 master branch of sake from its git repository, where it is developed. This
 is the second-most stable version of the sake source. This is perhaps more
 feature-rich than the source on PyPI, but it may contain bugs that would
-hopefully be found and fixed before upload to PyPI. 
-<li>Finally, the bleeding-edge sake source can be cloned directly from the git
+hopefully be found and fixed before upload to PyPI.
+</li><li> Finally, the bleeding-edge sake source can be cloned directly from the git
 repository thusly: (assuming you have git installed)
-     <pre class="example">              git clone https://github.com/tonyfischetti/sake.git
-</pre>
-     <p>You can check which branches are available with the command
+<div class="example">
+<pre class="example">    git clone https://github.com/tonyfischetti/sake.git
+</pre></div>
+<p>You can check which branches are available with the command
 <code>git branch</code>. Usually, a branch called <code>dev</code> is the most recent
 (and potentially buggy) version of the sake source. On occasion, though, the
-<code>dev</code> branch will lag behind <code>master</code> if <code>dev</code> wasn't recently
+<code>dev</code> branch will lag behind <code>master</code> if <code>dev</code> wasn&rsquo;t recently
 been rebased. This option is most suitable to potential contributors to the
-project. 
-</ul>
-   For the vast majority of cases, the best way to obtain sake is during the
-installation step, with the python package manager <code>pip</code>. 
-<!--  -->
-
-<!--  -->
+project.
+</p></li></ul>
+<p>For the vast majority of cases, the best way to obtain sake is during the
+installation step, with the python package manager <code>pip</code>.
+</p>
+<a name="Dependencies"></a>
 <h3 class="section">2.2 Dependencies</h3>
-
 <p>There are four pieces of open source software that must be installed to
 ensure the proper functioning of sake:
-     <ul>
-<li>Python. Sake is Python3 compatible and is tested using Python 2.7 and
+</p><ul>
+<li> Python. Sake is Python3 compatible and is tested using Python 2.7 and
 3.3
-<li>The python module <code>NetworkX</code>
-<li>The python module <code>PyYAML</code>
-<li>The graph visualization tool <code>Graphviz</code>
-</ul>
-   Future versions of sake may shed some of these dependencies. 
-<!--  -->
-
-<!--  -->
+</li><li> The python module <code>NetworkX</code>
+</li><li> The python module <code>PyYAML</code>
+</li><li> The graph visualization tool <code>Graphviz</code>
+</li></ul>
+<p>Future versions of sake may shed some of these dependencies.
+</p>
+<a name="Generic-Installation-Instructions"></a>
 <h3 class="section">2.3 Generic Installation Instructions</h3>
-
 <p><strong>Note: performing all of these steps are usually unnecessary
 depending on what system you are using. If you do not care to know how
 sake can be installed generically, you should read the installation
 instructions for your specific platform (if available) below.</strong>
-
-   <p>If you do not already have it, Python can be installed by following the
+</p>
+<p>If you do not already have it, Python can be installed by following the
 links on the Python.org website: <a href="http://www.python.org/download/">http://www.python.org/download/</a>. There are executable installers for
 Windows and Mac OS X. There are also download links to the Python source
 code for compiling on Unix and Unix-alike systems though, for these
@@ -340,598 +377,615 @@ systems, there is very often a package manager available that will
 facilitate a much easier python installation process. If the
 platform-specific instructions are not available below, a quick search
 of the web for
-<pre class="example">     &lt;your system here&gt; python install
-</pre>
-   <p>can save you a lot of trouble.
-
-   <p>The two python packages and sake itself can be installed in at least two
+</p><div class="example">
+<pre class="example">&lt;your system here&gt; python install
+</pre></div>
+<p>can save you a lot of trouble.
+</p>
+<p>The two python packages and sake itself can be installed in at least two
 ways.
-     <ul>
-<li>One uses the python package manager <code>pip</code>. After <code>pip</code> is installed,
+</p><ul>
+<li> One uses the python package manager <code>pip</code>. After <code>pip</code> is installed,
 these python packages can be installed from the command-line thusly:
-     <pre class="example">          pip install master-sake
-</pre>
-     <p><code>pip</code> installing <code>master-sake</code> should automatically install
+<div class="example">
+<pre class="example">pip install master-sake
+</pre></div>
+<p><code>pip</code> installing <code>master-sake</code> should automatically install
 dependencies <code>NetworkX</code> and <code>PyYAML</code>. If there is a problem
-and it doesn't do this automatically, the dependencies can be easily
+and it doesn&rsquo;t do this automatically, the dependencies can be easily
 installed by issuing these commands:
-     <pre class="example">          pip install networkx
-          pip install pyyaml
-</pre>
-     <p><code>pip</code> itself can be installed via:
-     <pre class="example">          easy_install pip
-</pre>
-     <p>Finally, <code>easy_install</code> can be installed with instructions from
+</p><div class="example">
+<pre class="example">pip install networkx
+pip install pyyaml
+</pre></div>
+<p><code>pip</code> itself can be installed via:
+</p><div class="example">
+<pre class="example">easy_install pip
+</pre></div>
+<p>Finally, <code>easy_install</code> can be installed with instructions from
 this website: <a href="https://pypi.python.org/pypi/setuptools">https://pypi.python.org/pypi/setuptools</a>
-<li>Another way to install these python packages is by downloading a tarball
+</p></li><li> Another way to install these python packages is by downloading a tarball
 of the source of these packages, extracting the archive and running the
 <code>setup.py</code> script inside the extracted archive with
-     <pre class="example">          python setup.py install
-</pre>
-     <p><a href="https://pypi.python.org/pypi/setuptools">https://pypi.python.org/pypi/setuptools</a>
-</ul>
+<div class="example">
+<pre class="example">python setup.py install
+</pre></div>
+<p><a href="https://pypi.python.org/pypi/setuptools">https://pypi.python.org/pypi/setuptools</a>
+</p></li></ul>
 
-   <p>Finally, Graphviz can be installed easily by following the directions
+<p>Finally, Graphviz can be installed easily by following the directions
 on the Graphviz download page: <a href="http://www.graphviz.org/Download..php">http://www.graphviz.org/Download..php</a>. Easy-to-install packages are
-available for Mac OS X, Windows, GNU/Linux, and Solaris. 
-<!--  -->
-
-<!--  -->
+available for Mac OS X, Windows, GNU/Linux, and Solaris.
+</p>
+<a name="Installation-for-Mac-OS-X"></a>
 <h3 class="section">2.4 Installation for Mac OS X</h3>
-
 <p>Python and <code>easy_install</code> are already installed and ready to use on
 OS X. Open <code>Terminal.app</code> (usually in /Applications/Utilities) and issue
 the following commands:
-<pre class="example">     sudo easy_install pip
-     sudo pip install master-sake
-</pre>
-   <p>The use of <code>sudo</code> will prompt you for your login password, if applicable.
-
-   <p>Finally, Mac-specific Graphviz installers are available at the Graphviz site
+</p><div class="example">
+<pre class="example">sudo easy_install pip
+sudo pip install master-sake
+</pre></div>
+<p>The use of <code>sudo</code> will prompt you for your login password, if applicable.
+</p>
+<p>Finally, Mac-specific Graphviz installers are available at the Graphviz site
 at <a href="http://www.graphviz.org/Download_macos.php">http://www.graphviz.org/Download_macos.php</a>. The Mountain Lion installer
 will work with Mavericks.
-
-   <p>If you are using a version of Python that is not the version that ships
-with OS X, you should follow the 'Generic Installation Instructions'. 
-<!--  -->
-
-<!--  -->
+</p>
+<p>If you are using a version of Python that is not the version that ships
+with OS X, you should follow the &rsquo;Generic Installation Instructions&rsquo;.
+</p>
+<a name="Installation-for-GNU_002fLinux-_0028Debian_0029"></a>
 <h3 class="section">2.5 Installation for GNU/Linux (Debian)</h3>
-
 <p>Debian and some Debian-based GNU/Linux distributions make it very easy to
 install sake and all of its dependencies. Issue the following commands in a
 terminal emulator:
-<pre class="example">     sudo apt-get install python-networkx
-     sudo apt-get install python-pip
-     sudo pip install master-sake
-</pre>
-   <p>The <code>python-networkx</code> will automatically install PyYAML, and Graphviz.
-
-   <p>If for some strange reason, Python is missing on your Debian system, you can
+</p><div class="example">
+<pre class="example">sudo apt-get install python-networkx
+sudo apt-get install python-pip
+sudo pip install master-sake
+</pre></div>
+<p>The <code>python-networkx</code> will automatically install PyYAML, and Graphviz.
+</p>
+<p>If for some strange reason, Python is missing on your Debian system, you can
 install it using <code>apt-get</code>, as well.
-
-   <p>For other GNU/Linux distributions, check to see if your system has a
+</p>
+<p>For other GNU/Linux distributions, check to see if your system has a
 package management tool and whether these (or analogous) packages are
 available for that tool. <code>yum</code> and <code>pacman</code> are some other
-popular package managers, although there are many others. 
-<!--  -->
-
-<!--  -->
+popular package managers, although there are many others.
+</p>
+<a name="Installation-on-Windows"></a>
 <h3 class="section">2.6 Installation on Windows</h3>
-
 <p><strong>Note: These instructions will assume that Python 2.7 is used. The
 same installation instructions will work with Python 3.3, if the appropriate
-version numbers are changed. 
+version numbers are changed.
 These installation instructions also assume the use of Windows 7. The
 instructions should be the same, or very similar for other versions of
 Windows</strong>
-
-     <ol type=1 start=1>
-<li>Download the Windows Python installer at <a href="http://www.python.org/download/">http://www.python.org/download/</a>
-<li>Double-click the installer. A default install will install Python in
-     <pre class="example">          C:\Python27\  or
-          C:\Python33\
-</pre>
-     <li>Open the Control Panel. In the search bar, type
-     <pre class="example">          environment
-</pre>
-     <p>and click on the entry that reads
-     <pre class="example">          Edit environment variables for your account
-</pre>
-     <li>In the top-most list box, find the entry that reads <code>Path</code>. (If it
-doesn't exist, you have to add it.) Click on
+</p>
+<ol>
+<li> Download the Windows Python installer at <a href="http://www.python.org/download/">http://www.python.org/download/</a>
+</li><li> Double-click the installer. A default install will install Python in
+<div class="example">
+<pre class="example">C:\Python27\  or
+C:\Python33\
+</pre></div>
+</li><li> Open the Control Panel. In the search bar, type
+<div class="example">
+<pre class="example">environment
+</pre></div>
+<p>and click on the entry that reads
+</p><div class="example">
+<pre class="example">Edit environment variables for your account
+</pre></div>
+</li><li> In the top-most list box, find the entry that reads <code>Path</code>. (If it
+doesn&rsquo;t exist, you have to add it.) Click on
 the <code>Edit...</code> button and append the following to the
 <code>Variable value</code> field
-     <pre class="example">          ;C:\Python27;C:\Python27\Scripts
-</pre>
-     <p>of course, changing the Python version number if necessary. 
-<li>Download the Python script that bootstraps <code>easy_install</code>
+<div class="example">
+<pre class="example">;C:\Python27;C:\Python27\Scripts
+</pre></div>
+<p>of course, changing the Python version number if necessary.
+</p></li><li> Download the Python script that bootstraps <code>easy_install</code>
 at
-     <pre class="example">          <a href="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py">https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py</a>
-</pre>
-     <p>Place this file somewhere you can find with the command prompt. This will
-assume you named it <code>ez_setup.py</code>. 
-<li>Open a command prompt window (Windows key + r, type "cmd", press &lt;Enter&gt;)
-<li>Navigate to the directory where ez_setup.py resides and run it with Python. 
+<div class="example">
+<pre class="example"><a href="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py">https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py</a>
+</pre></div>
+<p>Place this file somewhere you can find with the command prompt. This will
+assume you named it <code>ez_setup.py</code>.
+</p></li><li> Open a command prompt window (Windows key + r, type &quot;cmd&quot;, press &lt;Enter&gt;)
+</li><li> Navigate to the directory where ez_setup.py resides and run it with Python.
 As an example,
-     <pre class="example">          cd C:\Users\me\Desktop
-          python ez_setup.py
-</pre>
-     <li>After the last command finishes, close the command prompt window, open
+<div class="example">
+<pre class="example">cd C:\Users\me\Desktop
+python ez_setup.py
+</pre></div>
+</li><li> After the last command finishes, close the command prompt window, open
 a new one, and issue the following commands:
-     <pre class="example">          easy_install pip
-          pip install master-sake
-</pre>
-     <li>Open up a command prompt with Administrator privileges. You can
-press the Windows key, type <code>cmd</code>, right click the Program "cmd"
-at the top of the menu and choose "Run as administrator". 
+<div class="example">
+<pre class="example">easy_install pip
+pip install master-sake
+</pre></div>
+</li><li> Open up a command prompt with Administrator privileges. You can
+press the Windows key, type <code>cmd</code>, right click the Program &quot;cmd&quot;
+at the top of the menu and choose &quot;Run as administrator&quot;.
 In the same command prompt window navigate to the Python scripts
 directory:
-     <pre class="example">          cd C:\Python27\Scripts
-</pre>
-     <p>and issue the command
-     <pre class="example">          mklink sake.py sake
-</pre>
-     <li>Download and install a graphviz windows intaller from their website:
-<a href="http://www.graphviz.org/Download_windows.php">http://www.graphviz.org/Download_windows.php</a>. 
-<li>Find the location of the bin directory of the Graphviz install. Add it
+<div class="example">
+<pre class="example">cd C:\Python27\Scripts
+</pre></div>
+<p>and issue the command
+</p><div class="example">
+<pre class="example">mklink sake.py sake
+</pre></div>
+</li><li> Download and install a graphviz windows intaller from their website:
+<a href="http://www.graphviz.org/Download_windows.php">http://www.graphviz.org/Download_windows.php</a>.
+</li><li> Find the location of the bin directory of the Graphviz install. Add it
 to the <code>Path</code> variable just like in steps 3 and 4. This time, append
 the location of the bin directory of Graphviz. It should look something
 like this.
-     <pre class="example">          ;C:\Program Files (x86)\Graphviz2.34\bin
-</pre>
-     <li>Open the Control Panel. In the search bar, type
-     <pre class="example">          environment
-</pre>
-     <p>and this time click on the entry that reads
-     <pre class="example">          Edit the system environment variables
-</pre>
-     <li>Click the button (on the bottom) that reads "Environment Variables...". 
+<div class="example">
+<pre class="example">;C:\Program Files (x86)\Graphviz2.34\bin
+</pre></div>
+</li><li> Open the Control Panel. In the search bar, type
+<div class="example">
+<pre class="example">environment
+</pre></div>
+<p>and this time click on the entry that reads
+</p><div class="example">
+<pre class="example">Edit the system environment variables
+</pre></div>
+</li><li> Click the button (on the bottom) that reads &quot;Environment Variables...&quot;.
 In the bottom-most list box, find the entry that reads
 <code>PATHEXT</code>. Click on the <code>Edit...</code> button and append the following
 to the <code>Variable value</code> field
-     <pre class="example">          ;.PY
-</pre>
-     <li>Close all command prompt windows, start a new one and issue the command
-     <pre class="example">          sake -V
-</pre>
-     <p>to make sure that everything worked.
-        </ol>
-<!--  -->
-<!--  -->
-
+<div class="example">
+<pre class="example">;.PY
+</pre></div>
+</li><li> Close all command prompt windows, start a new one and issue the command
+<div class="example">
+<pre class="example">sake -V
+</pre></div>
+<p>to make sure that everything worked.
+</p></li></ol>
+<a name="Updating-sake"></a>
 <h3 class="section">2.7 Updating sake</h3>
-
 <p>If sake is installed using <code>pip</code>, updating is as easy as running
 the following command:
-<pre class="example">     pip install --upgrade master-sake
-</pre>
-   <p>If sake was installed through the tarball and
+</p><div class="example">
+<pre class="example">pip install --upgrade master-sake
+</pre></div>
+<p>If sake was installed through the tarball and
 <code>python setup.py install</code>, you can just download the latest tarball
-and run the installation command again. 
-<!--  -->
-<!--  -->
+and run the installation command again.
+</p>
 
-<!--  -->
-<div class="node">
+<hr>
 <a name="Using-Sake"></a>
-<p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Installation">Installation</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
-
+<div class="header">
+<p>
+Previous: <a href="#Installation" accesskey="p" rel="prev">Installation</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
-
+<a name="Using-Sake-1"></a>
 <h2 class="chapter">3 Using Sake</h2>
 
-<!--  -->
+<a name="Running-Sake"></a>
 <h3 class="section">3.1 Running Sake</h3>
-
 <p>Sake is a command-line tool. After proper installation, running sake is just
 a matter of typing <code>sake</code> into your terminal. To see all the options,
 you can type:
-<pre class="example">     sake -h
-</pre>
-   <p>Sake expects certain things of the directory you run it from. Without any
-options, it looks for files called "<code>Sakefile</code>", "<code>Sakefile.yaml</code>",
-"<code>Sakefile.yml</code>" (in that order) and uses the first one it finds. The
+</p><div class="example">
+<pre class="example">sake -h
+</pre></div>
+
+<p>Sake expects certain things of the directory you run it from. Without any
+options, it looks for files called &quot;<code>Sakefile</code>&quot;, &quot;<code>Sakefile.yaml</code>&quot;,
+&quot;<code>Sakefile.yml</code>&quot; (in that order) and uses the first one it finds. The
 <code>Sakefile</code> is the instruction manual for building a project, and is the
 subject of the next section. Almost all of the command-line flags and
 arguments passed into the <code>sake</code> executable just modify how it treats and
 interacts with the Sakefile instructions.
-
-   <p>After running <code>sake</code> for the first time, a file is deposited in the
-current directory named "<code>.shastore</code>". This hidden file is another YAML
+</p>
+<p>After running <code>sake</code> for the first time, a file is deposited in the
+current directory named &quot;<code>.shastore</code>&quot;. This hidden file is another YAML
 document that stores the SHA1 hashes of all the dependencies and output files
 indicated in the Sakefile. This is how sake determines which dependencies
-have changed and what targets need to be rebuilt. 
-<!--  -->
-
-<!--  -->
+have changed and what targets need to be rebuilt.
+</p>
+<a name="The-Sakefile"></a>
 <h3 class="section">3.2 The Sakefile</h3>
 
 <p>The sakefile, which serves as the instruction manual for sake builds, is 100%
 parse-able YAML. The structure of the YAML document enforces simplicity and
 readability.
-
-   <p>The Sakefile format as <code>sake</code> requires it, is a subset of the full YAML
+</p>
+<p>The Sakefile format as <code>sake</code> requires it, is a subset of the full YAML
 specification. There are only a few structures that can appear in the
 document:
-     <ul>
-<li>targets
-<li>meta-targets
-<li>the "all" special target
-<li>macro definitions
-<li>an arbitrary number of comments
-</ul>
+</p><ul>
+<li> targets
+</li><li> meta-targets
+</li><li> the &quot;all&quot; special target
+</li><li> macro definitions
+</li><li> an arbitrary number of comments
+</li></ul>
 
-   <p>All valid Sakefiles must contain at least one target. All other elements are,
-strictly speaking, optional. 
-<!--  -->
-
-<!--  -->
+<p>All valid Sakefiles must contain at least one target. All other elements are,
+strictly speaking, optional.
+</p>
+<a name="Anatomy-of-a-target"></a>
 <h3 class="section">3.3 Anatomy of a target</h3>
-
-<p>The "target" is an isolated collection of key-value pairs that tells sake
+<p>The &quot;target&quot; is an isolated collection of key-value pairs that tells sake
 how to build one element that makes up the whole project. Before we get into
 the details of all the necessary components of a target, it would behoove
 us to see a complete example of one:
+</p><div class="example">
+<pre class="example">format raw data:
+    help: format raw (copy and pasted) data using perl
+    dependencies:
+        - raw-data.txt
+    formula: &gt;
+        perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+        raw-data.txt | sed 's/,//g' &gt; cleaned-data.tsv;
+    output:
+        - cleaned-data.tsv
+</pre></div>
 
-<pre class="example">     format raw data:
-         help: format raw (copy and pasted) data using perl
-         dependencies:
-             - raw-data.txt
-         formula: &gt;
-             perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
-             raw-data.txt | sed 's/,//g' &gt; cleaned-data.tsv;
-         output:
-             - cleaned-data.tsv
-</pre>
-   <!--  -->
+<a name="Target-title"></a>
 <h4 class="subsection">3.3.1 Target title</h4>
-
 <p>The target names serve two purposes in sake projects.
-     <ul>
-<li>If you are looking to build only one part of a project (which includes all of
-that part's dependencies) the name of the target is the string you pass into
-the <code>sake</code> executable to denote that. 
-<li>When sake produces a dependency diagram, the target name is the name of the
-node in the visualization. 
-</ul>
-   There are very few restrictions on what can be used as a valid target name. 
+</p><ul>
+<li> If you are looking to build only one part of a project (which includes all of
+that part&rsquo;s dependencies) the name of the target is the string you pass into
+the <code>sake</code> executable to denote that.
+</li><li> When sake produces a dependency diagram, the target name is the name of the
+node in the visualization.
+</li></ul>
+<p>There are very few restrictions on what can be used as a valid target name.
 The only requirements are
-     <ol type=1 start=1>
-<li>that the YAML parser used by sake unambiguiously identify the name as a string
-<li>it is not named any of the following reserved names:
-          <ul>
-<li><code>help</code>
-<li><code>visual</code>
-<li><code>clean</code>, or
-<li><code>all</code>
-</ul>
-     </ol>
-Since the target name can also serve as a
+</p><ol>
+<li> that the YAML parser used by sake unambiguiously identify the name as a string
+</li><li> it is not named any of the following reserved names:
+<ul>
+<li> <code>help</code>
+</li><li> <code>visual</code>
+</li><li> <code>clean</code>, or
+</li><li> <code>all</code>
+</li></ul>
+</li><li> it does not contain parentheses. Parentheticals in target names have
+special meaning.
+</li></ol>
+<p>Since the target name can also serve as a
 (very) short description of what the target is for, the target name should
 aim to be descriptive. The target title in the example above is, or course,
-<code>format raw data</code>. 
-<!--  -->
-
-<!--  -->
+<code>format raw data</code>.
+</p>
+<a name="Help"></a>
 <h4 class="subsection">3.3.2 Help</h4>
-
 <p>The <code>help</code> value in the target is an arbitrarily long description of
 what the target is for. This is automatically parsed and output when the
 <code>sake help</code> command is run.
-
-   <p>Since sake seeks to be a documentation tool, as well as an automated build
-system, the <code>help</code> element is mandatory. 
-<!--  -->
-
-<!--  -->
+</p>
+<p>Since sake seeks to be a documentation tool, as well as an automated build
+system, the <code>help</code> element is mandatory.
+</p>
+<a name="Dependencies-1"></a>
 <h4 class="subsection">3.3.3 Dependencies</h4>
-
 <p>The <code>dependencies</code> element is a list of all the files (by filename) that
 are required for the target to build. In the example above, the target only
 requires the input of file <code>raw-data.txt</code>, so that is the only
 dependency. The filenames may be written as an absolute path, or as a relative
 path. All relative paths are relative to the directory where <code>sake</code> is
 run. So the dependency entry may have been written like
-<pre class="example">         - ./input/raw-data.txt
-</pre>
-   <p>if it were stored in a directory under the current directory named
+</p><div class="example">
+<pre class="example">    - ./input/raw-data.txt
+</pre></div>
+<p>if it were stored in a directory under the current directory named
 <code>input</code>, or
-<pre class="example">         - ../raw-data.txt
-</pre>
-   <p>if it were in a directory above the current directory. 
+</p><div class="example">
+<pre class="example">    - ../raw-data.txt
+</pre></div>
+<p>if it were in a directory above the current directory.
 Even though you can specify a file above the current working directory, it
-is strongly discouraged and runs contra to sake's aim for simplicity and
+is strongly discouraged and runs contra to sake&rsquo;s aim for simplicity and
 being intuitive. Ideally, the Sakefile should appear in the top level
 directory of any given project and only reference files below it.
-
-   <p>A dependency entry may also contain Unix-style 'wildcard' characters. For
+</p>
+<p>A dependency entry may also contain Unix-style &rsquo;wildcard&rsquo; characters. For
 example, a dependency that looks like this:
-<pre class="example">         - ./input/*
-</pre>
-   <p>will tell sake that the target described depends on all the files in the
+</p><div class="example">
+<pre class="example">    - ./input/*
+</pre></div>
+<p>will tell sake that the target described depends on all the files in the
 directory named <code>input</code>. Even though sake supports the use of wildcards,
 for most use cases, wildcard usage should be discouraged because it obscures
 clarity and makes reading the Sakefile difficult.
-
-   <p>If a target has no dependencies, the dependency field may be left out. A good
+</p>
+<p>If a target has no dependencies, the dependency field may be left out. A good
 example of this would be if there is a target that starts off a data pipeline
 and just downloads a CSV from the internet.
-
-   <p>Sake determines which targets have to be run by whether any of its
-dependencies' content has changed. If a target has no dependencies,
+</p>
+<p>Sake determines which targets have to be run by whether any of its
+dependencies&rsquo; content has changed. If a target has no dependencies,
 <code>sake</code> has to assume that the target needs to be rebuilt every time it
 is run. To stop this behavior, you can create a dummy dependency for the
 target that never changes, or changes only when you want to explicitly
 re-run the target. Alternatively, you can include the dependency field but
 leave it blank, like so
-<pre class="example">         dependencies:
-         formula: &gt;
-         ....
-</pre>
-   <p>This will also stop sake from running the target every time <code>sake</code> is
-called. 
-<!--  -->
-
-<!--  -->
+</p><div class="example">
+<pre class="example">    dependencies:
+    formula: &gt;
+    ....
+</pre></div>
+<p>This will also stop sake from running the target every time <code>sake</code> is
+called.
+</p>
+<a name="Formula"></a>
 <h4 class="subsection">3.3.4 Formula</h4>
-
 <p>The <code>formula</code> field stores the command that carries out the building of
 a target. It is a string that gets executed as a system command. Anything
 that can be done in the shell from a terminal emulator can be used as a
-target's formula. In this way, the formula is like an arbitrarily long
+target&rsquo;s formula. In this way, the formula is like an arbitrarily long
 shell script. It can call other scripts, run programs, and send commands to
 specific interpreters. You can even get fancy with Applescript, VBScript, or
 Powershell and communicate with running applications or control menu-driven
 interfaces.
-
-   <p>Remember that any scripts called from the formula should appear in the
+</p>
+<p>Remember that any scripts called from the formula should appear in the
 dependency list, or the formula will not be rerun if the script changes.
-
-   <p>Every "target-proper" must have a formula. If a formula is missing from a
+</p>
+<p>Every &quot;target-proper&quot; must have a formula. If a formula is missing from a
 target, <code>sake</code> inteprets it as a meta-target, which is the subject of
-a future section. 
-<!--  -->
-
-<!--  -->
+a future section.
+</p>
+<a name="Output"></a>
 <h4 class="subsection">3.3.5 Output</h4>
-
 <p>This field is similar to the <code>dependency</code> field; it lists all of the
-files that are created as a result of the target's formula being run. This
+files that are created as a result of the target&rsquo;s formula being run. This
 section serves three very important roles in sake:
-     <ol type=1 start=1>
-<li>It is used internally by sake to determine which targets have to be run and
+</p><ol>
+<li> It is used internally by sake to determine which targets have to be run and
 updated before others. If another target uses the output from the above
 target (namely, <code>cleaned-data.tsv</code>), that target needs to know that
 if the dependency of the target whose output it relies on has changed, its
-output has to be brought up to date in order for it's own output to be up to
-date. 
-<li>It is recorded by sake so that when the <code>sake clean</code> command is run,
-the output files are automatically removed from the project's file
-structure. 
-<li>It provides useful information to someone (a human) reading the Sakefile so
-they can tell where a file came from and why it's there.
-        </ol>
-As with the <code>dependencies</code> entries, output entries may contain wildcard
-characters but, again, this may obscure clarity. 
-<!--  -->
-
-<!--  -->
+output has to be brought up to date in order for it&rsquo;s own output to be up to
+date.
+</li><li> It is recorded by sake so that when the <code>sake clean</code> command is run,
+the output files are automatically removed from the project&rsquo;s file
+structure.
+</li><li> It provides useful information to someone (a human) reading the Sakefile so
+they can tell where a file came from and why it&rsquo;s there.
+</li></ol>
+<p>As with the <code>dependencies</code> entries, output entries may contain wildcard
+characters but, again, this may obscure clarity.
+</p>
+<a name="Ignored-attributes"></a>
 <h4 class="subsection">3.3.6 Ignored attributes</h4>
-
 <p>An arbitrary number of other key-value attributes may be added to a target&ndash;
 sake will just ignore them. Even so, adding other attributes may be helpful
 for other reasons... consider the following addendum to the example target
 from above:
-<pre class="example">     format raw data:
-         help: format raw (copy and pasted) data using perl
-         WARNING: the regular expression need to be rewritten for readibility
-         dependencies:
-             - raw-data.txt
-         formula: &gt;
-             perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
-             raw-data.txt | sed 's/,//g' &gt; cleaned-data.tsv;
-         output:
-             - cleaned-data.tsv
-</pre>
-   <p>This added "<code>WARNING</code>" atrribute may contribute to the documentation
+</p><div class="example">
+<pre class="example">format raw data:
+    help: format raw (copy and pasted) data using perl
+    WARNING: the regular expression need to be rewritten for readibility
+    dependencies:
+        - raw-data.txt
+    formula: &gt;
+        perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+        raw-data.txt | sed 's/,//g' &gt; cleaned-data.tsv;
+    output:
+        - cleaned-data.tsv
+</pre></div>
+<p>This added &quot;<code>WARNING</code>&quot; atrribute may contribute to the documentation
 quality and improve understanding of the project.
-
-   <p>Added non-standard attributes may also be helpful components of a non-sake
+</p>
+<p>Added non-standard attributes may also be helpful components of a non-sake
 tool that processes Sakefiles to perform some other function, such as
 to generate markup.
-
-   <p>Sake will issue a warning if it sees an attribute name that it doesn't
+</p>
+<p>Sake will issue a warning if it sees an attribute name that it doesn&rsquo;t
 recognize because it is possible that it was a mispelling of a reserved
-attribute. 
-<!--  -->
-<!--  -->
+attribute. If the warning is unwanted, it is possible to suppress it
+by adding &quot;<code>(ignore)</code>&quot; in front of the attribute name, as in this example:
+</p><div class="example">
+<pre class="example">format raw data:
+    help: format raw (copy and pasted) data using perl
+    (ignore) WARNING: the regular expression need to be rewritten for readibility
+    ...
+</pre></div>
 
-<!--  -->
+
+<a name="Meta_002dtargets"></a>
 <h3 class="section">3.4 Meta-targets</h3>
-
 <p>Meta-targets allow one or more targets to be treated as one. This can greatly
-improve readability and make a Sakefile more managable to maintain. 
-Here's an example:
-<pre class="example">     foobar:
-         help: does "foo" and "bar"
-         foo:
-             help: does "foo"
-             dependencies:
-                 - baz.dat
-                 - foo.sed
-             formula: &gt;
-                 ./foo.sed baz.dat &gt; foo.dat;
-             output:
-                 - foo.dat
-         bar:
-             help: does "bar"
-             dependencies:
-                 - baz.dat
-                 - bar.awk
-             formula: &gt;
-                 ./bar.awk baz.dat &gt; bar.dat;
-             output:
-                 - bar.dat
-</pre>
-   <p>In this example, both atomic targets "<code>foo</code>" and "<code>bar</code>" use
-shell scripts to transform the file "<code>baz.dat</code>" to "<code>foo.dat</code>" and
-"<code>bar.dat</code>", respectively. These targets are similar in function so it's
+improve readability and make a Sakefile more managable to maintain.
+Here&rsquo;s an example:
+</p><div class="example">
+<pre class="example">foobar:
+    help: does &quot;foo&quot; and &quot;bar&quot;
+    foo:
+        help: does &quot;foo&quot;
+        dependencies:
+            - baz.dat
+            - foo.sed
+        formula: &gt;
+            ./foo.sed baz.dat &gt; foo.dat;
+        output:
+            - foo.dat
+    bar:
+        help: does &quot;bar&quot;
+        dependencies:
+            - baz.dat
+            - bar.awk
+        formula: &gt;
+            ./bar.awk baz.dat &gt; bar.dat;
+        output:
+            - bar.dat
+</pre></div>
+<p>In this example, both atomic targets &quot;<code>foo</code>&quot; and &quot;<code>bar</code>&quot; use
+shell scripts to transform the file &quot;<code>baz.dat</code>&quot; to &quot;<code>foo.dat</code>&quot; and
+&quot;<code>bar.dat</code>&quot;, respectively. These targets are similar in function so it&rsquo;s
 plausible that it would make sense to group them together, while also keeping
 them functionally separated so that one may be run independently of the other.
-
-   <p>With a Sakefile containing the meta-target above, <code>sake</code> may be run on
+</p>
+<p>With a Sakefile containing the meta-target above, <code>sake</code> may be run on
 <code>foobar</code>, <code>foo</code>, or <code>bar</code> as in this command:
-<pre class="example">     sake foobar
-</pre>
-   <p>This grouping can be readily seen in the output of the <code>sake help</code>
+</p><div class="example">
+<pre class="example">sake foobar
+</pre></div>
+
+<p>This grouping can be readily seen in the output of the <code>sake help</code>
 command:
-<pre class="example">     You can 'sake' one of the following...
-     
-     foobar:
-       - does "foo" and "bar"
-         foo:
-           -  does "foo"
-         bar:
-           -  does "bar"
-     
-     clean:
-       -  remove all targets' outputs and start from scratch
-     
-     visual:
-       -  output visual representation of project's dependencies
-</pre>
-   <p>A meta-target must have a help field, and at least one target. A meta-target
-may not contain another meta-target, either. 
-<!--  -->
+</p><div class="example">
+<pre class="example">You can 'sake' one of the following...
 
-<!--  -->
+foobar:
+  - does &quot;foo&quot; and &quot;bar&quot;
+    foo:
+      -  does &quot;foo&quot;
+    bar:
+      -  does &quot;bar&quot;
+
+clean:
+  -  remove all targets' outputs and start from scratch
+
+visual:
+  -  output visual representation of project's dependencies
+</pre></div>
+
+<p>A meta-target must have a help field, and at least one target. A meta-target
+may not contain another meta-target, either.
+</p>
+
+<a name="Macro-definitions"></a>
 <h3 class="section">3.5 Macro definitions</h3>
-
-<p>In addition to targets, a Sakefile may also contain "macro definitions".
-
-   <p>A macro definition can be used to replace often-repeated paths and files
-with shorter "nick-names" or aliases. More generally, it replaces text
+<p>In addition to targets, a Sakefile may also contain &quot;macro definitions&quot;.
+</p>
+<p>A macro definition can be used to replace often-repeated paths and files
+with shorter &quot;nick-names&quot; or aliases. More generally, it replaces text
 elsewhere in the Sakefile document with the value specified in the macro
 definition.
-
-   <p>To use a macro, you first have to define one, like in these examples:
-<pre class="example">     #! A_FILE=areallyreallyreallylongfilename.jpg
-     #! THE_PATH = /Applications/Xcode.app/Contents/Developer/Library/
-     #!LS = ls -al
-</pre>
-   <p>The macro definition must start with "<code>#!</code>". Then, the macro name must
+</p>
+<p>To use a macro, you first have to define one, like in these examples:
+</p><div class="example">
+<pre class="example">#! A_FILE=areallyreallyreallylongfilename.jpg
+#! THE_PATH = /Applications/Xcode.app/Contents/Developer/Library/
+#!LS = ls -al
+</pre></div>
+<p>The macro definition must start with &quot;<code>#!</code>&quot;. Then, the macro name must
 start with a letter and contain no spaces. Then an equals sign (<code>=</code>),
-and then the macro's value. Anything after the first non-whitespace character
+and then the macro&rsquo;s value. Anything after the first non-whitespace character
 after the equals sign and until the end of the line is considered to be part
-of the macros value, including spaces (as with the "<code>LS</code>" example.)
-
-   <p>Any amount of spacing is allowed after the "<code>#!</code>" and preceding and
+of the macros value, including spaces (as with the &quot;<code>LS</code>&quot; example.)
+</p>
+<p>Any amount of spacing is allowed after the &quot;<code>#!</code>&quot; and preceding and
 following the equals sign.
-
-   <p>The capitalization of the macro name is not a requirement but it improves
+</p>
+<p>The capitalization of the macro name is not a requirement but it improves
 readibility by sending clear notice to the human Sakefile reader that a
 macro is being used.
+</p>
+<p>To actually use a macro in a Sakefile, the macro name must be prefixed by
+a dollar sign (&quot;<code>$</code>&quot;) as with this example:
+</p><div class="example">
+<pre class="example">formula: &gt;
+    cp ./$A_FILE $THE_PATH
+</pre></div>
 
-   <p>To actually use a macro in a Sakefile, the macro name must be prefixed by
-a dollar sign ("<code>$</code>") as with this example:
-<pre class="example">     formula: &gt;
-         cp ./$A_FILE $THE_PATH
-</pre>
-   <p>One thing to watch out for when using macros in Sakefiles is that it can only
+<p>One thing to watch out for when using macros in Sakefiles is that it can only
 be used in a string. This is because the dollar sign is a special character
-in YAML and is only ignored when it is in what is, unambiguously, a string. 
-For this reason a macro cannot (and shouldn't be) used as a target name
+in YAML and is only ignored when it is in what is, unambiguously, a string.
+For this reason a macro cannot (and shouldn&rsquo;t be) used as a target name
 unless it is quoted. It may be used anywhere in a formula, though, because
 the formula is one large string.
-
-   <p>If the macro is meant to be included in a larger word, using curly braces
+</p>
+<p>If the macro is meant to be included in a larger word, using curly braces
 can improve readibility (and potentially reduce ambiguity). This example
 depicts the use of curly braces when using macros:
-<pre class="example">     formula: &gt;
-         cp ./$A_FILE ${THE_PATH}Frameworks
-</pre>
-   <p>which copies the file <code>areallyreallyreallylongfilename.jpg</code> to the
+</p><div class="example">
+<pre class="example">formula: &gt;
+    cp ./$A_FILE ${THE_PATH}Frameworks
+</pre></div>
+<p>which copies the file <code>areallyreallyreallylongfilename.jpg</code> to the 
 directory <code>/Applications/Xcode.app/Contents/Developer/Library/Frameworks</code>.
-
-   <p>If you want a literal dollar-sign ("<code>$</code>") in the formula, you have to
-use two dollar-signs ("<code>$$</code>"). 
-<!--  -->
-
-<!--  -->
-<h3 class="section">3.6 The special "all" target</h3>
-
+</p>
+<p>If you want a literal dollar-sign (&quot;<code>$</code>&quot;) in the formula, you have to
+use two dollar-signs (&quot;<code>$$</code>&quot;).
+</p>
+<a name="The-special-_0022all_0022-target"></a>
+<h3 class="section">3.6 The special &quot;all&quot; target</h3>
 <p>The last component that a Sakefile may contain is a special target, named
-"<code>all</code>", that is a list of targets to build when <code>sake</code> is run
+&quot;<code>all</code>&quot;, that is a list of targets to build when <code>sake</code> is run
 with no other targets named.
-
-   <p>Normally, when the <code>sake</code> command is run and a target is not passed in
+</p>
+<p>Normally, when the <code>sake</code> command is run and a target is not passed in
 as a parameter, sake will build <em>all</em> of the targets in the Sakefile. If
-there is an "all" target specified, though, <code>sake</code> will only build the
-targets that "all" names. This can be helpful to prevent certain targets
+there is an &quot;all&quot; target specified, though, <code>sake</code> will only build the
+targets that &quot;all&quot; names. This can be helpful to prevent certain targets
 from running all the time, or if <code>sake</code> is run while a target is
-actively being written. 
-<!--  -->
+actively being written.
+</p>
 
-<!--  -->
+<a name="Building-a-project"></a>
 <h3 class="section">3.7 Building a project</h3>
-
 <p>To properly cover the topic of building a sake project, an example of a
 full example Sakefile would be helpful for reference, and to help put
 everything in context:
-<pre class="example">     ---
-     # Macros
-     #! TEEN_STATS_URL = http://mathforum.org/workshops/sum96/data...
-     
-     fetch teen stats:
-         help: fetches various teen statstics from the web
-         # no dependencies
-         formula: &gt;
-             curl -o teenstats.xls $TEEN_STATS_URL;
-         output:
-             - teenstats.xls
-     
-     formatting:
-         help: formatting and conversion steps
-         convert teen stats to csv:
-             help: &gt;
-                 uses gnumerics ssconvert to convert ugly xls to csv
-                 and cleans it
-             dependencies:
-                 - teenstats.xls
-                 - convert.sh
-             formula: &gt;
-                 ./convert.sh;
-             output:
-                 - teenstats.csv
-         format dui stats:
-             help: format raw (copy and pasted) dui/state data using perl
-             dependencies:
-                 - rawdata.txt
-             formula: &gt;
-                 perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
-                 rawdata.txt | sed 's/,//g' &gt; duistats.tsv;
-             output:
-                 - duistats.tsv
-     
-     find correlates:
-         help: &gt;
-             calls R script that finds correlates of DUI arrest in
-             various teen statistics
-         dependencies:
-             - duistats.tsv
-             - teenstats.csv
-             - dui-correlates.R
-         formula: &gt;
-             ./dui-correlates.R
-         output:
-             - Rplots.pdf
-             - lmcoeffs.txt
-     ...
-</pre>
-   <p>A short description of each of the steps appears in the "help" field on
+</p><div class="example">
+<pre class="example">---
+# Macros
+#! TEEN_STATS_URL = http://mathforum.org/workshops/sum96/data...
+
+fetch teen stats:
+    help: fetches various teen statstics from the web
+    # no dependencies
+    formula: &gt;
+        curl -o teenstats.xls $TEEN_STATS_URL;
+    output:
+        - teenstats.xls
+
+formatting:
+    help: formatting and conversion steps
+    convert teen stats to csv:
+        help: &gt;
+            uses gnumerics ssconvert to convert ugly xls to csv
+            and cleans it
+        dependencies:
+            - teenstats.xls
+            - convert.sh
+        formula: &gt;
+            ./convert.sh;
+        output:
+            - teenstats.csv
+    format dui stats:
+        help: format raw (copy and pasted) dui/state data using perl
+        dependencies:
+            - rawdata.txt
+        formula: &gt;
+            perl -pe 's/^(\D+)\s+([\d,]+)\s+([\d,]+)\s*/\1\t\2\t\3\n/'
+            rawdata.txt | sed 's/,//g' &gt; duistats.tsv;
+        output:
+            - duistats.tsv
+
+find correlates:
+    help: &gt;
+        calls R script that finds correlates of DUI arrest in
+        various teen statistics
+    dependencies:
+        - duistats.tsv
+        - teenstats.csv
+        - dui-correlates.R
+    formula: &gt;
+        ./dui-correlates.R
+    output:
+        - Rplots.pdf
+        - lmcoeffs.txt
+...
+</pre></div>
+
+<p>A short description of each of the steps appears in the &quot;help&quot; field on
 each entry. Basically, there are two source data files: one exists as raw
 text (copy and pasted from a website), and the other is fetched from the web
 using <code>curl</code>. The former is cleaned and formatted using <code>perl</code> and
@@ -939,337 +993,348 @@ using <code>curl</code>. The former is cleaned and formatted using <code>perl</c
 excel file into a CSV and strips useless lines. Both of these source data
 files then get read by an R script which, ultimately, outputs a corrogram
 graphic and a summarization table.
-
-   <p>The problem occurs when the file "<code>rawdata.txt</code>" is changed or updated,
+</p>
+<p>The problem occurs when the file &quot;<code>rawdata.txt</code>&quot; is changed or updated,
 perhaps by another team member. One of two things can happen:
-     <ul>
-<li>The maintainer of the project can remain wholly unaware of the change to
-"<code>rawdata.txt</code>" and carry around "<code>Rplots.pdf</code>" and
-"<code>lmcoeffs.txt</code>" thinking that they are the most up-to-date reflection
-of the data available. 
-<li>The maintainer knows that the file has changed and has to either re-run
+</p><ul>
+<li> The maintainer of the project can remain wholly unaware of the change to
+&quot;<code>rawdata.txt</code>&quot; and carry around &quot;<code>Rplots.pdf</code>&quot; and
+&quot;<code>lmcoeffs.txt</code>&quot; thinking that they are the most up-to-date reflection
+of the data available.
+</li><li> The maintainer knows that the file has changed and has to either re-run
 all of the steps in the workflow, or dig into zer memory and remember that
-"<code>fetch teen stats</code>" needn't be re-run, but that
-"<code>format dui stats</code>" <em>and</em> "<code>find correlates</code>" have to be
-re-run, and in that order. 
-</ul>
+&quot;<code>fetch teen stats</code>&quot; needn&rsquo;t be re-run, but that
+&quot;<code>format dui stats</code>&quot; <em>and</em> &quot;<code>find correlates</code>&quot; have to be
+re-run, and in that order.
+</li></ul>
 
-   <p>Admittedly, this is not a very complex workflow and is fairly easy to grasp
+<p>Admittedly, this is not a very complex workflow and is fairly easy to grasp
 all at once. But imagine if the workflow involved hundreds of files, with
 intricate inter-connectivity; it is unreasonable to expect that someone can
 keep track of which components have to be updated. The only recourse
 available is to re-run <em>all</em> the components. In modern science and
 data analysis, this can easily take hours or days.
-
-   <p>Like stated in the introduction, sake seeks to solve this problem by keeping
+</p>
+<p>Like stated in the introduction, sake seeks to solve this problem by keeping
 track of the dependency structure for you. After the first build, any
 subsequent call to <code>sake</code> will only result in the building of the
 components reliant on changed files.
-
-   <p>The first time the Sakefile above is run, the output looks like this:
-<pre class="example">     $ sake -q
-     Running target format dui stats
-     Running target fetch teen stats
-     Running target convert teen stats to csv
-     Running target find correlates
-     Done
-</pre>
-   <p>(we used the "<code>-q</code>" flag to cut down on the volume of the output for
+</p>
+<p>The first time the Sakefile above is run, the output looks like this:
+</p><div class="example">
+<pre class="example">$ sake -q
+Running target format dui stats
+Running target fetch teen stats
+Running target convert teen stats to csv
+Running target find correlates
+Done
+</pre></div>
+<p>(we used the &quot;<code>-q</code>&quot; flag to cut down on the volume of the output for
 this example)
-
-   <p>If <code>sake</code> is called again, the output looks like this:
-<pre class="example">     $ sake -q
-     Running target fetch teen stats
-     Done
-</pre>
-   <p>Sake knows that no dependencies have changed, and that the only target that
-needs to run again is "<code>fetch teen stats</code>" (because it has no
-dependencies). 
+</p>
+<p>If <code>sake</code> is called again, the output looks like this:
+</p><div class="example">
+<pre class="example">$ sake -q
+Running target fetch teen stats
+Done
+</pre></div>
+<p>Sake knows that no dependencies have changed, and that the only target that
+needs to run again is &quot;<code>fetch teen stats</code>&quot; (because it has no
+dependencies).
 Had the excel file that <code>fetch teen stats</code> downloads from the net been
 modified in any way, sake would detect this and re-run the appropriate
 targets, and <em>only</em> those targets. If the change to
-"<code>teenstats.xls</code>" was trivial and had no bearing on the output
-"<code>teenstats.csv</code>", sake would be smart enough to know not to re-run
+&quot;<code>teenstats.xls</code>&quot; was trivial and had no bearing on the output
+&quot;<code>teenstats.csv</code>&quot;, sake would be smart enough to know not to re-run
 <code>find correlates</code> because it would not change.
-
-<!--  -->
+</p>
+<a name="Building-specific-parts-of-a-project"></a>
 <h4 class="subsection">3.7.1 Building specific parts of a project</h4>
-
 <p>There are two ways to tell <code>sake</code> to build only certain parts of a
 project:
-     <ol type=1 start=1>
-<li>Add an "<code>all</code>" target that lists only the targets that you wish
-to build. 
-<li>Supply the name of the target you'd like to build to <code>sake</code> as a
+</p><ol>
+<li> Add an &quot;<code>all</code>&quot; target that lists only the targets that you wish
+to build.
+</li><li> Supply the name of the target you&rsquo;d like to build to <code>sake</code> as a
 parameter. You can see of full list of the targets you can build with
 the <code>sake help</code> command. If you have spaces in your target name, be
-sure to put the target name in quotes so the shell doesn't interpret the
+sure to put the target name in quotes so the shell doesn&rsquo;t interpret the
 words as separate arguments, like
-     <pre class="example">          sake "find correlates"
-</pre>
-     </ol>
+<div class="example">
+<pre class="example">sake &quot;find correlates&quot;
+</pre></div>
+</li></ol>
 
-   <p>It is important to note that even if they haven't been named, sake will
+<p>It is important to note that even if they haven&rsquo;t been named, sake will
 <em>not</em> ignore targets if they are dependencies of the target that was
-asked to be built. Only the targets that don't have anything to do with the
-target that was asked to be built will be ignored. 
-<!--  -->
-
-<!--  -->
+asked to be built. Only the targets that don&rsquo;t have anything to do with the
+target that was asked to be built will be ignored.
+</p>
+<a name="Debugging-a-Sakefile"></a>
 <h4 class="subsection">3.7.2 Debugging a Sakefile</h4>
-
 <p>When writing and testing any Sakefile for a project of sufficient complexity,
-you may come across problems. If it isn't a bug in sake, it may be helpful
+you may come across problems. If it isn&rsquo;t a bug in sake, it may be helpful
 to diagnose the problem by running sake in verbose mode. This will list all
 the steps that sake took to execute and explain reasoning for running certain
 targets and not running others.
+</p>
+<div class="example">
+<pre class="example"><code>sake -v</code>
+</pre></div>
 
-<pre class="example">     <code>sake -v</code>
-</pre>
-   <p>Verbose mode's logical inverse is "quiet mode" which lists only the targets
+<p>Verbose mode&rsquo;s logical inverse is &quot;quiet mode&quot; which lists only the targets
 that are being built as they are executed. With this option, the commands in
 the formulas, and the output of those commands are suppressed.
-
-   <p>It is important to note that errors are never suppressed, even in quiet mode. 
-<!--  -->
-
-<!--  -->
+</p>
+<p>It is important to note that errors are never suppressed, even in quiet mode.
+</p>
+<a name="Choosing-from-different-Sakefiles"></a>
 <h4 class="subsection">3.7.3 Choosing from different Sakefiles</h4>
-
 <p>In certain circumstances, it may be helpful for a project to have more than
-one Sakefile, perhaps with instructions for building on different platforms. 
-As stated above, <code>sake</code> will look for a file called "<code>Sakefile</code>",
-"<code>Sakefile.yaml</code>", "<code>Sakefile.yml</code>" (in that order) and uses the
+one Sakefile, perhaps with instructions for building on different platforms.
+As stated above, <code>sake</code> will look for a file called &quot;<code>Sakefile</code>&quot;,
+&quot;<code>Sakefile.yaml</code>&quot;, &quot;<code>Sakefile.yml</code>&quot; (in that order) and uses the
 first one it finds. You can force <code>sake</code> to use a specific Sakfile
 thusly:
-<pre class="example">     sake -s yoursakefile
-</pre>
-   <p>The extention need not be ".yaml" or ".yml" in order for <code>sake</code> to
-accept it. 
-<!--  -->
-<!--  -->
+</p><div class="example">
+<pre class="example">sake -s yoursakefile
+</pre></div>
+<p>The extention need not be &quot;.yaml&quot; or &quot;.yml&quot; in order for <code>sake</code> to
+accept it.
+</p>
 
-<!--  -->
+<a name="Parallel-building"></a>
 <h3 class="section">3.8 Parallel building</h3>
-
 <p>If two different targets are not dependencies of each other (one does not
 depend on the other, and vice-versa) that means the two targets can be built
 simultaneously. On modern computers with multi-core processors, this usually
 means that the two targets will build on two separate cores. This means that
 building the two targets will only take as long as the building of the target
 that takes the longest to complete.
-
-   <p>Consider a <code>sake</code> project consisting of  two targets with no
-interdependencies and the targets take the same amount of time to build. 
+</p>
+<p>Consider a <code>sake</code> project consisting of  two targets with no
+interdependencies and the targets take the same amount of time to build.
 If the project is built in <code>parallel</code> mode, you can expect the time to
 build the whole project to be cut roughly in half. Similarly, on a machine
 with 8-cores, and in a project with 8 independent (non-interdependent)
 targets whose build times are identical, you can expect a parallel project
 build time of 1/8th of the time it would take to build the project serially
 (non-parallel).
-
-   <p>In real-world projects, the targets are rarely all independent, but running
+</p>
+<p>In real-world projects, the targets are rarely all independent, but running
 a project in parallel mode may drastically decrease total build-time anyway.
-
-   <p>Using <code>sake</code>'s parallel mode is very easy; all you have to do is supply
+</p>
+<p>Using <code>sake</code>&rsquo;s parallel mode is very easy; all you have to do is supply
 the <code>-p</code> flag to <code>sake</code> on the command-line. <code>Sake</code> will
 automatically determine which targets can be run in parallel and do so.
-
-   <p>To make this more concrete, consider this sakefile that builds a four-line
+</p>
+<p>To make this more concrete, consider this sakefile that builds a four-line
 poem line-by-line. Each line takes two seconds to output to an intermediate
 file. After all of the lines are outputted to files, the one-line files are
 combined in order to product <code>poem.txt</code> which contains the whole poem...
+</p>
+<div class="example">
+<pre class="example">line by line:
+    help: print each line of the poem to a file
+    first line:
+        help: prints the first line
+        dependencies:
+        formula: &gt;
+            sleep 5;
+            echo Twinkle twinkle little bat &gt; first.txt;
+        output:
+            - first.txt
 
-<pre class="example">     line by line:
-         help: print each line of the poem to a file
-         first line:
-             help: prints the first line
-             dependencies:
-             formula: &gt;
-                 sleep 5;
-                 echo Twinkle twinkle little bat &gt; first.txt;
-             output:
-                 - first.txt
-     
-         second line:
-             help: prints the second line
-             formula: &gt;
-                 sleep 5;
-                 echo How I wonder what youre at &gt; second.txt
-             output:
-                 - second.txt
-     
-         third line:
-             help: prints the third line
-             formula: &gt;
-                 sleep 5;
-                 echo Up above the world you fly &gt; third.txt
-             output:
-                 - third.txt
-     
-         fourth line:
-             help: prints the fourth line
-             formula: &gt;
-                 sleep 5;
-                 echo Like a tea tray in the sky &gt; fourth.txt
-             output:
-                 - fourth.txt
-     
-     combine them:
-         help: combine all the lines
-         dependencies:
-             - first.txt
-             - second.txt
-             - third.txt
-             - fourth.txt
-         formula: &gt;
-             cat first.txt second.txt third.txt fourth.txt &gt; poem.txt;
-         output:
-             - poem.txt
-</pre>
-   <p>Building this project by just issuing the <code>sake</code> command takes 20.24
+    second line:
+        help: prints the second line
+        formula: &gt;
+            sleep 5;
+            echo How I wonder what youre at &gt; second.txt
+        output:
+            - second.txt
+
+    third line:
+        help: prints the third line
+        formula: &gt;
+            sleep 5;
+            echo Up above the world you fly &gt; third.txt
+        output:
+            - third.txt
+
+    fourth line:
+        help: prints the fourth line
+        formula: &gt;
+            sleep 5;
+            echo Like a tea tray in the sky &gt; fourth.txt
+        output:
+            - fourth.txt
+
+combine them:
+    help: combine all the lines
+    dependencies: 
+        - first.txt
+        - second.txt
+        - third.txt
+        - fourth.txt
+    formula: &gt;
+        cat first.txt second.txt third.txt fourth.txt &gt; poem.txt;
+    output:
+        - poem.txt
+</pre></div>
+
+<p>Building this project by just issuing the <code>sake</code> command takes 20.24
 seconds on my machine. This is because each target (taking 5 seconds) is run
 one after another. If the project is build in parallel mode, however...
+</p>
+<div class="example">
+<pre class="example">sake -p
+</pre></div>
 
-<pre class="example">     sake -p
-</pre>
-   <p>it takes only 5.24 seconds to build.
-
-   <p>The example project above is a bit of an unatural example that was only
+<p>it takes only 5.24 seconds to build.
+</p>
+<p>The example project above is a bit of an unatural example that was only
 constructed for pedagogical purposes; it was purposely designed to benefit
 greatly from parallel building. Nevertheless, in many real-world
 projects, using parallel mode can save an enormous amount of time.
-
-   <p>A drawback of using parallel building is that the output of the commands that
+</p>
+<p>A drawback of using parallel building is that the output of the commands that
 build the targets will become garbled because there are two or more processes
 printing output to the screen simultaneously. For this reason, when using
-parallel building, you may want to also use <code>sake</code> in <code>quiet</code> mode. 
-<!--  -->
+parallel building, you may want to also use <code>sake</code> in <code>quiet</code> mode.
+</p>
 
-<!--  -->
+
+<a name="Other-Options"></a>
 <h3 class="section">3.9 Other Options</h3>
 
-<!--  -->
-<h4 class="subsection">3.9.1 "Recon" mode</h4>
-
+<a name="g_t_0022Recon_0022-mode"></a>
+<h4 class="subsection">3.9.1 &quot;Recon&quot; mode</h4>
 <p>When coming back to building a project after changing a few files,
 particularly if it is a large project, it can also be helpful to know which
 targets sake will build/rebuild (and in what order) <em>before</em> you actually
 build them. This can be helpful for planning purposes as well as for
 debugging.
-
-   <p>Sake allows you to do just this with <code>recon</code> mode. To use it, just supply
+</p>
+<p>Sake allows you to do just this with <code>recon</code> mode. To use it, just supply
 the <code>-r</code> argument to the sake command. Instead of executing the commands
-in each target's formula, it will just print the name of the targets it
+in each target&rsquo;s formula, it will just print the name of the targets it
 <em>would</em> build. For example, after running <code>sake clean</code> on the
 Sakefile introduced in the previous section, running sake in recon mode will
 look like this:
+</p>
+<div class="example">
+<pre class="example"># <strong>sake -r</strong>
+Would run target: third line
+Would run target: fourth line
+Would run target: first line
+Would run target: second line
+Would run target: combine them
+</pre></div>
 
-<pre class="example">     # <strong>sake -r</strong>
-     Would run target: third line
-     Would run target: fourth line
-     Would run target: first line
-     Would run target: second line
-     Would run target: combine them
-</pre>
-   <p>You can also combine parallel mode and recon mode to learn how sake will
+<p>You can also combine parallel mode and recon mode to learn how sake will
 approach the parallel building:
+</p>
+<div class="example">
+<pre class="example"># <strong>sake -r -p</strong>
+Would run targets 'second line, first line, fourth line, third line' in parallel
+Would run target 'combine them'
+</pre></div>
 
-<pre class="example">     # <strong>sake -r -p</strong>
-     Would run targets 'second line, first line, fourth line, third line' in parallel
-     Would run target 'combine them'
-</pre>
-   <p>In a project that has already been built before, after changing a couple of
+<p>In a project that has already been built before, after changing a couple of
 files, <code>recon</code> mode can be an invaluable tool to investigate the impact
-of your changes.
-
-   <p>You should be aware that recon mode cannot <em>a priori</em> tell all the
+of your changes. 
+</p>
+<p>You should be aware that recon mode cannot <em>a priori</em> tell all the
 changes that will happen down the road, though. For example, if <code>recon</code>
 mode indicates that a certain target will be re-run, if that target will
 change any output files that are dependencies of other targets, sake cannot
-know that and recon mode will not detect it. 
-<!--  -->
-
-<!--  -->
+know that and recon mode will not detect it.
+</p>
+<a name="Forcing-building"></a>
 <h4 class="subsection">3.9.2 Forcing building</h4>
-
-<p>If <code>sake</code> doesn't build a target, it is because none of its dependencies
+<p>If <code>sake</code> doesn&rsquo;t build a target, it is because none of its dependencies
 have changed. However, if you want <code>sake</code> to rebuild the target anyway,
 the best way to do this is to use <code>force</code> mode by supplying the
 <code>-F</code> command-line flag. This can be applied to just one target (or
 meta-target) or the whole project. If <code>force</code> mode is used to rebuild
 the whole project, it is roughly equivalent to running <code>sake clean</code>
-and then <code>sake</code> again. 
-<!--  -->
-<!--  -->
+and then <code>sake</code> again.
+</p>
 
-<!--  -->
+
+<a name="Visualization"></a>
 <h3 class="section">3.10 Visualization</h3>
-
-<p>The last topic to cover is sake's visualization capabilities.
-
-   <p>Since sake already knows which targets are dependent on others (and why), it
+<p>The last topic to cover is sake&rsquo;s visualization capabilities.
+</p>
+<p>Since sake already knows which targets are dependent on others (and why), it
 was a small jump to enlist the help of the powerful graph visualization
 software, Graphviz, to be able to visualize these dependency structures.
-
-   <p>With Graphviz properly installed, creating a visualization of your workflow
+</p>
+<p>With Graphviz properly installed, creating a visualization of your workflow
 is as easy as running the command
-<pre class="example">     sake visual
-</pre>
-   <p>This will, by default, deposit a file called "<code>dependencies.svg</code>" into
+</p><div class="example">
+<pre class="example">sake visual
+</pre></div>
+<p>This will, by default, deposit a file called &quot;<code>dependencies.svg</code>&quot; into
 your current working directory. This file can then be opened (and printed)
 from an image viewer or a web browser. The SVG file format is a good choice
 for graph visualizations because it can be scaled arbitrarily large without
 pixelation.
+</p>
+<p>Internally, the visualization feature follows these steps:
+</p><ol>
+<li> The dependency graph that sake stores internally is written to a
+temporary text file, in a format that Graphviz understands.
+</li><li> The Graphviz executable (called &quot;<code>dot</code>&quot;) is called to convert the
+text file that describes the graph into a image.
+</li><li> The temporary file is deleted.
+</li></ol>
 
-   <p>Internally, the visualization feature follows these steps:
-     <ol type=1 start=1>
-<li>The dependency graph that sake stores internally is written to a
-temporary text file, in a format that Graphviz understands. 
-<li>The Graphviz executable (called "<code>dot</code>") is called to convert the
-text file that describes the graph into a image. 
-<li>The temporary file is deleted.
-        </ol>
-
-   <p>If you'd like to name the resulting visualization something other than
-"dependencies.svg", you can call <code>sake visual</code> with the <code>-f</code> flag:
-<pre class="example">     sake visual -f anothername
-</pre>
-   <p>This will name the file "<code>anothername.svg</code>" (the file extention is
+<p>If you&rsquo;d like to name the resulting visualization something other than
+&quot;dependencies.svg&quot;, you can call <code>sake visual</code> with the <code>-f</code> flag:
+</p><div class="example">
+<pre class="example">sake visual -f anothername
+</pre></div>
+<p>This will name the file &quot;<code>anothername.svg</code>&quot; (the file extention is
 automatically appended).
-
-   <p>In the interest of simplicity, sake doesn't explicitly support exporting to
-image file formats other than SVG. If you'd like to have your dependency
+</p>
+<p>In the interest of simplicity, sake doesn&rsquo;t explicitly support exporting to
+image file formats other than SVG. If you&rsquo;d like to have your dependency
 graph in another file format, can do this in two ways:
-     <ol type=1 start=1>
-<li>Use conversion software to convert the SVG output from sake into another
-format. 
-<li>Use the <code>-n</code> option to cause sake to skip the call to Graphviz and
+</p><ol>
+<li> Use conversion software to convert the SVG output from sake into another
+format.
+</li><li> Use the <code>-n</code> option to cause sake to skip the call to Graphviz and
 just output the text file that describes the graph. Then you can use
-Graphviz's <code>dot</code> executable directly on the file like so
-     <pre class="example">          $ sake visual -n
-          $ dot -Tpng dependencies -o dependencies.png
-</pre>
-     <p>or
-     <pre class="example">          $ sake visual -n -f foo.txt
-          $ dot -Tps foo.txt -o foo.ps
-</pre>
-     </ol>
+Graphviz&rsquo;s <code>dot</code> executable directly on the file like so
+<div class="example">
+<pre class="example">$ sake visual -n
+$ dot -Tpng dependencies -o dependencies.png
+</pre></div>
+<p>or
+</p><div class="example">
+<pre class="example">$ sake visual -n -f foo.txt
+$ dot -Tps foo.txt -o foo.ps
+</pre></div>
+</li></ol>
 
-   <p>For more information on how to use <code>dot</code>, consult the man page, or
+<p>For more information on how to use <code>dot</code>, consult the man page, or
 read documentation online.
-
-   <p><br>
+</p>
+<br>
 <br>
 
-   <p>The Sakefile in the example above will yield a visualization like this:
-
-<div align="center"><img src="deps.png" alt="deps.png"></div>
-
-   <p><br>
+<p>The Sakefile in the example above will yield a visualization like this:
+</p>
+<div align="center"><img src="deps.png" alt="deps">
+</div>
 <br>
-<!--  -->
+<br>
 
-<!--  -->
-</body></html>
 
+<hr>
+
+
+
+</body>
+</html>

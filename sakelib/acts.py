@@ -282,6 +282,11 @@ def expand_patterns(name, target):
                     data[k].append(v)
     if not data:
         return {name: target}
+    # check for presence of output
+    # it is not allowed to use a pattern
+    # and not have outputs
+    if "output" not in target or not target['output']:
+        sys.exit("Target using pattern must have non-empty 'output' field")
     # based on http://stackoverflow.com/a/5228294/2097780
     product = (dict(zip(data, x)) for x in itertools.product(*data.values()))
     res = {}

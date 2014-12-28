@@ -53,6 +53,7 @@ except that this permission notice be translated properly.
 * Introduction:: Introduction to Sake
 * Installation:: Installing Sake
 * Using Sake:: Documentation for use
+* Advanced Sake Usage:: Guide to Sake's advance features
 @end menu
 @c --------------------------------------------------------------------
 
@@ -513,7 +514,7 @@ and run the installation command again.
 
 
 @c --------------------------------------------------------------------
-@node Using Sake, , Installation, Top
+@node Using Sake, Advanced Sake Usage, Installation, Top
 @chapter Using Sake
 
 @c -----------------------
@@ -1303,7 +1304,7 @@ of the dependency network, use:
 sake visual -f somename.jpg
 @end example
 Sake can handle the following file extentions and image formats:
-(.svg, .jpg (or .jpeg), .png, .gif, .ps, .pdf)
+.svg, .jpg (or .jpeg), .png, .gif, .ps, .pdf
 
 
 @*
@@ -1315,6 +1316,19 @@ The Sakefile in the example above will yield a visualization like this:
 
 @*
 @*
+@c -----------------------
+
+@c --------------------------------------------------------------------
+@node Advanced Sake Usage, , Using Sake, Top
+@chapter Advanced Sake Usage
+
+@c -----------------------
+@section Using Patterns
+hi
+@c -----------------------
+
+@section Using Includes
+hi
 @c -----------------------
 
 @c --------------------------------------------------------------------

@@ -290,8 +290,9 @@ def expand_patterns(name, target):
         new_deps = []
         new_name = PatternTemplate(name).safe_substitute(sub)
         if new_name == name:
-            sys.exit("Target '%s' that has pattern in dependencies must have "\
-                     "pattern in name" % name)
+            errmes = "Target {} that has pattern in dependencies must have "
+            errmes += "pattern in name"
+            sys.exit(errmes.format(name))
         new_help = PatternTemplate(target["help"]).safe_substitute(sub)
         new_formula = PatternTemplate(target["formula"]).safe_substitute(sub)
         for dep in target["dependencies"]:
@@ -476,8 +477,8 @@ def clean_all(G, verbose, quiet, recon):
                 if verbose:
                     print("Removed file")
             except:
-                errmeg = "Error: file '{}' failed to be removed\n"
-                sys.stderr.write(errmeg.format(item))
+                errmes = "Error: file '{}' failed to be removed\n"
+                sys.stderr.write(errmes.format(item))
                 retcode = 1
     if not retcode and not recon:
         print("All clean")

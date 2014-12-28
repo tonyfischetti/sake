@@ -298,7 +298,7 @@ def expand_patterns(name, target):
             new_deps.append(PatternTemplate(dep).safe_substitute(sub))
         for out in target["output"]:
             new_outputs.append(PatternTemplate(out).safe_substitute(sub))
-        res[new_name] = {"help": target["help"],
+        res[new_name] = {"help": new_help,
                          "output": new_outputs,
                          "dependencies": new_deps,
                          "formula": new_formula}

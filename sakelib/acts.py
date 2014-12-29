@@ -169,7 +169,7 @@ def expand_macros(raw_text, macros={}):
     includes = {}
     result = []
     pattern = re.compile("#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
-    ipattern = re.compile("#<\s*(\S+)\s*(optional|or\s+(.+))?$")
+    ipattern = re.compile("#<\s*(\S+)\s*(optional|or\s+(.+))?$", re.UNICODE)
     for line in raw_text.split("\n"):
         line = string.Template(line).safe_substitute(macros)
         # note that the line is appended to result before it is checked for macros

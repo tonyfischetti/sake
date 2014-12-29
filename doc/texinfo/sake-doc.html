@@ -1343,11 +1343,150 @@ Previous: <a href="#Using-Sake" accesskey="p" rel="prev">Using Sake</a>, Up: <a 
 
 <a name="Using-Patterns"></a>
 <h3 class="section">4.1 Using Patterns</h3>
-<p>hi
+<p>Sake may have a strong preference for elegance and simplicity, but that
+doesn&rsquo;t mean Sake is lacking advanced features. One such feature is
+&rsquo;formula patterns&rsquo;.
+</p>
+<p>Very often in project building, the same procedure has to be performed
+on many similar files. Formula patterns allow you to condense all of the
+targets down to one that gets automatically autoexpanded. If you find
+yourself with targets that have identical formulas except for a file
+that changes from target to target, this might be a perfect application
+for formula patterns.
+</p>
+<p>Concretely, it is a common C programming/compilation idiom to compile all
+C files in a directory into object files (which then get linked together).
+If there are four such .c files (file1.c, file2.c file3.c, and file4.c)
+in a directory that all need to be object-compiled, you certainly
+<em>can</em> create four different targets to perform this, but you can
+also leverage formula patterns here.
+</p>
+<p>If the original Sakefile snippet looked like this:
+</p><div class="example">
+<pre class="example">compile C file1:
+    help: compiles C file 1
+    dependencies:
+        - &quot;file1.c&quot;
+    formula: &gt;
+        gcc -c -o file1.o file1.c
+    output:
+        - file1.o
+
+compile C file2:
+    help: compiles C file 2
+    ....
+</pre></div>
+
+<p>the new target to replace the four targets above will look like:
+</p><div class="example">
+<pre class="example">compile %cfiles:
+    help: compiles file %cfiles into object file
+    dependencies:
+        - &quot;%cfiles.c&quot;
+    formula: &gt;
+        gcc -c -o %cfiles.o %cfiles.c
+    output:
+        - %cfiles
+</pre></div>
+
+<p>This may appear as but one target in the Sakefile, but as far as Sake is
+concerned, these are four different targets (or how ever many files the
+pattern matches&ndash;it was just four in our example).
+</p>
+<p>To prove it, <code>sake help</code> will yield:
+</p><div class="example">
+<pre class="example">&quot;compile file1&quot;:
+  - compiles file file1 into object file
+
+&quot;compile file2&quot;:
+  - compiles file file2 into object file
+...
+</pre></div>
+
+<p>Additionally, since these are separate targets, <code>sake visual</code> will
+render them separately, and parallel sake will run them in parallel, if
+applicable.
+</p>
+<p>Note that anywhere in the target the string &quot;<code>%cfiles</code>&quot; is used, the
+substitution is of the base name of the file, and not the file extentions.
+</p>
+<p>For another example, say you have to convert all png images in a directory
+to jpeg files; you have a program called &quot;picconvert&quot; that performes the
+conversion. The Sakefile snippet will look a little like this:
+</p><div class="example">
+<pre class="example">convert %picfile:
+    dependencies:
+        - %picfile.png
+    formula: &gt;
+        picconvert --from png --to jpg %picfile.png %picfile.jpg
+    output:
+        - %picfile.jpg
+</pre></div>
+
+<p>When using patterns in your Sakefiles, there are four things to keep in mind
+</p><ol>
+<li> The pattern must appear in the dependency field.
+</li><li> A target that has a pattern in the dependency must have the pattern in the
+target name. Because Sake treats every file match as a new target, and
+different targets cannot share a name, the pattern must be in the target name
+to get outexpanded and keep the target names different and specific.
+</li><li> A target using a pattern must use the pattern in its formula. 
+</li><li> A target using a pattern must have an output, and must use the pattern
+in the output
+</li></ol>
+<p>Don&rsquo;t be worried about this requirements; It is hard to think of a
+legitimate usage of formula patterns that will violate any of the rules above.
 </p>
 <a name="Using-Includes"></a>
 <h3 class="section">4.2 Using Includes</h3>
-<p>hi
+<p>Sake&rsquo;s second advanced feature is called &quot;includes&quot;.
+</p>
+<p>Includes are a lot like storing macros in a different file and then
+importing those macro definitions into your Sakefile.
+</p>
+<p>The primary use case for this feature would be to use the same Sakefile
+across different architectures/platforms but be able to substitute
+values for platform dependent variables.
+</p>
+<p>For example, let&rsquo;s say a C project decides to support the two most
+popular open source C compilers, clang and gcc. It would be silly to write
+two different Sakefiles&ndash;one that uses gcc for compilation, and one that uses
+clang for compilation&ndash;and switch which Sakefile you use dependending on
+the machine being used.
+</p>
+<p>Instead, a program can be run to interrogate a system, find the name of the
+extant/preferred C compiler, and drop that into a yaml file as a Sake
+compatible macro. That very macro can then be included in the Sakefile.
+</p>
+<p>Concretely, let&rsquo;s say a configure script is run and it determines that gcc is
+the preferred C compiler. It can then create a file called <code>config.yaml</code>
+with the following content:
+</p><div class="example">
+<pre class="example">#! C_Compiler=gcc
+</pre></div>
+
+<p>In the Sakefile, we can include a line like this:
+</p><div class="example">
+<pre class="example">#&lt; config.yaml
+</pre></div>
+<p>This will make the <code>C_Compiler</code> macro available for use in the Sakefile.
+(Note that &quot;<code>config.yaml</code>&quot; could have been named anything.)
+</p>
+<p>If you include a non-existent config file, <code>sake</code> will throw a fatal
+error. There may be a use case, however, where you would like to include a
+macro definition file, but don&rsquo;t want to strictly <em>require</em> it. In this
+case, you can label the include file <code>optional</code>, as in this line:
+</p><div class="example">
+<pre class="example">#&lt; filetoinclude.yaml optional
+</pre></div>
+
+<p>It is also possible to raise a warning when an optional include file is
+missing; the user will see this warning everytime <code>sake</code> is run until
+the include file becomes existent. This can be done thusly:
+</p><div class="example">
+<pre class="example">#&lt; filetoinclude.yaml or warning: include file missing
+</pre></div>
+<p>Everything after the &quot;<code>or</code>&quot; will be considered the warning message.
 </p>
 
 <hr>

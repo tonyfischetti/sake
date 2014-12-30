@@ -1,0 +1,236 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/MacPorts 2014_4) (preloaded format=pdfetex 2014.10.24)  29 DEC 2014 19:07
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**\catcode126=12 \def\normaltilde{~}\catcode126=13 \let~\normaltilde  \input ./
+sake-doc.texi
+(./sake-doc.texi (/opt/local/share/texmf/tex/texinfo/texinfo.tex
+Loading texinfo [version 2013-09-11.11]:
+\bindingoffset=\dimen16
+\normaloffset=\dimen17
+\pagewidth=\dimen18
+\pageheight=\dimen19
+\outerhsize=\dimen20
+\outervsize=\dimen21
+\cornerlong=\dimen22
+\cornerthick=\dimen23
+\topandbottommargin=\dimen24
+\headlinebox=\box16
+\footlinebox=\box17
+\margin=\insert252
+\EMsimple=\toks13
+\groupbox=\box18
+\groupinvalidhelp=\toks14
+\mil=\dimen25
+\exdentamount=\skip18
+\inmarginspacing=\skip19
+\centerpenalty=\count27
+ pdf,
+\tempnum=\count28
+\lnkcount=\count29
+\filename=\toks15
+\filenamelength=\count30
+\pgn=\count31
+\toksA=\toks16
+\toksB=\toks17
+\toksC=\toks18
+\toksD=\toks19
+\boxA=\box19
+\countA=\count32
+\nopdfimagehelp=\toks20
+ fonts,
+\sffam=\fam8
+\textleading=\dimen26
+ markup,
+\fontdepth=\count33
+ glyphs,
+\errorbox=\box20
+
+page headings,
+\titlepagetopglue=\skip20
+\titlepagebottomglue=\skip21
+\evenheadline=\toks21
+\oddheadline=\toks22
+\evenfootline=\toks23
+\oddfootline=\toks24
+ tables,
+\tableindent=\dimen27
+\itemindent=\dimen28
+\itemmargin=\dimen29
+\itemmax=\dimen30
+\itemno=\count34
+\multitableparskip=\skip22
+\multitableparindent=\skip23
+\multitablecolspace=\dimen31
+\multitablelinespace=\skip24
+\colcount=\count35
+\everytab=\toks25
+ conditionals,
+\doignorecount=\count36
+ indexing,
+\whatsitskip=\skip25
+\whatsitpenalty=\count37
+\secondaryindent=\skip26
+\partialpage=\box21
+\doublecolumnhsize=\dimen32
+ sectioning,
+\unnumberedno=\count38
+\chapno=\count39
+\secno=\count40
+\subsecno=\count41
+\subsubsecno=\count42
+\appendixno=\count43
+\absseclevel=\count44
+\secbase=\count45
+\chapheadingskip=\skip27
+\secheadingskip=\skip28
+\subsecheadingskip=\skip29
+ toc,
+\tocfile=\write0
+\contentsrightmargin=\skip30
+\savepageno=\count46
+\lastnegativepageno=\count47
+\tocindent=\dimen33
+ environments,
+\lispnarrowing=\skip31
+\envskipamount=\skip32
+\circthick=\dimen34
+\cartouter=\dimen35
+\cartinner=\dimen36
+\normbskip=\skip33
+\normpskip=\skip34
+\normlskip=\skip35
+\lskip=\skip36
+\rskip=\skip37
+\nonfillparindent=\dimen37
+\tabw=\dimen38
+\verbbox=\box22
+
+defuns,
+\defbodyindent=\skip38
+\defargsindent=\skip39
+\deflastargmargin=\skip40
+\defunpenalty=\count48
+\parencount=\count49
+\brackcount=\count50
+ macros,
+\paramno=\count51
+\macname=\toks26
+ cross references,
+\auxfile=\write1
+\savesfregister=\count52
+\toprefbox=\box23
+\printedrefnamebox=\box24
+\infofilenamebox=\box25
+\printedmanualbox=\box26
+ insertions,
+\footnoteno=\count53
+\SAVEfootins=\box27
+\SAVEmargin=\box28
+
+(/opt/local/share/texmf/tex/generic/epsf/epsf.tex
+This is `epsf.tex' v2.7.4 <14 February 2011>
+\epsffilein=\read1
+\epsfframemargin=\dimen39
+\epsfframethickness=\dimen40
+\epsfrsize=\dimen41
+\epsftmp=\dimen42
+\epsftsize=\dimen43
+\epsfxsize=\dimen44
+\epsfysize=\dimen45
+\pspoints=\dimen46
+)
+\noepsfhelp=\toks27
+ localization,
+\nolanghelp=\toks28
+\countUTFx=\count54
+\countUTFy=\count55
+\countUTFz=\count56
+ formatting,
+\defaultparindent=\dimen47
+ and turning on texinfo input format.)
+(./sake-doc.aux)
+\openout1 = `sake-doc.aux'.
+
+@cpindfile=@write2
+@fnindfile=@write3
+@vrindfile=@write4
+@tpindfile=@write5
+@kyindfile=@write6
+@pgindfile=@write7
+ [1
+\openout2 = `sake-doc.cp'.
+
+\openout3 = `sake-doc.fn'.
+
+\openout4 = `sake-doc.vr'.
+
+\openout5 = `sake-doc.tp'.
+
+\openout6 = `sake-doc.ky'.
+
+\openout7 = `sake-doc.pg'.
+
+{/opt/local/var/db/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./sake-doc.t
+oc) [-1] (./sake-doc.toc) (./sake-doc.toc) Chapter 1
+\openout0 = `sake-doc.toc'.
+
+
+[1] [2] Chapter 2 [3] [4] [5] [6]
+Underfull \hbox (badness 10000) in paragraph at lines 464--468
+ []@textrm Download and in-stall a graphviz win-dows in-taller from their web-s
+ite:
+
+@hbox(7.60416+2.12917)x433.62, glue set 4.94109
+.@glue(@leftskip) 21.68121
+.@hbox(7.05666+0.0)x0.0, glue set - 21.21912fil
+..@glue 0.0 plus 1.0fil minus 1.0fil
+..@textrm 1
+..@textrm 0
+..@textrm .
+..@kern 7.22743
+.@textrm D
+.@textrm o
+.@kern-0.30418
+.etc.
+
+Chapter 3 [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+Overfull \hbox (55.18257pt too wide) in paragraph at lines 1226--1226
+ []@texttt Would run targets 'second line, first line, fourth line, third line'
+ in parallel[] |
+
+@hbox(6.69167+2.43333)x433.62
+.@glue(@leftskip) 28.90755
+.@hbox(0.0+0.0)x0.0
+.@texttt W
+.@texttt o
+.@texttt u
+.etc.
+
+[18] <./deps.png> [19] Chapter 4 [20] [21] [22] [23] ) 
+Here is how much of TeX's memory you used:
+ 1959 strings out of 497110
+ 23432 string characters out of 6206871
+ 64876 words of memory out of 5000000
+ 3036 multiletter control sequences out of 15000+600000
+ 32127 words of font info for 112 fonts, out of 8000000 for 9000
+ 51 hyphenation exceptions out of 8191
+ 12i,6n,16p,360b,447s stack positions out of 5000i,500n,10000p,200000b,80000s
+</opt/local/share/texmf-t
+exlive/fonts/type1/public/amsfonts/cm/cmb10.pfb></opt/local/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/local/share/texmf-texlive/font
+s/type1/public/amsfonts/cm/cmmi10.pfb></opt/local/share/texmf-texlive/fonts/typ
+e1/public/amsfonts/cm/cmmi12.pfb></opt/local/share/texmf-texlive/fonts/type1/pu
+blic/amsfonts/cm/cmr10.pfb></opt/local/share/texmf-texlive/fonts/type1/public/a
+msfonts/cm/cmsy10.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmti10.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm
+/cmtt10.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt
+12.pfb>
+Output written on sake-doc.pdf (26 pages, 194810 bytes).
+PDF statistics:
+ 327 PDF objects out of 1000 (max. 8388607)
+ 283 compressed objects within 3 object streams
+ 28 named destinations out of 1000 (max. 500000)
+ 322 words of extra memory for PDF output out of 10000 (max. 10000000)
+

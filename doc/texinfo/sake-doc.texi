@@ -179,9 +179,10 @@ Steps like displaying help and cleaning intermediate files are not handled
 automatically by @code{make} and are prone to errors.
 @end itemize
 @code{Sake} seeks to rectify these limitations of @code{make}. To wit,
-@itemize @bullet
+@itemize @bullet 
 @item
 Sakefiles are written in a very easy-to-read-and-write markup language.
+@item
 @code{Sake} was also not designed with a particular application in mind, so
 the use of @code{sake} is just as applicable to one domain as it is to
 another. This cuts down on the number of tools a user must learn to do
@@ -257,9 +258,9 @@ repository thusly: (assuming you have git installed)
 @end example
 You can check which branches are available with the command
 @code{git branch}. Usually, a branch called @code{dev} is the most recent
-(and potentially buggy) version of the sake source. On occasion, though, the
+(and potentially buggy) version of the sake source. (On occasion, though, the
 @code{dev} branch will lag behind @code{master} if @code{dev} wasn't recently
-been rebased. This option is most suitable to potential contributors to the
+been rebased.) This option is most suitable to potential contributors to the
 project.
 @end itemize
 For the vast majority of cases, the best way to obtain sake is during the
@@ -272,8 +273,8 @@ There are four pieces of open source software that must be installed to
 ensure the proper functioning of sake:
 @itemize @bullet
 @item
-Python. Sake is Python3 compatible and is tested using Python 2.7 and
-3.3
+Python. Sake is Python3 compatible and is tested using Python 2.7, 3.2,
+3.3, and 3.4
 @item
 The python module @code{NetworkX}
 @item
@@ -336,8 +337,6 @@ of the source of these packages, extracting the archive and running the
 @example
 python setup.py install
 @end example
-@url{https://pypi.python.org/pypi/setuptools,
-https://pypi.python.org/pypi/setuptools}
 @end itemize
 
 Finally, Graphviz can be installed easily by following the directions
@@ -360,7 +359,7 @@ The use of @code{sudo} will prompt you for your login password, if applicable.
 Finally, Mac-specific Graphviz installers are available at the Graphviz site
 at @url{http://www.graphviz.org/Download_macos.php,
 http://www.graphviz.org/Download_macos.php}. The Mountain Lion installer
-will work with Mavericks.
+will work with Mavericks and Yosemite.
 
 If you are using a version of Python that is not the version that ships
 with OS X, you should follow the 'Generic Installation Instructions'.
@@ -390,7 +389,7 @@ popular package managers, although there are many others.
 @c -----------------------
 @section Installation on Windows
 @strong{Note: These instructions will assume that Python 2.7 is used. The
-same installation instructions will work with Python 3.3, if the appropriate
+same installation instructions will work with Python 3.*, if the appropriate
 version numbers are changed.
 These installation instructions also assume the use of Windows 7. The
 instructions should be the same, or very similar for other versions of
@@ -1188,11 +1187,6 @@ The example project above is a bit of an unatural example that was only
 constructed for pedagogical purposes; it was purposely designed to benefit
 greatly from parallel building. Nevertheless, in many real-world
 projects, using parallel mode can save an enormous amount of time.
-
-A drawback of using parallel building is that the output of the commands that
-build the targets will become garbled because there are two or more processes
-printing output to the screen simultaneously. For this reason, when using
-parallel building, you may want to also use @code{sake} in @code{quiet} mode.
 @c -----------------------
 
 
@@ -1260,7 +1254,7 @@ and then @code{sake} again.
 
 @c -----------------------
 @section Visualization
-The last topic to cover is sake's visualization capabilities.
+The last basic topic to cover is sake's visualization capabilities.
 
 Since sake already knows which targets are dependent on others (and why), it
 was a small jump to enlist the help of the powerful graph visualization
@@ -1367,7 +1361,7 @@ compile %cfiles:
     formula: >
         gcc -c -o %cfiles.o %cfiles.c
     output:
-        - %cfiles
+        - "%cfiles"
 @end example
 
 This may appear as but one target in the Sakefile, but as far as Sake is
@@ -1397,14 +1391,23 @@ conversion. The Sakefile snippet will look a little like this:
 @example
 convert %picfile:
     dependencies:
-        - %picfile.png
+        - "%picfile.png"
     formula: >
         picconvert --from png --to jpg %picfile.png %picfile.jpg
     output:
-        - %picfile.jpg
+        - "%picfile.jpg"
 @end example
 
-When using patterns in your Sakefiles, there are four things to keep in mind
+@strong{Important:} The percent-sign ("%") is not a valid character in YAML
+unless it is in a string. Because Sakefiles are 100% valid YAML, you need
+to make sure that @code{sake} categorically recognizes attributes/values
+with a percent-sign in them as strings. You can make sure that this
+happens by wrapping them in quotation marks. Quoting the target name, help
+string, or formula is usually unecessary, but it is usually necessary to
+quote the 'dependencies' item and 'output' item.
+
+When using patterns in your Sakefiles, there are four other things to keep
+in mind
 @enumerate
 @item
 The pattern must appear in the dependency field.

@@ -278,7 +278,7 @@ automatically by <code>make</code> and are prone to errors.
 <p><code>Sake</code> seeks to rectify these limitations of <code>make</code>. To wit,
 </p><ul>
 <li> Sakefiles are written in a very easy-to-read-and-write markup language.
-<code>Sake</code> was also not designed with a particular application in mind, so
+</li><li> <code>Sake</code> was also not designed with a particular application in mind, so
 the use of <code>sake</code> is just as applicable to one domain as it is to
 another. This cuts down on the number of tools a user must learn to do
 certain specialized tasks.
@@ -348,9 +348,9 @@ repository thusly: (assuming you have git installed)
 </pre></div>
 <p>You can check which branches are available with the command
 <code>git branch</code>. Usually, a branch called <code>dev</code> is the most recent
-(and potentially buggy) version of the sake source. On occasion, though, the
+(and potentially buggy) version of the sake source. (On occasion, though, the
 <code>dev</code> branch will lag behind <code>master</code> if <code>dev</code> wasn&rsquo;t recently
-been rebased. This option is most suitable to potential contributors to the
+been rebased.) This option is most suitable to potential contributors to the
 project.
 </p></li></ul>
 <p>For the vast majority of cases, the best way to obtain sake is during the
@@ -361,8 +361,8 @@ installation step, with the python package manager <code>pip</code>.
 <p>There are four pieces of open source software that must be installed to
 ensure the proper functioning of sake:
 </p><ul>
-<li> Python. Sake is Python3 compatible and is tested using Python 2.7 and
-3.3
+<li> Python. Sake is Python3 compatible and is tested using Python 2.7, 3.2,
+3.3, and 3.4
 </li><li> The python module <code>NetworkX</code>
 </li><li> The python module <code>PyYAML</code>
 </li><li> The graph visualization tool <code>Graphviz</code>
@@ -417,8 +417,7 @@ of the source of these packages, extracting the archive and running the
 <div class="example">
 <pre class="example">python setup.py install
 </pre></div>
-<p><a href="https://pypi.python.org/pypi/setuptools">https://pypi.python.org/pypi/setuptools</a>
-</p></li></ul>
+</li></ul>
 
 <p>Finally, Graphviz can be installed easily by following the directions
 on the Graphviz download page: <a href="http://www.graphviz.org/Download..php">http://www.graphviz.org/Download..php</a>. Easy-to-install packages are
@@ -437,7 +436,7 @@ sudo pip install master-sake
 </p>
 <p>Finally, Mac-specific Graphviz installers are available at the Graphviz site
 at <a href="http://www.graphviz.org/Download_macos.php">http://www.graphviz.org/Download_macos.php</a>. The Mountain Lion installer
-will work with Mavericks.
+will work with Mavericks and Yosemite.
 </p>
 <p>If you are using a version of Python that is not the version that ships
 with OS X, you should follow the &rsquo;Generic Installation Instructions&rsquo;.
@@ -465,7 +464,7 @@ popular package managers, although there are many others.
 <a name="Installation-on-Windows"></a>
 <h3 class="section">2.6 Installation on Windows</h3>
 <p><strong>Note: These instructions will assume that Python 2.7 is used. The
-same installation instructions will work with Python 3.3, if the appropriate
+same installation instructions will work with Python 3.*, if the appropriate
 version numbers are changed.
 These installation instructions also assume the use of Windows 7. The
 instructions should be the same, or very similar for other versions of
@@ -1211,11 +1210,6 @@ constructed for pedagogical purposes; it was purposely designed to benefit
 greatly from parallel building. Nevertheless, in many real-world
 projects, using parallel mode can save an enormous amount of time.
 </p>
-<p>A drawback of using parallel building is that the output of the commands that
-build the targets will become garbled because there are two or more processes
-printing output to the screen simultaneously. For this reason, when using
-parallel building, you may want to also use <code>sake</code> in <code>quiet</code> mode.
-</p>
 
 
 <a name="Other-Options"></a>
@@ -1278,7 +1272,7 @@ and then <code>sake</code> again.
 
 <a name="Visualization"></a>
 <h3 class="section">3.10 Visualization</h3>
-<p>The last topic to cover is sake&rsquo;s visualization capabilities.
+<p>The last basic topic to cover is sake&rsquo;s visualization capabilities.
 </p>
 <p>Since sake already knows which targets are dependent on others (and why), it
 was a small jump to enlist the help of the powerful graph visualization
@@ -1386,7 +1380,7 @@ compile C file2:
     formula: &gt;
         gcc -c -o %cfiles.o %cfiles.c
     output:
-        - %cfiles
+        - &quot;%cfiles&quot;
 </pre></div>
 
 <p>This may appear as but one target in the Sakefile, but as far as Sake is
@@ -1416,14 +1410,23 @@ conversion. The Sakefile snippet will look a little like this:
 </p><div class="example">
 <pre class="example">convert %picfile:
     dependencies:
-        - %picfile.png
+        - &quot;%picfile.png&quot;
     formula: &gt;
         picconvert --from png --to jpg %picfile.png %picfile.jpg
     output:
-        - %picfile.jpg
+        - &quot;%picfile.jpg&quot;
 </pre></div>
 
-<p>When using patterns in your Sakefiles, there are four things to keep in mind
+<p><strong>Important:</strong> The percent-sign (&quot;%&quot;) is not a valid character in YAML
+unless it is in a string. Because Sakefiles are 100% valid YAML, you need
+to make sure that <code>sake</code> categorically recognizes attributes/values
+with a percent-sign in them as strings. You can make sure that this
+happens by wrapping them in quotation marks. Quoting the target name, help
+string, or formula is usually unecessary, but it is usually necessary to
+quote the &rsquo;dependencies&rsquo; item and &rsquo;output&rsquo; item.
+</p>
+<p>When using patterns in your Sakefiles, there are four other things to keep
+in mind
 </p><ol>
 <li> The pattern must appear in the dependency field.
 </li><li> A target that has a pattern in the dependency must have the pattern in the

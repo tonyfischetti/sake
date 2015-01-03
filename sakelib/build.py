@@ -476,6 +476,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
+        in_mem_shas['files'] = {}
     with open(".shastore", "r") as fh:
         shas_on_disk = fh.read()
     from_store = yaml.load(shas_on_disk)
@@ -483,6 +484,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
     if not from_store:
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
+        in_mem_shas['files'] = {}
         with open(".shastore", "r") as fh:
             shas_on_disk = fh.read()
         from_store = yaml.load(shas_on_disk)

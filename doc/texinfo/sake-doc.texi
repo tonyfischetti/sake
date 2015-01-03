@@ -7,9 +7,9 @@
 
 @c --------------------------------------------------------------------
 @copying
-This manual is for sake, version 0.9.5
+This manual is for sake, version 0.9.5.1
 
-Copyright @copyright{} 2013, 2014, Tony Fischetti
+Copyright @copyright{} 2013, 2014, 2015, Tony Fischetti
 @quotation
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -32,7 +32,7 @@ except that this permission notice be translated properly.
 @sp 5
 @title Sake
 @subtitle A self-documenting build automation tool
-@subtitle Version 0.9.5 (2014-12-27)
+@subtitle Version 0.9.5.1 (2015-01-02)
 @author Tony Fischetti
 @page
 @vskip 0pt plus 1filll
@@ -1476,6 +1476,17 @@ the include file becomes existent. This can be done thusly:
 #< filetoinclude.yaml or warning: include file missing
 @end example
 Everything after the "@code{or}" will be considered the warning message.
+
+@strong{Important:} The yaml file that you include is always relative to the
+top-level project directory. That means that you can include a file in a
+subdirectory of a project's root by specifying the path relative to
+that root. It also means that in a project with two or more Sakefiles--
+where one is in a subdirectory of the project's root--if the one in the 
+subdirectory includes a file "config.yaml", it will look for that
+file relative to the project's root, @strong{not} in the subdirectory
+that houses the Sakefile that actually included the file.
+
+
 @c -----------------------
 
 @c --------------------------------------------------------------------

@@ -163,7 +163,7 @@ def check_target_integrity(key, values, meta=False, all=False, parent=None):
     field_types = {"dependencies": list, "output": list, "formula": str,
                    "help": str}
     for field, type in field_types.items():
-        if not isinstance(values.get(field, type()), type):
+        if not isinstance(values.get(field) or type(), type):
             sys.stderr.write("Field '{}' needs to be type {}\n".format(field,
                                                             type.__name__))
             return False

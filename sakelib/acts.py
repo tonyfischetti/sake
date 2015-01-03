@@ -171,7 +171,13 @@ def expand_macros(raw_text, macros={}):
     pattern = re.compile("#!\s*(\w+)\s*=\s*(.*$)", re.UNICODE)
     ipattern = re.compile("#<\s*(\S+)\s*(optional|or\s+(.+))?$", re.UNICODE)
     for line in raw_text.split("\n"):
-        line = string.Template(line).safe_substitute(macros)
+        try:
+            line = string.Template(line).substitute(macros)
+        except KeyError as ex:
+            sys.stderr.write("Nonexistent variable ${}\n".format(ex.message))
+        except ValueError as ex:
+            sys.stderr.write("Invalid placeholder in string: {}\n".format(
+                                                                line.strip()))
         # note that the line is appended to result before it is checked for macros
         # this prevents macros expanding into themselves
         result.append(line)

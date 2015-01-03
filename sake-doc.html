@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- This manual is for sake, version 0.9.5
+<!-- This manual is for sake, version 0.9.5.1
 
-Copyright (C) 2013, 2014, Tony Fischetti
+Copyright (C) 2013, 2014, 2015, Tony Fischetti
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
 preserved on all copies.
@@ -1491,6 +1491,17 @@ the include file becomes existent. This can be done thusly:
 </pre></div>
 <p>Everything after the &quot;<code>or</code>&quot; will be considered the warning message.
 </p>
+<p><strong>Important:</strong> The yaml file that you include is always relative to the
+top-level project directory. That means that you can include a file in a
+subdirectory of a project&rsquo;s root by specifying the path relative to
+that root. It also means that in a project with two or more Sakefiles&ndash;
+where one is in a subdirectory of the project&rsquo;s root&ndash;if the one in the 
+subdirectory includes a file &quot;config.yaml&quot;, it will look for that
+file relative to the project&rsquo;s root, <strong>not</strong> in the subdirectory
+that houses the Sakefile that actually included the file.
+</p>
+
+
 
 <hr>
 

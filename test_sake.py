@@ -11,15 +11,14 @@ import shutil
 import ntpath
 import posixpath
 import textwrap
+import pytest
+import sys
 
-from testlib import utobjs
+from testlib.utobjs import *
 
 # test UNICODE!!!
 
 def setup_module(module):
-    module.mock_sakefile_for_macros = utobjs.mock_sakefile_for_macros
-    module.mock_sakefile_for_help = utobjs.mock_sakefile_for_help
-    module.expected_help = utobjs.expected_help
     os.mkdir("./tmp")
     with open("./tmp/file1.txt", "w") as fh:
         fh.write("1")
@@ -30,9 +29,6 @@ def setup_module(module):
 
 
 def teardown_module(module):
-    del module.mock_sakefile_for_macros
-    del module.mock_sakefile_for_help
-    del module.expected_help
     shutil.rmtree("./tmp/")
 
 
@@ -66,14 +62,37 @@ def test_acts_expand_macros():
     #   there is a bug in python's template substitution that
     #   prevents certain unicode-heavy strings from being replaced
     #   so 'rΩsholme' won't be subsituted, but it should be
-    temp = ["---", "#!ask=shyness is nice", "$ask me, ask me, $ask me",
-            "there are ruffians in $rusholme ($rΩsholme) and they steal $$",
-            "$askme, ${ask}me", "..."]
-    temp = mock_sakefile_for_macros+"\n".join(temp)
-    solution = ["---", "#!ask=shyness is nice", "shyness is nice me, ask me, shyness is nice me",
-                    "there are ruffians in $rusholme ($rΩsholme) and they steal $",
-                    "$askme, shyness is niceme", "..."]
-    solution = mock_sakefile_for_macros+"\n".join(solution)
+    temp = mock_sakefile_for_macros+textwrap.dedent('''
+    ---
+    #!ask=shyness is nice
+    $ask me, ask me, $ask me
+    there are ruffians and they steal $$
+    ${ask}me
+    ...
+    '''.strip('\n'))
+    solution = mock_sakefile_for_macros+textwrap.dedent('''
+    ---
+    #!ask=shyness is nice
+    shyness is nice me, ask me, shyness is nice me
+    there are ruffians and they steal $
+    shyness is niceme
+    ...
+    '''.strip('\n'))
+    assert acts.expand_macros(temp)[0] == solution
+
+    temp = textwrap.dedent('''
+    #!this=1
+    $thi
+    ''')
+
+    with pytest.raises(acts.InvalidMacroError):
+        acts.expand_macros(temp)
+
+
+@pytest.mark.xfail(reason="Python's string template module has bugs with unicode strings")
+def test_acts_expand_macros_unicode():
+    temp = mock_sakefile_for_macros+'there are ruffians in $rΩsholme'
+    solution = mock_sakefile_for_macros+'there are ruffians in at the last night'
     assert acts.expand_macros(temp)[0] == solution
 
 

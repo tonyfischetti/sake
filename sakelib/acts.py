@@ -174,9 +174,9 @@ def expand_macros(raw_text, macros={}):
         try:
             line = string.Template(line).substitute(macros)
         except KeyError as ex:
-            sys.stderr.write("Nonexistent variable ${}\n".format(ex.message))
+            raise InvalidMacroError("Nonexistent variable ${}\n".format(str(ex)))
         except ValueError as ex:
-            sys.stderr.write("Invalid placeholder in string: {}\n".format(
+            raise InvalidMacroError("Invalid placeholder in string: {}\n".format(
                                                                 line.strip()))
         # note that the line is appended to result before it is checked for macros
         # this prevents macros expanding into themselves

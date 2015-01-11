@@ -20,12 +20,12 @@ from testlib.utobjs import *
 
 def setup_module(module):
     os.mkdir("./tmp")
-    with open("./tmp/file1.txt", "w") as fh:
-        fh.write("1")
-    with open("./tmp/file2.txt", "w") as fh:
-        fh.write("2")
-    with open("./tmp/file1.json", "w") as fh:
-        fh.write("1")
+    for file, data in ("./tmp/file1.txt", "1"), ("./tmp/file2.txt", "2"),\
+                      ("./tmp/file1.json", "1"),\
+                      ("./tmp/other.yaml", "#< missing.yaml optional\n#! a=1"),\
+                      ("./tmp/bad.yaml", "#< x.yaml or Error!"):
+        with open(file, "w") as fh:
+            fh.write(data)
 
 
 def teardown_module(module):
@@ -57,7 +57,7 @@ def test_acts_escp():
     assert acts.escp(has_more_spaces_and_unicode) == "\" well i wønder\""
 
 
-def test_acts_expand_macros():
+def test_acts_expand_macros_and_includes(capsys):
     # ATTENTION:
     #   there is a bug in python's template substitution that
     #   prevents certain unicode-heavy strings from being replaced
@@ -78,22 +78,31 @@ def test_acts_expand_macros():
     shyness is niceme
     ...
     '''.strip('\n'))
-    assert acts.expand_macros(temp)[0] == solution
+    assert acts.expand_macros_and_includes('.', temp)[0] == solution
 
     temp = textwrap.dedent('''
     #!this=1
     $thi
-    ''')
+    '''.strip('\n'))
 
     with pytest.raises(acts.InvalidMacroError):
-        acts.expand_macros(temp)
+        acts.expand_macros_and_includes('.', temp)
+
+    assert acts.expand_macros_and_includes('tmp', '#< other.yaml') ==\
+           ('#< other.yaml', {'other.yaml': ('#< missing.yaml optional\n#! a=1', {})})
+
+    with pytest.raises(acts.IncludeError):
+        acts.expand_macros_and_includes('tmp', '#< missing.yaml')
+
+    acts.expand_macros_and_includes('tmp', '#< missing.yaml or Error')
+    assert capsys.readouterr() == ('Error\n', '')
 
 
 @pytest.mark.xfail(reason="Python's string template module has bugs with unicode strings")
 def test_acts_expand_macros_unicode():
     temp = mock_sakefile_for_macros+'there are ruffians in $rΩsholme'
     solution = mock_sakefile_for_macros+'there are ruffians in at the last night'
-    assert acts.expand_macros(temp)[0] == solution
+    assert acts.expand_macros_and_includes(temp)[0] == solution
 
 
 def test_acts_get_help():
@@ -101,7 +110,7 @@ def test_acts_get_help():
 
 
 def test_acts_get_all_outputs():
-    assert sorted(acts.get_all_outputs({'output': ['./tmp/*']})) ==\
+    assert sorted(acts.get_all_outputs({'output': ['./tmp/file*']})) ==\
            sorted(['./tmp/file1.txt', './tmp/file2.txt', './tmp/file1.json'])
     assert sorted(acts.get_all_outputs({'output': ['./tmp/file1.*']})) ==\
            sorted(['./tmp/file1.txt', './tmp/file1.json'])

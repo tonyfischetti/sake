@@ -98,11 +98,12 @@ def test_acts_expand_macros_and_includes(capsys):
     assert capsys.readouterr() == ('Error\n', '')
 
 
-@pytest.mark.xfail(reason="Python's string template module has bugs with unicode strings")
+@pytest.mark.xfail(raises=acts.InvalidMacroError,\
+        reason="Python's string template module has bugs with unicode strings")
 def test_acts_expand_macros_unicode():
     temp = mock_sakefile_for_macros+'there are ruffians in $rΩsholme'
     solution = mock_sakefile_for_macros+'there are ruffians in at the last night'
-    assert acts.expand_macros_and_includes(temp)[0] == solution
+    assert acts.expand_macros_and_includes('.', temp)[0] == solution
 
 
 def test_acts_get_help():

@@ -708,6 +708,8 @@ expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 Command failed to run
 """
 expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+ #include <deadcandance.h>
+                          ^
 compilation terminated.
 Command failed to run
 """
@@ -740,6 +742,8 @@ Target 'compile statfuncs' failed!
 A command failed to run
 """
 expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+ #include <deadcandance.h>
+                          ^
 compilation terminated.
 Target 'compile statfuncs' failed!
 A command failed to run
@@ -839,6 +843,8 @@ expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 Command failed to run
 """
 expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+ #include <deadcandance.h>
+                          ^
 compilation terminated.
 Command failed to run
 """

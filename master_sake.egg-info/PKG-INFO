@@ -1,0 +1,42 @@
+Metadata-Version: 1.1
+Name: master-sake
+Version: 0.9.5.5
+Summary: A self-documenting build automation tool
+Home-page: http://tonyfischetti.github.io/sake
+Author: Tony Fischetti
+Author-email: tony.fischetti@gmail.com
+License: MIT
+Description: 
+              Sake is a way to easily design, share, build, and visualize workflows
+              with intricate interdependencies. Sake is self-documenting because the
+              instructions for building a project also serve as the documentation of
+              the project's workflow. The first time it's run, sake will build all
+              of the components of a project in an order that automatically satisfies
+              all dependencies. For all subsequent runs, sake will only rebuild the
+              parts of the project that depend on changed files. This cuts down on
+              unnecessary re-building and lets the user concentrate on their work
+              rather than memorizing the order in which commands have to be run.
+        
+              For more information and documentation, check out this project's
+              website: http://tonyfischetti.github.io/sake/
+              
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Utilities
+Classifier: Topic :: Software Development
+Classifier: Topic :: Documentation
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Requires: networkx (>=1.0)
+Requires: PyYAML (>=3.0)

@@ -160,4 +160,11 @@ def check_target_integrity(key, values, meta=False, all=False, parent=None):
     if "formula" not in values:
         sys.stderr.write("Target '{}' is missing formula\n".format(key))
         return False
+    field_types = {"dependencies": list, "output": list, "formula": str,
+                   "help": str}
+    for field, type in field_types.items():
+        if not isinstance(values.get(field) or type(), type):
+            sys.stderr.write("Field '{}' needs to be type {}\n".format(field,
+                                                            type.__name__))
+            return False
     return True

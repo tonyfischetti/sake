@@ -117,7 +117,8 @@ else:
 with io.open(fname, "r") as fh:
     raw_text = fh.read()
     try:
-        sake_text, includes = acts.expand_macros(raw_text)
+        sake_text, includes = acts.expand_macros_and_includes(os.path.dirname(
+                                            fname) or os.getcwd(), raw_text)
     except acts.InvalidMacroError as err:
         sys.stderr.write(err.message)
         sys.exit(1)

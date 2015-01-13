@@ -8,11 +8,12 @@ This holds mock objects for the unittests
 """
 
 mock_sakefile_for_macros = """---
-#!ask=$hyness is nice
-  
-#!rΩsholme = at the last night      
+#!ask=shyness is nice
+
+#!rΩsholme = at the last night
 panic #! streets= london, burmingham
  #! asleep =sing me to sleep
+#! empty=
 ..."""
 
 mock_sakefile_for_help = """first☼:

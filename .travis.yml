@@ -10,8 +10,8 @@ before_install:
 # command to install dependencies
 install:
   - pip install .
-  - pip install -r ./testlib/test_reqs.txt
+  - pip install -r ./testlib/requirements.txt
 # command to run tests
 script:
-    - python ./test_sake.py
+    - py.test
     - cd functests/test3/ && python ./functest.py

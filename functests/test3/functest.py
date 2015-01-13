@@ -713,8 +713,12 @@ expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or d
 compilation terminated.
 Command failed to run
 """
+expected3 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+compilation terminated.
+Command failed to run
+"""
 print(err)
-if err != expected and err != expected2:
+if err != expected and err != expected2 and err != expected3:
     FAIL("break target with no ancestors sake failed!")
 out, err = run("../../sake -r")
 expected = """Would run target: compile statfuncs
@@ -749,7 +753,12 @@ compilation terminated.
 Target 'compile statfuncs' failed!
 A command failed to run
 """
-if err != expected and err != expected2:
+expected3 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+compilation terminated.
+Target 'compile statfuncs' failed!
+A command failed to run
+"""
+if err != expected and err != expected2 and err != expected3:
     FAIL("break target with no ancestors sake parallel failed!")
 expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
 if out != expected:
@@ -849,7 +858,11 @@ expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or d
 compilation terminated.
 Command failed to run
 """
-if err != expected and err != expected2:
+expected3 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
+compilation terminated.
+Command failed to run
+"""
+if err != expected and err != expected2 and err != expected3:
     FAIL("quiet error failed!")
 passed("quiet error")
 

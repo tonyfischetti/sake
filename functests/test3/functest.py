@@ -416,11 +416,12 @@ Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target ensure version match
 ./ensure_version_match.sh
-Done
+File 'qstats-documentation.html' could not be read! Exiting!
 """
 if out != expected:
     FAIL('sake force "compile objects" failed!')
 passed('sake force "compile objects"')
+
 
 #####################
 #  sake clean full  #

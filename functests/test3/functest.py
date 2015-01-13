@@ -717,7 +717,6 @@ expected3 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or d
 compilation terminated.
 Command failed to run
 """
-print(err)
 if err != expected and err != expected2 and err != expected3:
     FAIL("break target with no ancestors sake failed!")
 out, err = run("../../sake -r")

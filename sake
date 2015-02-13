@@ -140,10 +140,26 @@ if args.verbose:
 
 
 # expand patterns
-for k, v in list(sakefile.items()):
-    sakefile.pop(k)
-    sakefile.update(acts.expand_patterns(k, v))
-
+new_sakefile = {}
+# get around Python 2's lack of nonlocal
+expanded_patterns = [False]
+def add_expansion(k, v):
+    tgts, anything = acts.expand_patterns(k, v, sakefile)
+    if anything:
+        expanded_patterns[0] = True
+    new_sakefile.update(tgts)
+# keep on until there's nothing left to expand
+while True:
+    for k, v in sakefile.items():
+        if 'formula' not in v:
+            for sk, sv in v.items():
+                add_expansion(sk, sv)
+        else:
+            add_expansion(k, v)
+    if not expanded_patterns:
+        break
+    expanded_patterns = False
+    sakefile = new_sakefile
 
 # if target is "help"
 if args.target == "help":

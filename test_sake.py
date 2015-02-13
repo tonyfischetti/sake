@@ -129,7 +129,13 @@ def test_acts_get_all_outputs():
 
 
 def test_acts_patterns():
-    assert acts.expand_patterns('echo %.txt', {'dependencies': 'tmp/%.txt', 'formula': 'echo tmp/%.txt'}) == {'echo %.txt': {
+    assert acts.expand_patterns('echo %.txt', {'dependencies': 'tmp/%.txt', 'formula': 'echo tmp/%.txt'}, {}) == ({'echo %.txt': {
         'dependencies': 'tmp/%.txt',
         'formula': 'echo tmp/%.txt'
-    }}
+    }}, False)
+    # issue 50
+    assert acts.expand_patterns('echo %f.x', {'dependencies': ['tmp/%f.x'],
+           'formula': 'echo tmp/%f.x', 'output': ['tmp/%f.o'], 'help': ''}, {'':
+                   {'output': ['tmp/y.x'], 'formula': 'xyz'}}) ==\
+        ({'echo y.x': {'dependencies': ['tmp/y.x'], 'help': '',
+                       'formula': 'echo tmp/y.x', 'output': ['tmp/y.o']}}, True)

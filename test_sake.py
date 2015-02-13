@@ -57,7 +57,7 @@ def test_acts_escp():
     assert acts.escp(has_more_spaces_and_unicode) == "\" well i wønder\""
 
 
-def test_acts_expand_macros_and_includes(capsys):
+def test_acts_preprocess(capsys):
     # ATTENTION:
     #   there is a bug in python's template substitution that
     #   prevents certain unicode-heavy strings from being replaced
@@ -78,7 +78,7 @@ def test_acts_expand_macros_and_includes(capsys):
     shyness is niceme
     ...
     '''.strip('\n'))
-    assert acts.expand_macros_and_includes('.', temp)[0] == solution
+    assert acts.preprocess('.', temp)[0] == solution
 
     temp = textwrap.dedent('''
     #!this=1
@@ -86,15 +86,15 @@ def test_acts_expand_macros_and_includes(capsys):
     '''.strip('\n'))
 
     with pytest.raises(acts.InvalidMacroError):
-        acts.expand_macros_and_includes('.', temp)
+        acts.preprocess('.', temp)
 
-    assert acts.expand_macros_and_includes('tmp', '#< other.yaml') ==\
+    assert acts.preprocess('tmp', '#< other.yaml') ==\
            ('#< other.yaml', {'other.yaml': ('#< missing.yaml optional\n#! a=1', {})})
 
     with pytest.raises(acts.IncludeError):
-        acts.expand_macros_and_includes('tmp', '#< missing.yaml')
+        acts.preprocess('tmp', '#< missing.yaml')
 
-    acts.expand_macros_and_includes('tmp', '#< missing.yaml or Error')
+    acts.preprocess('tmp', '#< missing.yaml or Error')
     assert capsys.readouterr() == ('Error\n', '')
 
 
@@ -103,7 +103,7 @@ def test_acts_expand_macros_and_includes(capsys):
 def test_acts_expand_macros_unicode():
     temp = mock_sakefile_for_macros+'there are ruffians in $rΩsholme'
     solution = mock_sakefile_for_macros+'there are ruffians in at the last night'
-    assert acts.expand_macros_and_includes('.', temp)[0] == solution
+    assert acts.preprocess('.', temp)[0] == solution
 
 
 def test_acts_get_help():

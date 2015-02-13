@@ -158,7 +158,7 @@ def get_help(sakefile):
     return full_string
 
 
-def expand_macros_and_includes(root, raw_text, macros={}):
+def preprocess(root, raw_text, macros={}):
     """
     This gets called before the sakefile is parsed. It looks for
     macros defined anywhere in the sakefile (the start of the line
@@ -197,8 +197,7 @@ def expand_macros_and_includes(root, raw_text, macros={}):
                 raise IncludeError("Failed to parse include {}\n".format(line))
             try:
                 with open(os.path.join(root, filename), 'r') as f:
-                    includes[filename] = expand_macros_and_includes(root,
-                                                        f.read(), macros)
+                    includes[filename] = preprocess(root, f.read(), macros)
             except IOError:
                 if match.group(2):
                     if match.group(2).startswith('or '):
@@ -306,7 +305,7 @@ def expand_patterns(name, target, sakefile):
         for f in glob.iglob(matcher):
             add_match(f)
         for out in all_outputs:
-            if out in target['output']:
+            if out in target.get('output', []):
                 continue
             if fnmatch.fnmatch(out, matcher):
                 add_match(out)

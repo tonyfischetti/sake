@@ -271,13 +271,14 @@ def expand_patterns(name, target, sakefile):
     if "dependencies" not in target or not target["dependencies"]:
         return {name: target}, False
     all_outputs = []
-    # gather all outputs for expanded based on files that will be created
+    # gather all outputs for expansion based on files that will be created
     for tgt in sakefile.values():
         if 'formula' not in tgt:
-            for subtgt in tgt.values():
-                all_outputs.extend(subtgt.get('output', []))
+            for subn, subtgt in tgt.items():
+                if subn != 'help' and not subn.startswith('(ignore)'):
+                    all_outputs.extend(subtgt.get('output', []))
         else:
-            all_outputs.extend(tgt.get('output', []))
+            all_outputs.extend(tgt.get('output') or [])
     for dep in target["dependencies"]:
         engine, patterns = get_patterns(dep)
         if not patterns:

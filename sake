@@ -151,14 +151,17 @@ def add_expansion(k, v):
 # keep on until there's nothing left to expand
 while True:
     for k, v in sakefile.items():
+        if k == 'help' or k.startswith('(ignore)'):
+            continue
         if 'formula' not in v:
             for sk, sv in v.items():
-                add_expansion(sk, sv)
+                if sk != 'help' and not sk.startswith('(ignore)'):
+                    add_expansion(sk, sv)
         else:
             add_expansion(k, v)
-    if not expanded_patterns:
+    if not expanded_patterns[0]:
         break
-    expanded_patterns = False
+    expanded_patterns[0] = False
     sakefile = new_sakefile
 
 # if target is "help"

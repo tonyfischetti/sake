@@ -273,6 +273,8 @@ def expand_patterns(name, target, sakefile):
     all_outputs = []
     # gather all outputs for expansion based on files that will be created
     for tgt in sakefile.values():
+        if not isinstance(tgt, dict): # probably all
+            continue
         if 'formula' not in tgt:
             for subn, subtgt in tgt.items():
                 if subn != 'help' and not subn.startswith('(ignore)'):

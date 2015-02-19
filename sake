@@ -151,7 +151,7 @@ def add_expansion(k, v):
 # keep on until there's nothing left to expand
 while True:
     for k, v in sakefile.items():
-        if k == 'help' or k.startswith('(ignore)'):
+        if k in ['help', 'all'] or k.startswith('(ignore)'):
             continue
         if 'formula' not in v:
             for sk, sv in v.items():

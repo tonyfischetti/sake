@@ -10,6 +10,14 @@
 #! CFLAGS=-w -O2 -I./include
 #! LDFLAGS=-lm
 
+all:
+    - compile objects
+    - build binary
+    - generate html documentation
+    - package it
+    - output wrapper
+    - ensure version match
+
 compile objects:
     help: compile all c files into object files
     compile graphfuncs:

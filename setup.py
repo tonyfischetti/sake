@@ -39,10 +39,10 @@ depends = ['networkx (>=1.0)', 'PyYAML (>=3.0)']
 
 try:
     from setuptools import setup
-    kw = {'install_requires': [s.replace('(','').replace(')','') for s in depends]}
+    kw = {'install_requires': [s.replace('(', '').replace(')', '') for s in depends]}
 except ImportError:
     from distutils.core import setup
-    kw = {'requires': depends}
+    kw = {}
 
 from sakelib import constants
 
@@ -85,8 +85,7 @@ setup(name=constants.NAME,
                    'Programming Language :: Python :: 3.3',
                    'Programming Language :: Python :: 3.4'],
       packages=['sakelib'],
-      requires=['networkx (>=1.0)',
-                'PyYAML (>=3.0)'],
+      requires=depends,
       scripts=['sake'],
       **kw
      )

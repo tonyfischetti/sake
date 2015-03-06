@@ -73,7 +73,7 @@ def check_shastore_version(from_store, verbose):
         errmes = ["Since you've used this project last, a new version of ",
                   "sake was installed that introduced backwards incompatible",
                   " changes. Run 'sake clean', and rebuild before continuing\n"]
-        errmes = " ".join(errmes) 
+        errmes = " ".join(errmes)
         sys.stderr.write(errmes)
         sys.exit(1)
 
@@ -292,9 +292,7 @@ def get_direct_ancestors(G, list_of_nodes):
     """
     parents = []
     for item in list_of_nodes:
-        anc = G.predecessors(item)
-        for one in anc:
-            parents.append(one)
+        parents.extend(G.predecessors(item))
     return parents
 
 
@@ -323,8 +321,10 @@ def get_levels(G):
     levels = []
     ends = get_sinks(G)
     levels.append(ends)
-    while get_direct_ancestors(G, ends):
+    while True:
         ends = get_direct_ancestors(G, ends)
+        if not ends:
+            break
         levels.append(ends)
     levels.reverse()
     return levels
@@ -335,13 +335,13 @@ def remove_redundancies(levels):
     There are repeats in the output from get_levels(). We
     want only the earliest occurrence (after it's reversed)
     """
-    seen = []
+    seen = set()
     final = []
     for line in levels:
         new_line = []
         for item in line:
             if item not in seen:
-                seen.append(item)
+                seen.add(item)
                 new_line.append(item)
         final.append(new_line)
     return final
@@ -398,10 +398,10 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
               for target in list_of_targets]
     commands = [item[1]['formula'].rstrip() for item in info]
     if not quiet:
-        procs = [Popen(command, shell=True) for command in commands]
+        procs = (Popen(command, shell=True) for command in commands)
     else:
-        procs = [Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
-                   for command in commands]
+        procs = (Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
+                   for command in commands)
     for index, process in enumerate(procs):
         if process.wait():
             sys.stderr.write("Target '{}' failed!\n".format(info[index][0]))
@@ -460,7 +460,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         UN-success results in a fatal error so it will return 0 or nothing
     """
     if not dont_update_shas_of:
-        dont_update_shas_of = []
+        dont_update_shas_of = set()
     if verbose:
         print("Checking that graph is directed acyclic")
     if not nx.is_directed_acyclic_graph(G):
@@ -516,8 +516,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         # build order deterministic (by sorting targets)
         targets = []
         for line in parallel_sort(G):
-            for item in sorted(line):
-                targets.append(item)
+            targets.extend(sorted(line))
         for target in targets:
             if verbose:
                 outstr = "Checking if target '{}' needs to be run"

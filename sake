@@ -260,22 +260,22 @@ try:
     predecessors = G.predecessors(args.target)
     # if a specific target is given, it's outputs need to be protected
     # from sha updates
-    no_sha_update = []
+    no_sha_update = set()
     for node in G.nodes(data=True):
         if node[0] == args.target:
             if 'output' in node[1]:
                 for item in node[1]['output']:
-                    no_sha_update.append(item)
+                    no_sha_update.add(item)
 except:
     # maybe its a meta-target?
     if args.target in sakefile:
         nodes_in_subgraph = []
-        no_sha_update = []
+        no_sha_update = set()
         for node in G.nodes(data=True):
             if "parent" in node[1] and node[1]["parent"] == args.target:
                 if 'output' in node[1]:
                     for item in node[1]['output']:
-                        no_sha_update.append(item)
+                        no_sha_update.add(item)
                 if args.force:
                     # force will not build any predecessors
                     nodes_in_subgraph.append(node[0])

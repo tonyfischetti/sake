@@ -3,8 +3,8 @@
 ![sake logo](http://statethatiamin.onlythisrose.com/sakelogo.png)
 
 [![Build Status](https://travis-ci.org/tonyfischetti/sake.svg?branch=master)](https://travis-ci.org/tonyfischetti/sake)
-[![Downloads](https://pypip.in/download/master-sake/badge.svg)](https://pypi.python.org/pypi/master-sake/)
-
+[![Downloads](https://img.shields.io/pypi/dm/master-sake.svg)](https://pypi.python.org/pypi/master-sake/)
+[![License](https://img.shields.io/pypi/l/master-sake.svg)](https://pypi.python.org/pypi/master-sake/)
 
 ### What is it?
 Sake is a way to easily design, share, build, and visualize workflows with

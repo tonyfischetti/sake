@@ -13,6 +13,7 @@ from __future__ import print_function
 from difflib import ndiff
 import hashlib
 import io
+import locale
 import os
 import platform
 import shutil
@@ -55,6 +56,7 @@ def FAIL(message):
     sys.exit(1)
 
 def run(command, spit_output=False):
+    encoding = locale.getpreferredencoding()
     p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     # if p.returncode:
@@ -62,9 +64,9 @@ def run(command, spit_output=False):
     #     print(err)
     #     sys.exit(1)
     if spit_output:
-        print("\nTHIS WAS THE OUTPUT:\n{}\n=======".format(out.decode("utf-8")))
-        print("\nTHIS WAS THE ERR:\n{}\n=======".format(err.decode("utf-8")))
-    return out.decode('utf-8'), err.decode('utf-8')
+        print("\nTHIS WAS THE OUTPUT:\n{}\n=======".format(out.decode(encoding)))
+        print("\nTHIS WAS THE ERR:\n{}\n=======".format(err.decode(encoding)))
+    return out.decode(encoding), err.decode(encoding)
 
 def passed(whichtest):
     print("{:>45} {:>15}".format(whichtest, "\033[92mpassed\033[0m"))

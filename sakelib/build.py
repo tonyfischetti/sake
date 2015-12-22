@@ -45,6 +45,7 @@ from __future__ import print_function
 import glob
 import hashlib
 import io
+import locale
 import networkx as nx
 import os.path
 from subprocess import Popen, PIPE
@@ -248,7 +249,7 @@ def run_commands(commands, verbose, quiet):
     out, err = p.communicate()
     if p.returncode:
         if quiet:
-            sys.stderr.write(err.decode('utf-8'))
+            sys.stderr.write(err.decode(locale.getpreferredencoding()))
         sys.exit("Command failed to run")
 
 

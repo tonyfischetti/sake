@@ -443,19 +443,13 @@ def merge_from_store_and_in_mems(from_store, in_mem_shas, dont_update_shas_of):
     return in_mem_shas
 
 
-def build_this_graph(G, verbose, quiet, force, recon, parallel,
-                     dont_update_shas_of=None):
+def build_this_graph(G, settings, dont_update_shas_of=None):
     """
     This is the master function that performs the building.
 
     Args:
         A graph (often a subgraph)
-        A flag indicating verbosity
-        A flag indicating quiet mode
-        A flag indicating whether a rebuild should be forced
-        A flag indicating whether this is a dry run (recon)
-        A flag indicating whether the graph targets should
-          build in parallel
+        The settings dictionary
         An optional list of files to not update the shas of
           (needed when building specific targets)
 
@@ -463,18 +457,23 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         0 if successful
         UN-success results in a fatal error so it will return 0 or nothing
     """
+    verbose = settings["verbose"]
+    quiet = settings["quiet"]
+    force = settings["force"]
+    recon = settings["recon"]
+    parallel = settings["parallel"]
+    error = settings["error"]
+    sprint = settings["sprint"]
     if not dont_update_shas_of:
         dont_update_shas_of = []
-    if verbose:
-        print("Checking that graph is directed acyclic")
+    sprint("Checking that graph is directed acyclic", level="verbose")
     if not nx.is_directed_acyclic_graph(G):
         errmes = "Dependency resolution is impossible; "
         errmes += "graph is not directed and acyclic"
         errmes += "\nCheck the Sakefile\n"
-        sys.stderr.write(errmes)
+        error(errmes)
         sys.exit(1)
-    if verbose:
-        print("Dependency resolution is possible")
+    sprint("Dependency resolution is possible", level="verbose")
     in_mem_shas = take_shas_of_all_files(G, verbose)
     from_store = {}
     if not os.path.isfile(".shastore"):
@@ -492,14 +491,12 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         with io.open(".shastore", "r") as fh:
             shas_on_disk = fh.read()
         from_store = yaml.load(shas_on_disk)
-    sys.stdout.flush()
     # parallel
     if parallel:
         for line in parallel_sort(G):
             line = sorted(line)
-            if verbose:
-                out = "Checking if targets '{}' need to be run"
-                print(out.format(", ".join(line)))
+            out = "Checking if targets '{}' need to be run"
+            sprint(out.format(", ".join(line)), level="verbose")
             to_build = []
             for item in line:
                 if needs_to_run(G, item, in_mem_shas, from_store, verbose,
@@ -509,10 +506,10 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
                 if recon:
                     if len(to_build) == 1:
                         out = "Would run target '{}'"
-                        print(out.format(to_build[0]))
+                        sprint(out.format(to_build[0]))
                     else:
                         out = "Would run targets '{}' in parallel"
-                        print(out.format(", ".join(to_build)))
+                        sprint(out.format(", ".join(to_build)))
                     continue
                 parallel_run_these(G, to_build, in_mem_shas, from_store,
                                    verbose, quiet, dont_update_shas_of)
@@ -525,13 +522,12 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
             for item in sorted(line):
                 targets.append(item)
         for target in targets:
-            if verbose:
-                outstr = "Checking if target '{}' needs to be run"
-                print(outstr.format(target))
+            outstr = "Checking if target '{}' needs to be run"
+            sprint(outstr.format(target), level="verbose")
             if needs_to_run(G, target, in_mem_shas, from_store, verbose,
                             force):
                 if recon:
-                    print("Would run target: {}".format(target))
+                    sprint("Would run target: {}".format(target))
                     continue
                 run_the_target(G, target, verbose, quiet)
                 node_dict = get_the_node_dict(G, target)
@@ -550,8 +546,9 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         return 0
     in_mem_shas = take_shas_of_all_files(G, verbose)
     if in_mem_shas:
-        in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas, dont_update_shas_of)
+        in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas,
+                                                   dont_update_shas_of)
         write_shas_to_shastore(in_mem_shas)
-    print("Done")
+    sprint("Done")
     return 0
 

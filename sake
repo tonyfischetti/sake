@@ -151,7 +151,7 @@ if args.target == "help":
 # get the graph representation
 G = nx.DiGraph()
 try:
-    G = acts.construct_graph(sakefile, args.verbose)
+    G = acts.construct_graph(sakefile, settings)
 except:
     error("Unspecified error constructing dependency graph")
     sys.exit(1)
@@ -159,22 +159,22 @@ except:
 
 # if target is "clean"
 if args.target == "clean":
-    retcode = acts.clean_all(G, args.verbose, args.quiet, args.recon)
+    retcode = acts.clean_all(G, settings)
     sys.exit(retcode)
 
 
 # if target is "visual"
 if args.target == 'visual':
     if args.recon:
-        sys.stderr.write("'visual' cannot be used in recon mode\n")
+        error("'visual' cannot be used in recon mode")
         sys.exit(1)
-    if args.verbose:
-        print("Going to generate dependency graph image")
+    sprint("Going to generate dependency graph image", level="verbose")
     if args.outfile:
         outfile = args.outfile
     else:
         outfile = "dependencies"
-    ret_val = acts.visualize(G, filename=outfile, no_graphviz=args.no_graphviz)
+    ret_val = acts.visualize(G, settings, filename=outfile,
+                             no_graphviz=args.no_graphviz)
     sys.exit(ret_val)
 
 
@@ -190,21 +190,18 @@ def all_preds(preds):
             else:
                 return preds
         car, cdr = preds[0], preds[1:]
-        sys.stdout.flush()
         return all_preds(G.predecessors(car)) + all_preds(car) + all_preds(cdr)
     else:
         return [preds]
 
-
+############# ADD THIS
 # if target is "all"
 if args.target == 'all':
-    if args.verbose:
-        print("Going to build target all")
+    sprint("Going to build target all", level="verbose")
     # if "all" isn't a target in the sakefile, we
     # just run everything
     if "all" not in sakefile:
-        retval = build.build_this_graph(G, args.verbose, args.quiet,
-                                        args.force, args.recon, args.parallel)
+        retval = build.build_this_graph(G, settings)
         sys.exit(retval)
     # ok, "all" is a listed target in the sakefile
     # lets make a subgraph with only the targets in "all"
@@ -220,8 +217,7 @@ if args.target == 'all':
             nodes_in_subgraph = nodes_in_subgraph + all_preds([node[0]])
     nodes_in_subgraph = list(set(nodes_in_subgraph))
     subgraph = G.subgraph(nodes_in_subgraph)
-    retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
-                                   args.force, args.recon, args.parallel)
+    retval = build.build_this_graph(subgraph, settings)
     sys.exit(retval)
 
 
@@ -229,7 +225,7 @@ if args.target == 'all':
 # both targets need to be updated. This is because running one will resolve
 # the sha mismatch and sake will think that the other one doesn't have to
 # run. This is called a "tie". We need to find such "ties" at this point.
-ties = acts.get_ties(G, args.verbose)
+ties = acts.get_ties(G)
 
 # for other target specified
 # it's easier to ask for forgiveness that permission
@@ -272,31 +268,29 @@ except:
         nodes_in_subgraph = list(set(nodes_in_subgraph))
         subgraph = G.subgraph(nodes_in_subgraph)
         if ties_message:
-            print(ties_message)
-        retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
-                                        args.force, args.recon, args.parallel,
+            warn(ties_message)
+        retval = build.build_this_graph(subgraph, settings,
                                        dont_update_shas_of=no_sha_update)
         sys.exit(retval)
     # I guess its not :(
-    err_mes = "Error: Couldn't find target '{}' in Sakefile\n"
-    sys.stderr.write(err_mes.format(args.target))
+    err_mes = "Error: Couldn't find target '{}' in Sakefile"
+    error(err_mes.format(args.target))
     sys.exit(1)
 # force will not build any predecessors
 if args.force:
     # check for need to run ties
     my_ties, ties_message = acts.get_tied_targets([args.target], ties)
     if ties_message:
-        print(ties_message)
+        warn(ties_message)
     subgraph = G.subgraph(my_ties)
 else:
     nodes_in_subgraph = list(set(all_preds([args.target])))
     my_ties, ties_message = acts.get_tied_targets(nodes_in_subgraph, ties)
     if ties_message:
-        print(ties_message)
+        warn(ties_message)
     nodes_in_subgraph = list(set(all_preds(my_ties)))
     subgraph = G.subgraph(nodes_in_subgraph)
 
-retval = build.build_this_graph(subgraph, args.verbose, args.quiet,
-                                args.force, args.recon, args.parallel,
+retval = build.build_this_graph(subgraph, settings,
                                 dont_update_shas_of=no_sha_update)
 sys.exit(retval)

@@ -75,10 +75,11 @@ def get_print_functions(settings):
     that specifies the output level (verbose or not). If not verbose,
     the print function will ignore the message.
     """
+    verbose = settings["verbose"]
     # the regular print doesn't use color by default
     # (even if color is True)
     def sprint(message, level=None, color=False):
-        if level=="verbose" and not settings["verbose"]:
+        if level=="verbose" and not verbose:
             return
         # for colors
         prepend = ""
@@ -88,7 +89,7 @@ def get_print_functions(settings):
             postfix = "\033[0m"
         print("{}{}{}".format(prepend, message, postfix), flush=True)
     def warn(message, level=None, color=True):
-        if level=="verbose" and not settings["verbose"]:
+        if level=="verbose" and not verbose:
             return
         # for colors
         prepend = ""
@@ -99,7 +100,7 @@ def get_print_functions(settings):
         print("{}{}{}".format(prepend, message, postfix), flush=True)
     def error(message, level=None, color=True):
         # this condition does really make any sense but w/e
-        if level=="verbose" and not settings["verbose"]:
+        if level=="verbose" and not verbose:
             return
         # for colors
         prepend = ""
@@ -425,7 +426,7 @@ def expand_patterns(name, target, settings):
     return res
 
 
-def get_ties(G, verbose):
+def get_ties(G):
     """
     If you specify a target that shares a dependency with another target,
     both targets need to be updated. This is because running one will resolve
@@ -472,20 +473,21 @@ def get_tied_targets(original_targets, the_ties):
     return original_targets, ""
 
 
-def construct_graph(sakefile, verbose):
+def construct_graph(sakefile, settings):
     """
     Takes the sakefile dictionary and builds a NetworkX graph
 
     Args:
         A dictionary that is the parsed Sakefile (from sake.py)
-        A flag indication verbosity
+        The settings dictionary
 
     Returns:
         A NetworkX graph
     """
+    verbose = settings["verbose"]
+    sprint = settings["sprint"]
     G = nx.DiGraph()
-    if verbose:
-        print("Going to construct Graph")
+    sprint("Going to construct Graph", level="verbose")
     for target in sakefile:
         if target == "all":
             # we don't want this node
@@ -495,20 +497,17 @@ def construct_graph(sakefile, verbose):
             for atomtarget in sakefile[target]:
                 if atomtarget == "help":
                     continue
-                if verbose:
-                    print("Adding '{}'".format(atomtarget))
+                sprint("Adding '{}'".format(atomtarget), level="verbose")
                 data_dict = sakefile[target][atomtarget]
                 data_dict["parent"] = target
                 G.add_node(atomtarget, data_dict)
         else:
-            if verbose:
-                print("Adding '{}'".format(target))
+            sprint("Adding '{}'".format(target), level="verbose")
             G.add_node(target, sakefile[target])
-    if verbose:
-        print("Nodes are built\nBuilding connections")
+    sprint("Nodes are built\nBuilding connections", level="verbose")
     for node in G.nodes(data=True):
-        if verbose:
-            print("checking node {} for dependencies".format(node[0]))
+        sprint("checking node {} for dependencies".format(node[0]),
+               level="verbose")
         # normalize all paths in output
         for k, v in node[1].items():
             if v is None: node[1][k] = []
@@ -517,8 +516,7 @@ def construct_graph(sakefile, verbose):
                 node[1]['output'][index] = clean_path(node[1]['output'][index])
         if "dependencies" not in node[1]:
             continue
-        if verbose:
-            print("it has dependencies")
+        sprint("it has dependencies", level="verbose")
         connects = []
         # normalize all paths in dependencies
         for index, dep in enumerate(node[1]['dependencies']):
@@ -534,8 +532,7 @@ def construct_graph(sakefile, verbose):
             if not matches:
                 continue
             for match in matches:
-                if verbose:
-                    print("Appending {} to matches".format(match))
+                sprint("Appending {} to matches".format(match), level="verbose")
                 connects.append(match)
         if connects:
             for connect in connects:
@@ -577,20 +574,23 @@ def get_all_dependencies(node_dict):
     return deplist
 
 
-def clean_all(G, verbose, quiet, recon):
+def clean_all(G, settings):
     """
     Removes all the output files from all targets. Takes
     the graph as the only argument
 
     Args:
         The networkx graph object
-        A flag indicating verbosity
-        A flag indicating quiet mode
+        The settings dictionary
 
     Returns:
         0 if successful
         1 if removing even one file failed
     """
+    quiet = settings["quiet"]
+    recon = settings["recon"]
+    sprint = settings["sprint"]
+    error = settings["error"]
     all_outputs = []
     for node in G.nodes(data=True):
         if "output" in node[1]:
@@ -601,21 +601,18 @@ def clean_all(G, verbose, quiet, recon):
     for item in sorted(all_outputs):
         if os.path.isfile(item):
             if recon:
-                print("Would remove file: {}".format(item))
+                sprint("Would remove file: {}".format(item))
                 continue
-            if verbose:
-                mesg = "Attempting to remove file '{}'"
-                print(mesg.format(item))
+            sprint("Attempting to remove file '{}'", level="verbose")
             try:
                 os.remove(item)
-                if verbose:
-                    print("Removed file")
+                sprint("Removed file", level="verbose")
             except:
-                errmes = "Error: file '{}' failed to be removed\n"
-                sys.stderr.write(errmes.format(item))
+                errmes = "Error: file '{}' failed to be removed"
+                error(errmes.format(item))
                 retcode = 1
     if not retcode and not recon:
-        print("All clean")
+        sprint("All clean")
     return retcode
 
 
@@ -646,7 +643,7 @@ def write_dot_file(G, filename):
         fh.write("}")
 
 
-def visualize(G, filename="dependencies", no_graphviz=False):
+def visualize(G, settings, filename="dependencies", no_graphviz=False):
     """
     Uses networkX to draw a graphviz dot file either (a) calls the
     graphviz command "dot" to turn it into a SVG and remove the
@@ -655,6 +652,7 @@ def visualize(G, filename="dependencies", no_graphviz=False):
 
     Args:
         a NetworkX DiGraph
+        the settings dictionary
         a filename (a default is provided
         a flag indicating whether graphviz should *not* be called
 
@@ -662,6 +660,7 @@ def visualize(G, filename="dependencies", no_graphviz=False):
         0 if everything worked
         will cause fatal error on failure
     """
+    error = settings["error"]
     if no_graphviz:
         write_dot_file(G, filename)
         return 0
@@ -690,7 +689,7 @@ def visualize(G, filename="dependencies", no_graphviz=False):
     if p.returncode:
         errmes = "Either graphviz is not installed, or its not on PATH"
         os.remove("tempdot")
-        sys.stderr.write(errmes)
+        error(errmes)
         sys.exit(1)
     os.remove("tempdot")
     return 0

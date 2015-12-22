@@ -46,38 +46,39 @@ from __future__ import print_function
 import sys
 
 
-def check_integrity(sakefile, verbose):
+def check_integrity(sakefile, settings):
     """
     Checks the format of the sakefile dictionary
     to ensure it conforms to specification
 
     Args:
         A dictionary that is the parsed Sakefile (from sake.py)
-        A flag indicating verbosity
+        The setting dictionary (for print functions)
     Returns:
         True if the Sakefile is conformant
         False if not
     """
-    if verbose:
-        print("Call to check_integrity issued")
+    sprint = settings["sprint"]
+    error = settings["error"]
+    sprint("Call to check_integrity issued", level="verbose")
     if not sakefile:
-        sys.stderr.write("Sakefile is empty\n")
+        error("Sakefile is empty")
         return False
     # checking for duplicate targets
     if len(sakefile.keys()) != len(set(sakefile.keys())):
-        sys.stderr.write("Sakefile contains duplicate targets\n")
+        error("Sakefile contains duplicate targets")
         return False
     for target in sakefile:
         if target == "all":
             if not check_target_integrity(target, sakefile["all"], all=True):
-                sys.stderr.write("Failed to accept target 'all'\n")
+                error("Failed to accept target 'all'")
                 return False
             continue
         if "formula" not in sakefile[target]:
             if not check_target_integrity(target, sakefile[target],
                                           meta=True):
-                errmes = "Failed to accept meta-target '{}'\n".format(target)
-                sys.stderr.write(errmes)
+                errmes = "Failed to accept meta-target '{}'".format(target)
+                error(errmes)
                 return False
             for atom_target in sakefile[target]:
                 if atom_target == "help":
@@ -87,12 +88,12 @@ def check_integrity(sakefile, verbose):
                                               parent=target):
                     errmes = "Failed to accept target '{}'\n".format(
                                                                 atom_target)
-                    sys.stderr.write(errmes)
+                    error(errmes)
                     return False
             continue
         if not check_target_integrity(target, sakefile[target]):
             errmes = "Failed to accept target '{}'\n".format(target)
-            sys.stderr.write(errmes)
+            error(errmes)
             return False
     return True
 

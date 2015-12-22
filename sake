@@ -49,6 +49,8 @@ from sakelib import audit
 from sakelib import build
 from sakelib import constants
 
+
+
 parser = argparse.ArgumentParser(description='Build from a Sakefile')
 
 # mandatory arguments (but default is provided)
@@ -64,6 +66,8 @@ parser.add_argument('-V', '--version', action='store_true',
                     help="print out version")
 parser.add_argument('-q', '--quiet', action='store_true',
                     help="suppress most output")
+parser.add_argument('-c', '--color', action='store_true',
+                    help="use colored output")
 parser.add_argument('-F', '--force', action="store_true",
                     help="force sake to rebuild targets")
 parser.add_argument('-r', '--recon', action="store_true",
@@ -98,58 +102,49 @@ if args.verbose and args.quiet:
     args.quiet = False
 
 
+# converts cli args into a dictionary
+settings = vars(args)
+
+# In order to be as referentially transparent, we will keep various
+# settings and key functions in a dictionary called `settings` that 
+# we will send to delegate functions. 
+
+# The delegate functions will print errors and halt execution
+
+
+sprint, warn, error = acts.get_print_functions(settings)
+settings["sprint"] = sprint
+settings["warn"] = warn
+settings["error"] = error
+
+
 # find sakefile to read
-fname = ""
-if args.customsake:
-    if not os.path.isfile(args.customsake):
-        errmes = "Specified sakefile '{}' doesn't exist\n"
-        sys.stderr.write(errmes.format(args.customsake))
-        sys.exit(1)
-    fname = args.customsake
-else:
-    for name in ["Sakefile", "Sakefile.yaml", "Sakefile.yml"]:
-        if os.path.isfile(name):
-            fname = name
-            break
-    if not fname:
-        sys.stderr.write("Error: there is no Sakefile to read\n")
-        sys.exit(1)
+fname = acts.find_standard_sakefile(settings)
+
 
 # expand macros
 with io.open(fname, "r") as fh:
     raw_text = fh.read()
-    try:
-        sake_text, includes = acts.expand_macros(raw_text)
-    except acts.InvalidMacroError as err:
-        sys.stderr.write(err.message)
-        sys.exit(1)
-    except acts.IncludeError as err:
-        sys.stderr.write(err.message)
-        sys.exit(1)
-    except:
-        sys.stderr.write("Unspecified error trying to expand macros\n")
-        sys.exit(1)
-
+    sake_text, includes = acts.expand_macros(raw_text, settings)
 
 
 sakefile = acts.parse(fname, sake_text, includes)
-if not audit.check_integrity(sakefile, args.verbose):
-    sys.stderr.write("Error: Sakefile isn't written to specification\n")
+if not audit.check_integrity(sakefile, settings):
+    error("Error: Sakefile isn't written to specification")
     sys.exit(1)
-if args.verbose:
-    print("Sakefile passes integrity test")
+sprint("Sakefile passes integrity test", level="verbose")
 
 
 # expand patterns
 for k, v in list(sakefile.items()):
     sakefile.pop(k)
-    sakefile.update(acts.expand_patterns(k, v))
+    sakefile.update(acts.expand_patterns(k, v, settings))
 
 
 # if target is "help"
 if args.target == "help":
     help_string = acts.get_help(sakefile)
-    print(help_string)
+    sprint(help_string)
     sys.exit(0)
 
 
@@ -158,7 +153,7 @@ G = nx.DiGraph()
 try:
     G = acts.construct_graph(sakefile, args.verbose)
 except:
-    sys.stderr.write("Unspecified error constructing dependency graph\n")
+    error("Unspecified error constructing dependency graph")
     sys.exit(1)
 
 

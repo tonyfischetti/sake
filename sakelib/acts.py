@@ -61,6 +61,120 @@ class PatternTemplate(string.Template):
     delimiter = "%"
 
 
+def get_print_functions(settings):
+    """
+    This returns the appropriate print functions
+    in a tuple
+    The print function are:
+        - sprint - for standard printing
+        - warn - for warnings
+        - error - for errors
+    This will all be the same if color is False.
+
+    The returned print functions will contain an optional parameter
+    that specifies the output level (verbose or not). If not verbose,
+    the print function will ignore the message.
+    """
+    # the regular print doesn't use color by default
+    # (even if color is True)
+    def sprint(message, level=None, color=False):
+        if level=="verbose" and not settings["verbose"]:
+            return
+        # for colors
+        prepend = ""
+        postfix = ""
+        if settings["color"] and color:
+            prepend = "\033[92m"
+            postfix = "\033[0m"
+        print("{}{}{}".format(prepend, message, postfix), flush=True)
+    def warn(message, level=None, color=True):
+        if level=="verbose" and not settings["verbose"]:
+            return
+        # for colors
+        prepend = ""
+        postfix = ""
+        if settings["color"] and color:
+            prepend = "\033[93m"
+            postfix = "\033[0m"
+        print("{}{}{}".format(prepend, message, postfix), flush=True)
+    def error(message, level=None, color=True):
+        # this condition does really make any sense but w/e
+        if level=="verbose" and not settings["verbose"]:
+            return
+        # for colors
+        prepend = ""
+        postfix = ""
+        if settings["color"] and color:
+            prepend = "\033[91m"
+            postfix = "\033[0m"
+        print("{}{}{}".format(prepend, message, postfix), flush=True,
+              file=sys.stderr)
+    return sprint, warn, error
+
+
+def find_standard_sakefile(settings):
+    """Returns the filename of the appropriate sakefile"""
+    error = settings["error"]
+    if settings["customsake"]:
+        custom = settings["customsake"]
+        if not os.path.isfile(custom):
+            error("Specified sakefile '{}' doesn't exist", custom)
+            sys.exit(1)
+        return custom
+    # no custom specified, going over defaults in order
+    for name in ["Sakefile", "Sakefile.yaml", "Sakefile.yml"]:
+        if os.path.isfile(name):
+            return name
+    error("Error: there is no Sakefile to read")
+    sys.exit(1)
+
+
+def expand_macros(raw_text, settings, macros=None):
+    """
+    this gets called before the sakefile is parsed. it looks for
+    macros defined anywhere in the sakefile (the start of the line
+    is '#!') and then replaces all occurences of '$variable' with the
+    value defined in the macro. it then returns the contents of the
+    file with the macros expanded.
+    """
+    # see mutable default value behavior
+    if not macros:
+        macros = {}
+    includes = {}
+    result = []
+    pattern = re.compile("#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
+    ipattern = re.compile("#<\s*(\S+)\s*(optional|or\s+(.+))?$", re.UNICODE)
+    for line in raw_text.split("\n"):
+        line = string.Template(line).safe_substitute(macros)
+        # note that the line is appended to result before it is checked for macros
+        # this prevents macros expanding into themselves
+        result.append(line)
+        if line.startswith("#!"):
+            match = pattern.match(line)
+            try:
+                var, val = match.group(1, 2)
+            except:
+                error("Failed to parse macro {}\n".format(line))
+                sys.exit(1)
+            macros[var] = val
+        elif line.startswith("#<"):
+            match = ipattern.match(line)
+            try:
+                filename = match.group(1)
+            except:
+                raise IncludeError("Failed to parse include {}\n".format(line))
+            try:
+                with io.open(filename, 'r') as f:
+                    includes[filename] = expand_macros(f.read(), macros)
+            except IOError:
+                if match.group(2):
+                    if match.group(2).startswith('or '):
+                        print(match.group(3))
+                else:
+                    raise IncludeError("Nonexistent include {}\n".format(filename))
+    return "\n".join(result), includes
+
+
 def parse(file, text, includes):
     try:
         sakefile = yaml.load(text) or {}
@@ -184,16 +298,18 @@ def expand_macros(raw_text, macros={}):
             try:
                 filename = match.group(1)
             except:
-                raise IncludeError("Failed to parse include {}\n".format(line))
+                error("Failed to parse include {}\n".format(line))
+                sys.exit(1)
             try:
                 with io.open(filename, 'r') as f:
                     includes[filename] = expand_macros(f.read(), macros)
             except IOError:
                 if match.group(2):
                     if match.group(2).startswith('or '):
-                        print(match.group(3))
+                        sprint(match.group(3))
                 else:
-                    raise IncludeError("Nonexistent include {}\n".format(filename))
+                    error("Nonexistent include {}\n".format(filename))
+                    sys.exit(1)
     return "\n".join(result), includes
 
 
@@ -238,7 +354,8 @@ def get_patterns(dep):
         return engine, patterns
 
 
-def expand_patterns(name, target):
+def expand_patterns(name, target, settings):
+    error = settings["error"]
     data = collections.OrderedDict()
     if name == "all":
         return {name: target}
@@ -249,7 +366,7 @@ def expand_patterns(name, target):
             if subname == "help":
                 res["help"] = subtarget
             else:
-                res.update(expand_patterns(subname, subtarget))
+                res.update(expand_patterns(subname, subtarget, settings))
         return {name: res}
     if "dependencies" not in target or not target["dependencies"]:
         return {name: target}
@@ -266,7 +383,7 @@ def expand_patterns(name, target):
             expanded = PatternTemplate(re.sub(r"\\(%|\{|\})", r"\1",
                                               re.escape(dep))).substitute(subs)
         except:
-            sys.exit("Error parsing dependency patterns for target %s" % name)
+            error("Error parsing dependency patterns for target '{}'".format(name))
         regex = re.compile(expanded)
         files = []
         for f in glob.iglob(matcher):
@@ -578,21 +695,4 @@ def visualize(G, filename="dependencies", no_graphviz=False):
     os.remove("tempdot")
     return 0
 
-
-
-#####################
-##  CUSTOM ERRORS  ##
-#####################
-
-class Error(Exception):
-    """Base class for exceptions in this module."""
-    pass
-
-class InvalidMacroError(Error):
-    def __init__(self, message):
-        self.message = message
-
-class IncludeError(Error):
-    def __init__(self, message):
-        self.message = message
 

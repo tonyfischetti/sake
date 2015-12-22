@@ -84,6 +84,8 @@ parser.add_argument('-s', '--sakefile', action="store",
 args = parser.parse_args()
 
 
+
+## Let's get some simple stuff out of the way
 # print out version and exit (if specified)
 if args.version:
     print("Sake -- version {}".format(constants.VERSION))

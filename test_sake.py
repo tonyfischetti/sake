@@ -2,16 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
-import unittest
-from sakelib import acts
-import yaml
-import os
-import shutil
+import io
 import ntpath
+import os
 import posixpath
-
+from sakelib import acts
+import shutil
 from testlib import utobjs
+import unittest
+import yaml
+
 
 
 # test UNICODE!!!
@@ -25,11 +27,11 @@ class TestActsFunction(unittest.TestCase):
         self.expected_help = utobjs.expected_help
         # to hell with mock objects
         os.mkdir("./tmp")
-        with open("./tmp/file1.txt", "w") as fh:
+        with io.open("./tmp/file1.txt", "w") as fh:
             fh.write("1")
-        with open("./tmp/file2.txt", "w") as fh:
+        with io.open("./tmp/file2.txt", "w") as fh:
             fh.write("2")
-        with open("./tmp/file1.json", "w") as fh:
+        with io.open("./tmp/file1.json", "w") as fh:
             fh.write("1")
         
     def tearDown(self):

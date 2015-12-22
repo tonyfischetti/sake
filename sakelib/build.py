@@ -42,24 +42,18 @@ dependency resolution
 
 from __future__ import unicode_literals
 from __future__ import print_function
+import glob
 import hashlib
 import io
 import networkx as nx
 import os.path
+from subprocess import Popen, PIPE
 import sys
 import yaml
-import glob
-from subprocess import Popen, PIPE
 
 from . import acts
 from . import constants
 
-if sys.version_info[0] < 3:
-    import codecs
-    old_open = open
-    open = codecs.open
-else:
-    old_open = open
 
 
 def check_shastore_version(from_store, verbose):
@@ -85,7 +79,7 @@ def get_sha(a_file):
     try:
         BLOCKSIZE = 65536
         hasher = hashlib.sha1()
-        with old_open(a_file, "rb") as fh:
+        with io.open(a_file, "rb") as fh:
             buf = fh.read(BLOCKSIZE)
             while len(buf) > 0:
                 hasher.update(buf)
@@ -107,7 +101,7 @@ def write_shas_to_shastore(sha_dict):
     Writes a sha1 dictionary stored in memory to
     the .shastore file
     """
-    with open(".shastore", "w", encoding="utf-8") as fh:
+    with io.open(".shastore", "w") as fh:
         fh.write("---\n")
         fh.write('sake version: {}\n'.format(constants.VERSION))
         if sha_dict:
@@ -486,7 +480,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
         in_mem_shas['files'] = {}
-    with open(".shastore", "r") as fh:
+    with io.open(".shastore", "r") as fh:
         shas_on_disk = fh.read()
     from_store = yaml.load(shas_on_disk)
     check_shastore_version(from_store, verbose)
@@ -494,7 +488,7 @@ def build_this_graph(G, verbose, quiet, force, recon, parallel,
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
         in_mem_shas['files'] = {}
-        with open(".shastore", "r") as fh:
+        with io.open(".shastore", "r") as fh:
             shas_on_disk = fh.read()
         from_store = yaml.load(shas_on_disk)
     sys.stdout.flush()

@@ -10,21 +10,16 @@
 
 from __future__ import unicode_literals
 from __future__ import print_function
-import os
-import sys
-import shutil
-import time
-import hashlib
-import platform
 from difflib import ndiff
+import hashlib
+import io
+import os
+import platform
+import shutil
 from subprocess import Popen, PIPE
+import sys
+import time
 
-if sys.version_info[0] < 3:
-    import codecs
-    old_open = open
-    open = codecs.open
-else:
-    old_open = open
 
 here = os.path.dirname(__file__)
 os.chdir(here)
@@ -39,7 +34,7 @@ def get_sha(a_file):
     try:
         BLOCKSIZE = 65536
         hasher = hashlib.sha1()
-        with old_open(a_file, "rb") as fh:
+        with io.open(a_file, "rb") as fh:
             buf = fh.read(BLOCKSIZE)
             while len(buf) > 0:
                 hasher.update(buf)
@@ -56,7 +51,7 @@ def get_sha(a_file):
     return the_hash
 
 def FAIL(message):
-    sys.stderr.write(message + "\n")
+    sys.stderr.write("\033[91m" + message + "\n")
     sys.exit(1)
 
 def run(command, spit_output=False):
@@ -72,7 +67,7 @@ def run(command, spit_output=False):
     return out.decode('utf-8'), err.decode('utf-8')
 
 def passed(whichtest):
-    print("{:>45} {:>15}".format(whichtest, "passed"))
+    print("{:>45} {:>15}".format(whichtest, "\033[92mpassed\033[0m"))
 
 ##################
 #  start clean  ##
@@ -523,11 +518,11 @@ passed("touch statfuncs and sake recon")
 ###################################
 # it is a trivial edit so only statfuncs.c should be recompiled
 shutil.copy("./statfuncs.c", "./BACKUPstatfuncs.c")
-with open("./statfuncs.c", "r") as fh:
+with io.open("./statfuncs.c", "r") as fh:
     statfuncs = fh.read()
 statfuncs += "\n\n"
 os.remove("./statfuncs.c")
-with open("./statfuncs.c", "w") as fh:
+with io.open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake -r")
 if out != "Would run target: compile statfuncs\n":
@@ -554,10 +549,10 @@ passed("edit statfuncs and sake")
 # this is a non-trivial change that will change the
 # object file. it will cause a rebuilding of the
 # binary but recon will not know that
-with open("./statfuncs.c", "r") as fh:
+with io.open("./statfuncs.c", "r") as fh:
     statfuncs = fh.read()
 statfuncs = statfuncs.replace("return(mean);", "return(1);")
-with open("./statfuncs.c", "w") as fh:
+with io.open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake -r")
 if out != "Would run target: compile statfuncs\n":
@@ -694,11 +689,11 @@ passed("sake help")
 # target "compile statfuncs" which has children
 # but no ancestors
 shutil.copy("./statfuncs.c", "./BACKUPstatfuncs.c")
-with open("./statfuncs.c", "r") as fh:
+with io.open("./statfuncs.c", "r") as fh:
     statfuncs = fh.read()
 statfuncs = statfuncs.replace("#include <float.h>",
                               '#include <float.h>\n#include <deadcandance.h>')
-with open("./statfuncs.c", "w") as fh:
+with io.open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake clean")
 out, err = run("../../sake")
@@ -784,10 +779,10 @@ shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
 out, err = run("../../sake clean")
 out, err = run("../../sake")
 shutil.copy("./qstats.md", "./BACKUPqstats.md")
-with open("./qstats.md", "r") as fh:
+with io.open("./qstats.md", "r") as fh:
     themd = fh.read()
 themd = themd.replace("NAME", 'NOMBRE')
-with open("./qstats.md", "w") as fh:
+with io.open("./qstats.md", "w") as fh:
     fh.write(themd)
 
 out, err = run("../../sake -r")
@@ -831,11 +826,11 @@ passed("quiet parallel")
 #  quiet error  #
 #################
 shutil.copy("./statfuncs.c", "./BACKUPstatfuncs.c")
-with open("./statfuncs.c", "r") as fh:
+with io.open("./statfuncs.c", "r") as fh:
     statfuncs = fh.read()
 statfuncs = statfuncs.replace("#include <float.h>",
                               '#include <float.h>\n#include <deadcandance.h>')
-with open("./statfuncs.c", "w") as fh:
+with io.open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run("../../sake clean")
 out, err = run("../../sake -q")
@@ -909,7 +904,7 @@ expected = """strict digraph DependencyDiagram {
 "output version text file"
 "package it"
 }"""
-with open("dependencies", "r") as fh:
+with io.open("dependencies", "r") as fh:
     dotfile = fh.read()
 if dotfile != expected:
     FAIL("sake visual no graphviz failed!")
@@ -940,7 +935,7 @@ expected = """strict digraph DependencyDiagram {
 "output version text file"
 "package it"
 }"""
-with open("custom.dot", "r") as fh:
+with io.open("custom.dot", "r") as fh:
     dotfile = fh.read()
 if dotfile != expected:
     FAIL("sake visual no graphviz custom filename failed!")
@@ -986,7 +981,7 @@ passed("sake visual graphviz custom png")
 os.remove("./deps.png")
 
 out, err = run("../../sake visual -f deps.gif")
-if "b9d5b57f3d417e51a1d2eae3d9125a961e0532e9" != get_sha('deps.gif'):
+if "e0cea15a115d98105f80b30f4f4910a841654e79" != get_sha('deps.gif'):
     FAIL("sake visual graphviz custom gif failed!")
 passed("sake visual graphviz custom gif")
 os.remove("./deps.gif")
@@ -998,7 +993,7 @@ passed("sake visual graphviz custom ps")
 os.remove("./deps.ps")
 
 out, err = run("../../sake visual -f deps.pdf")
-if "c2b0ae4e755a3e24bd17e96c8e5984ac4d6bf479" != get_sha('deps.pdf'):
+if "5a1a729eaf18d4e8bb8d414f22e6a4dc93fdd7db" != get_sha('deps.pdf'):
     FAIL("sake visual graphviz custom pdf failed!")
 passed("sake visual graphviz custom pdf")
 os.remove("./deps.pdf")

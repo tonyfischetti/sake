@@ -43,21 +43,18 @@ Various actions that the main entry delegates to
 from __future__ import unicode_literals
 from __future__ import print_function
 from subprocess import Popen
-import networkx as nx
 import codecs
+import collections
+import fnmatch
+import glob
+import io
+import itertools
+import networkx as nx
 import os
 import re
-import fnmatch
 import string
-import glob
 import sys
-import itertools
-import collections
 import yaml
-
-if sys.version_info[0] < 3:
-    import codecs
-    open = codecs.open
 
 
 class PatternTemplate(string.Template):
@@ -189,7 +186,7 @@ def expand_macros(raw_text, macros={}):
             except:
                 raise IncludeError("Failed to parse include {}\n".format(line))
             try:
-                with open(filename, 'r') as f:
+                with io.open(filename, 'r') as f:
                     includes[filename] = expand_macros(f.read(), macros)
             except IOError:
                 if match.group(2):
@@ -513,7 +510,7 @@ def write_dot_file(G, filename):
         a Networkx graph
         A filename to name the dot files
     """
-    with open(filename, "w", encoding="utf-8") as fh:
+    with io.open(filename, "w") as fh:
         fh.write("strict digraph DependencyDiagram {\n")
         edge_list = G.edges()
         node_list = set(G.nodes())

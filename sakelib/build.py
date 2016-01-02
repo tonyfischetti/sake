@@ -57,26 +57,30 @@ from . import constants
 
 
 
-def check_shastore_version(from_store, verbose):
+def check_shastore_version(from_store, settings):
     """
     This function gives us the option to emit errors or warnings
     after sake upgrades
     """
-    if verbose:
-        print("checking .shastore version for potential incompatibilities")
+    sprint = settings["sprint"]
+    error = settings["error"]
+
+    sprint("checking .shastore version for potential incompatibilities",
+           level="verbose")
     if 'sake version' not in from_store:
         errmes = ["Since you've used this project last, a new version of ",
                   "sake was installed that introduced backwards incompatible",
                   " changes. Run 'sake clean', and rebuild before continuing\n"]
         errmes = " ".join(errmes) 
-        sys.stderr.write(errmes)
+        error(errmes)
         sys.exit(1)
 
 
-def get_sha(a_file):
+def get_sha(a_file, settings):
     """
     Returns sha1 hash of the file supplied as an argument
     """
+    error = settings["error"]
     try:
         BLOCKSIZE = 65536
         hasher = hashlib.sha1()
@@ -87,12 +91,12 @@ def get_sha(a_file):
                 buf = fh.read(BLOCKSIZE)
         the_hash = hasher.hexdigest()
     except IOError:
-        errmes = "File '{}' could not be read! Exiting!\n".format(a_file)
-        sys.stdout.write(errmes)
+        errmes = "File '{}' could not be read! Exiting!".format(a_file)
+        error(errmes)
         sys.exit(1)
     except:
-        errmes = "Unspecified error returning sha1 hash. Exiting!\n"
-        sys.stdout.write(errmes)
+        errmes = "Unspecified error returning sha1 hash. Exiting!"
+        error(errmes)
         sys.exit(1)
     return the_hash
 
@@ -110,27 +114,26 @@ def write_shas_to_shastore(sha_dict):
         fh.write("...")
 
 
-def take_shas_of_all_files(G, verbose):
+def take_shas_of_all_files(G, settings):
     """
     Takes sha1 hash of all dependencies and outputs of all targets
 
     Args:
         The graph we are going to build
-        A flag indicating verbosity
+        The settings dictionary
 
     Returns:
         A dictionary where the keys are the filenames and the
         value is the sha1 hash
     """
+    sprint = settings["sprint"]
     sha_dict = {}
     all_files = []
     for target in G.nodes(data=True):
-        if verbose:
-            print("About to take shas of files in target '{}'".format(
-                                                                   target[0]))
+        sprint("About to take shas of files in target '{}'".format(target[0]),
+               level="verbose")
         if 'dependencies' in target[1]:
-            if verbose:
-                print("It has dependencies")
+            sprint("It has dependencies", level="verbose")
             deplist = []
             for dep in target[1]['dependencies']:
                 glist = glob.glob(dep)
@@ -141,27 +144,23 @@ def take_shas_of_all_files(G, verbose):
                     deplist.append(dep)
             target[1]['dependencies'] = list(deplist)
             for dep in target[1]['dependencies']:
-                if verbose:
-                    print("  - {}".format(dep))
+                sprint("  - {}".format(dep), level="verbose")
                 all_files.append(dep)
         if 'output' in target[1]:
-            if verbose:
-                print("It has outputs")
+            sprint("It has outputs", level="verbose")
             for out in acts.get_all_outputs(target[1]):
-                if verbose:
-                    print("  - {}".format(out))
+                sprint("  - {}".format(out), level="verbose")
                 all_files.append(out)
     if len(all_files):
         sha_dict['files'] = {}
         for item in all_files:
             if os.path.isfile(item):
-                sha_dict['files'][item] = {'sha': get_sha(item)}
+                sha_dict['files'][item] = {'sha': get_sha(item, settings)}
         return sha_dict
-    if verbose:
-        print("No dependencies")
+    sprint("No dependencies", level="verbose")
 
 
-def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
+def needs_to_run(G, target, in_mem_shas, from_store, settings):
     """
     Determines if a target needs to run. This can happen in two ways:
     (a) If a dependency of the target has changed
@@ -172,31 +171,30 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
         The name of the target
         The dictionary of the current shas held in memory
         The dictionary of the shas from the shastore
-        A flag indication verbosity
-        A flag indicating whether a rebuild should be forced
+        The settings dictionary
 
     Returns:
         True if the target needs to be run
         False if not
     """
+    force = settings["force"]
+    sprint = settings["sprint"]
+
     if(force):
-        if verbose:
-            print("Target rebuild is being forced so {} needs to run".format(
-                                                                      target))
+        sprint("Target rebuild is being forced so {} needs to run".format(target),
+               level="verbose")
         return True
     node_dict = get_the_node_dict(G, target)
     if 'output' in node_dict:
         for output in acts.get_all_outputs(node_dict):
             if not os.path.isfile(output):
-                if verbose:
-                    outstr = "Output file '{}' is missing so it needs to run"
-                    print(outstr.format(output))
+                outstr = "Output file '{}' is missing so it needs to run"
+                sprint(outstr.format(output), level="verbose")
                 return True
     if 'dependencies' not in node_dict:
         # if it has no dependencies, it always needs to run
-        if verbose:
-            print("Target {} has no dependencies and needs to run".format(
-                                                                      target))
+        sprint("Target {} has no dependencies and needs to run".format(target),
+               level="verbose")
         return True
     for dep in node_dict['dependencies']:
         # because the shas are updated after all targets build,
@@ -205,29 +203,25 @@ def needs_to_run(G, target, in_mem_shas, from_store, verbose, force):
         # then the target needs to run
         if ('files' in in_mem_shas and dep not in in_mem_shas['files'] or
             'files' not in in_mem_shas):
-            if verbose:
-                outstr = "Dep '{}' doesn't exist in memory so it needs to run"
-                print(outstr.format(dep))
+            outstr = "Dep '{}' doesn't exist in memory so it needs to run"
+            sprint(outstr.format(dep), level="verbose")
             return True
         now_sha = in_mem_shas['files'][dep]['sha']
         if ('files' in from_store and dep not in from_store['files'] or
             'files' not in from_store):
-            if verbose:
-                outst = "Dep '{}' doesn't exist in shastore so it needs to run"
-                print(outst.format(dep))
+            outst = "Dep '{}' doesn't exist in shastore so it needs to run"
+            sprint(outst.format(dep), level="verbose")
             return True
         old_sha = from_store['files'][dep]['sha']
         if now_sha != old_sha:
-            if verbose:
-                outstr = "There's a mismatch for dep {} so it needs to run"
-                print(outstr.format(dep))
+            outstr = "There's a mismatch for dep {} so it needs to run"
+            sprint(outstr.format(dep), level="verbose")
             return True
-    if verbose:
-        print("Target '{}' doesn't need to run".format(target))
+    sprint("Target '{}' doesn't need to run".format(target), level="verbose")
     return False
 
 
-def run_commands(commands, verbose, quiet):
+def run_commands(commands, settings):
     """
     Runs the commands supplied as an argument
     It will exit the program if the commands return a
@@ -235,25 +229,27 @@ def run_commands(commands, verbose, quiet):
 
     Args:
         the commands to run
-        A flag indicating verbosity
-        A flag indicatingf quiet mode
+        The settings dictionary
     """
+    sprint = settings["sprint"]
+    quiet = settings["quiet"]
+    error = settings["error"]
     commands = commands.rstrip()
-    if verbose:
-        print("About to run commands '{}'".format(commands))
+    sprint("About to run commands '{}'".format(commands), level="verbose")
     if not quiet:
-        print(commands)
+        sprint(commands)
         p = Popen(commands, shell=True)
     else:
         p = Popen(commands, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     if p.returncode:
         if quiet:
-            sys.stderr.write(err.decode(locale.getpreferredencoding()))
-        sys.exit("Command failed to run")
+            error(err.decode(locale.getpreferredencoding()))
+        error("Command failed to run")
+        sys.exit(1)
 
 
-def run_the_target(G, target, verbose, quiet):
+def run_the_target(G, target, settings):
     """
     Wrapper function that sends to commands in a target's 'formula'
     to run_commands()
@@ -261,12 +257,12 @@ def run_the_target(G, target, verbose, quiet):
     Args:
         The graph we are going to build
         The target to run
-        A flag indicating verbosity
-        A flag indicating quiet mode
+        The settings dictionary
     """
-    print("Running target {}".format(target))
+    sprint = settings["sprint"]
+    sprint("Running target {}".format(target))
     the_formula = get_the_node_dict(G, target)["formula"]
-    run_commands(the_formula, verbose, quiet)
+    run_commands(the_formula, settings)
 
 
 def get_the_node_dict(G, name):
@@ -354,7 +350,7 @@ def parallel_sort(G):
 
 
 def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
-                       verbose, quiet, dont_update_shas_of):
+                       settings, dont_update_shas_of):
     """
     The parallel equivalent of "run_this_target()"
     It receives a list of targets to execute in parallel.
@@ -369,31 +365,36 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
         A list of targets that we need to build in parallel
         The dictionary containing the in-memory sha store
         The dictionary containing the contents of the .shastore file
-        A flag indicating verbosity
-        A flag indicating quiet mode
+        The settings dictionary
         A list of outputs to not update shas of
     """
+    verbose = settings["verbose"]
+    quiet = settings["quiet"]
+    error = settings["error"]
+    sprint = settings["sprint"]
+
     if len(list_of_targets) == 1:
         target = list_of_targets[0]
-        if verbose:
-            print("Going to run target '{}' serially".format(target))
-        run_the_target(G, target, verbose, quiet)
+        sprint("Going to run target '{}' serially".format(target),
+               level="verbose")
+        run_the_target(G, target, settings)
         node_dict = get_the_node_dict(G, target)
         if "output" in node_dict:
             for output in acts.get_all_outputs(node_dict):
                 if output not in dont_update_shas_of:
-                    in_mem_shas['files'][output] = {"sha": get_sha(output)}
-                    in_mem_shas[output] = get_sha(output)
+                    in_mem_shas['files'][output] = {"sha": get_sha(output,
+                                                                   settings)}
+                    in_mem_shas[output] = get_sha(output, settings)
                     write_shas_to_shastore(in_mem_shas)
         if "dependencies" in node_dict:
             for dep in acts.get_all_dependencies(node_dict):
                 if dep not in dont_update_shas_of:
-                    in_mem_shas['files'][dep] = {"sha": get_sha(dep)}
+                    in_mem_shas['files'][dep] = {"sha": get_sha(dep, settings)}
                     write_shas_to_shastore(in_mem_shas)
         return True
     a_failure_occurred = False
     out = "Going to run these targets '{}' in parallel"
-    print(out.format(", ".join(list_of_targets)))
+    sprint(out.format(", ".join(list_of_targets)))
     info = [(target, get_the_node_dict(G, target))
               for target in list_of_targets]
     commands = [item[1]['formula'].rstrip() for item in info]
@@ -404,21 +405,23 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
                    for command in commands]
     for index, process in enumerate(procs):
         if process.wait():
-            sys.stderr.write("Target '{}' failed!\n".format(info[index][0]))
+            error("Target '{}' failed!".format(info[index][0]))
             a_failure_occurred = True
         else:
             if "output" in info[index][1]:
                 for output in acts.get_all_outputs(info[index][1]):
                     if output not in dont_update_shas_of:
-                        in_mem_shas['files'][output] = {"sha": get_sha(output)}
+                        in_mem_shas['files'][output] = {"sha": get_sha(output,
+                                                                       settings)}
                         write_shas_to_shastore(in_mem_shas)
             if "dependencies" in info[index][1]:
                 for dep in acts.get_all_dependencies(info[index][1]):
                     if dep not in dont_update_shas_of:
-                        in_mem_shas['files'][dep] = {"sha": get_sha(dep)}
+                        in_mem_shas['files'][dep] = {"sha": get_sha(dep, settings)}
                         write_shas_to_shastore(in_mem_shas)
     if a_failure_occurred:
-        sys.exit("A command failed to run")
+        error("A command failed to run")
+        sys.exit(1)
     return True
 
 
@@ -464,6 +467,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
     parallel = settings["parallel"]
     error = settings["error"]
     sprint = settings["sprint"]
+
     if not dont_update_shas_of:
         dont_update_shas_of = []
     sprint("Checking that graph is directed acyclic", level="verbose")
@@ -474,7 +478,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
         error(errmes)
         sys.exit(1)
     sprint("Dependency resolution is possible", level="verbose")
-    in_mem_shas = take_shas_of_all_files(G, verbose)
+    in_mem_shas = take_shas_of_all_files(G, settings)
     from_store = {}
     if not os.path.isfile(".shastore"):
         write_shas_to_shastore(in_mem_shas)
@@ -483,7 +487,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
     with io.open(".shastore", "r") as fh:
         shas_on_disk = fh.read()
     from_store = yaml.load(shas_on_disk)
-    check_shastore_version(from_store, verbose)
+    check_shastore_version(from_store, settings)
     if not from_store:
         write_shas_to_shastore(in_mem_shas)
         in_mem_shas = {}
@@ -499,8 +503,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
             sprint(out.format(", ".join(line)), level="verbose")
             to_build = []
             for item in line:
-                if needs_to_run(G, item, in_mem_shas, from_store, verbose,
-                                force):
+                if needs_to_run(G, item, in_mem_shas, from_store, settings):
                     to_build.append(item)
             if to_build:
                 if recon:
@@ -512,7 +515,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
                         sprint(out.format(", ".join(to_build)))
                     continue
                 parallel_run_these(G, to_build, in_mem_shas, from_store,
-                                   verbose, quiet, dont_update_shas_of)
+                                   settings, dont_update_shas_of)
     # not parallel
     else:
         # still have to use parallel_sort to make
@@ -524,31 +527,32 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
         for target in targets:
             outstr = "Checking if target '{}' needs to be run"
             sprint(outstr.format(target), level="verbose")
-            if needs_to_run(G, target, in_mem_shas, from_store, verbose,
-                            force):
+            if needs_to_run(G, target, in_mem_shas, from_store, settings):
                 if recon:
                     sprint("Would run target: {}".format(target))
                     continue
-                run_the_target(G, target, verbose, quiet)
+                run_the_target(G, target, settings)
                 node_dict = get_the_node_dict(G, target)
                 if "output" in node_dict:
                     for output in acts.get_all_outputs(node_dict):
                         if output not in dont_update_shas_of:
-                            in_mem_shas['files'][output] = {"sha": get_sha(output)}
+                            in_mem_shas['files'][output] = {"sha": get_sha(output,
+                                                                           settings)}
                             write_shas_to_shastore(in_mem_shas)
                 if "dependencies" in node_dict:
                     for dep in acts.get_all_dependencies(node_dict):
                         if dep not in dont_update_shas_of:
-                            in_mem_shas['files'][dep] = {"sha": get_sha(dep)}
+                            in_mem_shas['files'][dep] = {"sha": get_sha(dep,
+                                                                        settings)}
                             write_shas_to_shastore(in_mem_shas)
 
     if recon:
         return 0
-    in_mem_shas = take_shas_of_all_files(G, verbose)
+    in_mem_shas = take_shas_of_all_files(G, settings)
     if in_mem_shas:
         in_mem_shas = merge_from_store_and_in_mems(from_store, in_mem_shas,
                                                    dont_update_shas_of)
         write_shas_to_shastore(in_mem_shas)
-    sprint("Done")
+    sprint("Done", color=True)
     return 0
 

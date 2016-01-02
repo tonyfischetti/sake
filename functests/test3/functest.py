@@ -413,9 +413,12 @@ Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Running target ensure version match
 ./ensure_version_match.sh
+"""
+experr = """cat: qstats-documentation.html: No such file or directory
+./ensure_version_match.sh: line 6: [: 1.0: unary operator expected
 File 'qstats-documentation.html' could not be read! Exiting!
 """
-if out != expected:
+if out != expected and err != experr:
     FAIL('sake force "compile objects" failed!')
 passed('sake force "compile objects"')
 
@@ -847,16 +850,19 @@ expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 #include <deadcandance.h>
          ^
 1 error generated.
+
 Command failed to run
 """
 expected2 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
  #include <deadcandance.h>
                           ^
 compilation terminated.
+
 Command failed to run
 """
 expected3 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or directory
 compilation terminated.
+
 Command failed to run
 """
 if err != expected and err != expected2 and err != expected3:

@@ -87,7 +87,8 @@ def get_print_functions(settings):
         if settings["color"] and color:
             prepend = "\033[92m"
             postfix = "\033[0m"
-        print("{}{}{}".format(prepend, message, postfix), flush=True)
+        print("{}{}{}".format(prepend, message, postfix))
+        sys.stdout.flush()
     def warn(message, level=None, color=True):
         if level=="verbose" and not verbose:
             return
@@ -97,7 +98,8 @@ def get_print_functions(settings):
         if settings["color"] and color:
             prepend = "\033[93m"
             postfix = "\033[0m"
-        print("{}{}{}".format(prepend, message, postfix), flush=True)
+        print("{}{}{}".format(prepend, message, postfix))
+        sys.stdout.flush()
     def error(message, level=None, color=True):
         # this condition does really make any sense but w/e
         if level=="verbose" and not verbose:
@@ -108,8 +110,8 @@ def get_print_functions(settings):
         if settings["color"] and color:
             prepend = "\033[91m"
             postfix = "\033[0m"
-        print("{}{}{}".format(prepend, message, postfix), flush=True,
-              file=sys.stderr)
+        print("{}{}{}".format(prepend, message, postfix), file=sys.stderr)
+        sys.stderr.flush()
     return sprint, warn, error
 
 

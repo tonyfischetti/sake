@@ -9,7 +9,7 @@
 @copying
 This manual is for sake, version 0.9.5.1
 
-Copyright @copyright{} 2013, 2014, 2015, Tony Fischetti
+Copyright @copyright{} 2013, 2014, 2015, 2016, Tony Fischetti
 @quotation
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are

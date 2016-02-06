@@ -10,6 +10,7 @@ dist/
 duistats.tsv
 teenstats.csv
 teenstats.xls
+master_sake.egg-info/
 test/Rplots.pdf
 test/lmcoeffs.txt
 test/dependencies.svg

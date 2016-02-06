@@ -84,6 +84,9 @@ parser.add_argument('-n', '--no-graphviz', action="store_true",
 parser.add_argument('-s', '--sakefile', action="store",
                     dest="customsake",
                     help="Path to specific sakefile")
+parser.add_argument('-D', '--define', action='append', default=[],
+                    dest='defines',
+                    help='Define the given macro in the Sakefile')
 
 args = parser.parse_args()
 
@@ -106,8 +109,8 @@ if args.verbose and args.quiet:
 settings = vars(args)
 
 # In order to be as referentially transparent, we will keep various
-# settings and key functions in a dictionary called `settings` that 
-# we will send to delegate functions. 
+# settings and key functions in a dictionary called `settings` that
+# we will send to delegate functions.
 
 # The delegate functions will print errors and halt execution
 
@@ -120,12 +123,13 @@ settings["error"] = error
 
 # find sakefile to read
 fname = acts.find_standard_sakefile(settings)
+defines = acts.parse_defines(args.defines)
 
 
 # expand macros
 with io.open(fname, "r") as fh:
     raw_text = fh.read()
-    sake_text, includes = acts.expand_macros(raw_text, settings)
+    sake_text, includes = acts.expand_macros(raw_text, defines)
 
 
 sakefile = acts.parse(fname, sake_text, includes)

@@ -226,7 +226,25 @@ def get_help(sakefile):
     return full_string
 
 
-def expand_macros(raw_text, macros={}):
+def parse_defines(args):
+    """
+    This parses a list of define argument in the form of -DNAME=VALUE or -DNAME (
+    which is treated as -DNAME=1).
+    """
+    macros = {}
+    for arg in args:
+        try:
+            var, val = arg.split('=', 1)
+        except ValueError:
+            var = arg
+            val = '1'
+
+        macros[var] = val
+
+    return macros
+
+
+def expand_macros(raw_text, macros):
     """
     this gets called before the sakefile is parsed. it looks for
     macros defined anywhere in the sakefile (the start of the line

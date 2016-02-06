@@ -254,7 +254,7 @@ def expand_macros(raw_text, macros):
     """
     includes = {}
     result = []
-    pattern = re.compile("#!\s*(\w+)\s*=\s*(.*$)", re.UNICODE)
+    pattern = re.compile("#!\s*(\w+)\s*(\??\s*)=\s*(.*$)", re.UNICODE)
     ipattern = re.compile("#<\s*(\S+)\s*(optional|or\s+(.+))?$", re.UNICODE)
     for line in raw_text.split("\n"):
         line = string.Template(line).safe_substitute(macros)
@@ -264,10 +264,11 @@ def expand_macros(raw_text, macros):
         if line.startswith("#!"):
             match = pattern.match(line)
             try:
-                var, val = match.group(1, 2)
+                var, opt, val = match.group(1, 2, 3)
             except:
                 raise InvalidMacroError("Failed to parse macro {}\n".format(line))
-            macros[var] = val
+            if opt and var not in macros:
+                macros[var] = val
         elif line.startswith("#<"):
             match = ipattern.match(line)
             try:

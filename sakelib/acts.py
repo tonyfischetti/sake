@@ -132,52 +132,6 @@ def find_standard_sakefile(settings):
     sys.exit(1)
 
 
-def expand_macros(raw_text, settings, macros=None):
-    """
-    this gets called before the sakefile is parsed. it looks for
-    macros defined anywhere in the sakefile (the start of the line
-    is '#!') and then replaces all occurences of '$variable' with the
-    value defined in the macro. it then returns the contents of the
-    file with the macros expanded.
-    """
-    # see mutable default value behavior
-    if not macros:
-        macros = {}
-    includes = {}
-    result = []
-    pattern = re.compile("#!\s*(\w+)\s*=\s*(.+$)", re.UNICODE)
-    ipattern = re.compile("#<\s*(\S+)\s*(optional|or\s+(.+))?$", re.UNICODE)
-    for line in raw_text.split("\n"):
-        line = string.Template(line).safe_substitute(macros)
-        # note that the line is appended to result before it is checked for macros
-        # this prevents macros expanding into themselves
-        result.append(line)
-        if line.startswith("#!"):
-            match = pattern.match(line)
-            try:
-                var, val = match.group(1, 2)
-            except:
-                error("Failed to parse macro {}\n".format(line))
-                sys.exit(1)
-            macros[var] = val
-        elif line.startswith("#<"):
-            match = ipattern.match(line)
-            try:
-                filename = match.group(1)
-            except:
-                raise IncludeError("Failed to parse include {}\n".format(line))
-            try:
-                with io.open(filename, 'r') as f:
-                    includes[filename] = expand_macros(f.read(), macros)
-            except IOError:
-                if match.group(2):
-                    if match.group(2).startswith('or '):
-                        print(match.group(3))
-                else:
-                    raise IncludeError("Nonexistent include {}\n".format(filename))
-    return "\n".join(result), includes
-
-
 def parse(file, text, includes):
     try:
         sakefile = yaml.load(text) or {}

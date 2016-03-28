@@ -77,7 +77,7 @@ class TestActsFunction(unittest.TestCase):
                     "there are ruffians in $rusholme ($rΩsholme) and they steal $",
                     "$askme, shyness is niceme", "..."]
         solution = self.mock_sakefile_for_macros+"\n".join(solution)
-        self.assertEqual(acts.expand_macros(temp)[0], solution)
+        self.assertEqual(acts.expand_macros(temp, {})[0], solution)
 
     def test_get_help(self):
         self.assertEqual(acts.get_help(yaml.load(self.mock_sakefile_for_help)),

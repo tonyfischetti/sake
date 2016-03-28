@@ -1,3 +1,4 @@
+sudo: false
 language: python
 python:
   - "2.7"
@@ -5,6 +6,14 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+addons:
+  apt:
+    sources:
+    packages:
+      - build-essential
+      - pandoc
+      - figlet
+      - graphviz
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -y build-essential pandoc figlet graphviz

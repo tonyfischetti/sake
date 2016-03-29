@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- This manual is for sake, version 0.9.5.1
+<!-- This manual is for sake, version 0.9.7
 
-Copyright (C) 2013, 2014, 2015, Tony Fischetti
+Copyright (C) 2013, 2014, 2015, 2016, Tony Fischetti
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
 preserved on all copies.
@@ -116,6 +116,9 @@ ul.no-bullet {list-style: none}
   <ul class="no-bullet">
     <li><a name="toc-_0022Recon_0022-mode" href="#g_t_0022Recon_0022-mode">3.9.1 &quot;Recon&quot; mode</a></li>
     <li><a name="toc-Forcing-building" href="#Forcing-building">3.9.2 Forcing building</a></li>
+    <li><a name="toc-Colored-output" href="#Colored-output">3.9.3 Colored output</a></li>
+    <li><a name="toc-Enhanced-formula-error-handling" href="#Enhanced-formula-error-handling">3.9.4 Enhanced formula error handling</a></li>
+    <li><a name="toc-Custom-shells" href="#Custom-shells">3.9.5 Custom shells</a></li>
   </ul></li>
   <li><a name="toc-Visualization" href="#Visualization">3.10 Visualization</a></li>
 </ul></li>
@@ -123,6 +126,7 @@ ul.no-bullet {list-style: none}
 <ul class="no-bullet">
   <li><a name="toc-Using-Patterns" href="#Using-Patterns">4.1 Using Patterns</a></li>
   <li><a name="toc-Using-Includes" href="#Using-Includes">4.2 Using Includes</a></li>
+  <li><a name="toc-Advanced-Use-of-Macros" href="#Advanced-Use-of-Macros">4.3 Advanced Use of Macros</a></li>
 </ul></li>
 
 </ul>
@@ -346,13 +350,7 @@ repository thusly: (assuming you have git installed)
 <div class="example">
 <pre class="example">    git clone https://github.com/tonyfischetti/sake.git
 </pre></div>
-<p>You can check which branches are available with the command
-<code>git branch</code>. Usually, a branch called <code>dev</code> is the most recent
-(and potentially buggy) version of the sake source. (On occasion, though, the
-<code>dev</code> branch will lag behind <code>master</code> if <code>dev</code> wasn&rsquo;t recently
-been rebased.) This option is most suitable to potential contributors to the
-project.
-</p></li></ul>
+</li></ul>
 <p>For the vast majority of cases, the best way to obtain sake is during the
 installation step, with the python package manager <code>pip</code>.
 </p>
@@ -362,7 +360,7 @@ installation step, with the python package manager <code>pip</code>.
 ensure the proper functioning of sake:
 </p><ul>
 <li> Python. Sake is Python3 compatible and is tested using Python 2.7, 3.2,
-3.3, and 3.4
+3.3, 3.4, and 3.5
 </li><li> The python module <code>NetworkX</code>
 </li><li> The python module <code>PyYAML</code>
 </li><li> The graph visualization tool <code>Graphviz</code>
@@ -1268,6 +1266,60 @@ meta-target) or the whole project. If <code>force</code> mode is used to rebuild
 the whole project, it is roughly equivalent to running <code>sake clean</code>
 and then <code>sake</code> again.
 </p>
+<a name="Colored-output"></a>
+<h4 class="subsection">3.9.3 Colored output</h4>
+<p>You can get <code>sake</code> to output success messages in green, warnings in
+yellow, and errors in red by supplying <code>sake</code> with the <code>-c</code> flag:
+</p>
+<div class="example">
+<pre class="example"># sake -c
+</pre></div>
+
+<a name="Enhanced-formula-error-handling"></a>
+<h4 class="subsection">3.9.4 Enhanced formula error handling</h4>
+
+<p>A potential Sake &quot;gotcha&quot; in previous versions: if you had several commands
+in your <code>formula</code> separated by semicolons or literal new-lines,
+it was possible for one of the earlier commands to fail and for Sake to
+still think the command succeeded.  Specifically, if the last command in a
+formula was successful, it&rsquo;d appear to Sake as if the whole formula succeeded.
+This (usually) unsavory behavior could be thwarted (in some shells) by 
+separating the commands not by semicolons (or literal new-lines) but with
+<code>&amp;&amp;</code>s:
+</p>
+<div class="example">
+<pre class="example">command_1 &amp;&amp; command_2
+</pre></div>
+
+<p>Doing this, the shell will only execute the second command if the first one
+returned a non-zero exit status.
+</p>
+<p>Because terminating a series of commands in a formula at the first sign of
+error is such a common need&ndash;and because having Sake recognize any failed
+command as an &quot;unsuccessful&quot; formula build is usually very important&ndash;recent
+versions (starting at version 0.9.7) by default use a mode called
+&quot;enhanced errors&quot; (which, unfortunately, only works for POSIX (non-windows)
+systems. What this does is add the <code>-e</code> option to the shell that
+<code>sake</code> executes it&rsquo;s formulas in.
+</p>
+<p>This behavior can be turned off by using the <code>-E</code> option:
+</p>
+<div class="example">
+<pre class="example"># sake -E
+</pre></div>
+
+<a name="Custom-shells"></a>
+<h4 class="subsection">3.9.5 Custom shells</h4>
+<p>By default, Python chooses the shell that will run your formulas. On Windows,
+it will chose <code>cmd.exe</code> and on POSIX systems, it will run the POSIX shell
+(<code>/bin/sh</code>. If you have constructs in your formulas (named pipes,
+subprocess redirection, etc...) that requires another shell, you can specify
+the alternative shell to use in your Sakefile:
+</p>
+<div class="example">
+<pre class="example">shell: bash
+</pre></div>
+
 
 
 <a name="Visualization"></a>
@@ -1353,7 +1405,7 @@ C files in a directory into object files (which then get linked together).
 If there are four such .c files (file1.c, file2.c file3.c, and file4.c)
 in a directory that all need to be object-compiled, you certainly
 <em>can</em> create four different targets to perform this, but you can
-also leverage formula patterns here.
+also employ formula patterns here.
 </p>
 <p>If the original Sakefile snippet looked like this:
 </p><div class="example">
@@ -1442,7 +1494,7 @@ legitimate usage of formula patterns that will violate any of the rules above.
 </p>
 <a name="Using-Includes"></a>
 <h3 class="section">4.2 Using Includes</h3>
-<p>Sake&rsquo;s second advanced feature is called &quot;includes&quot;.
+<p>Another one of Sake&rsquo;s advanced features is called &quot;includes&quot;.
 </p>
 <p>Includes are a lot like storing macros in a different file and then
 importing those macro definitions into your Sakefile.
@@ -1500,8 +1552,59 @@ subdirectory includes a file &quot;config.yaml&quot;, it will look for that
 file relative to the project&rsquo;s root, <strong>not</strong> in the subdirectory
 that houses the Sakefile that actually included the file.
 </p>
+<a name="Advanced-Use-of-Macros"></a>
+<h3 class="section">4.3 Advanced Use of Macros</h3>
+<p>Similar to how having macro include files is useful in some settings,
+so too is it helpful to be able to supply macro definitions on the
+command-line. For example consider the following <em>complete</em> Sakefile:
+</p>
+<div class="example">
+<pre class="example">compile hello:
+    help: compiles &quot;hello&quot;
+    dependencies:
+        - hello.c
+    formula:
+        $CC -o hello $CFLAGS hello.c
+    output:
+        - hello
+</pre></div>
 
+<p>Note how the macros <code>CC</code> and <code>CFLAGS</code> are not specified by the
+Sakefile. If you use Sake to build this, the <code>$CC</code> and <code>CFLAGS</code>
+will not be replaced and will go into the formula, verbatim. If CC and
+CFLAGS are not environment variables in your shell, then the formula will
+fail.
+</p>
+<p>To specify values for these macros (so that Sake can expand them
+appropriately) run <code>sake</code> using one or more <code>-D</code> key/values.
+</p>
+<div class="example">
+<pre class="example"># sake -D CC=gcc -D CFLAGS=&quot;-Wall -Werror&quot;
+</pre></div>
 
+<p>You can provide default values for these macros by putting this at the
+top of the Sakefile displayed above:
+</p>
+<div class="example">
+<pre class="example">#! CC?=clang
+#! CFLAGS?=-Wall -Werror
+</pre></div>
+
+<p>The <code>?=</code> construct basically says &quot;if this macro is not defined, set
+it to this&quot;. If you don&rsquo;t include the question mark before the equals sign,
+the macro definitions on the command line (via <code>-D</code>) will <em>not</em>
+override it.
+</p>
+<p>To require that a macro be pre-defined, either via the command-line
+<code>-D</code> option or in an include file, you can use the <code>or</code> option:
+</p>
+<div class="example">
+<pre class="example">#! CC or Have to specify a C compiler
+</pre></div>
+
+<p>Everything after the &quot;<code>or</code>&quot; will be considered the error message
+to be printed.
+</p>
 
 <hr>
 

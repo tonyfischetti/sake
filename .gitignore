@@ -5,3 +5,6 @@ build/
 *.pyc
 dependencies.png
 .shastore
+MANIFEST
+dist/
+master_sake.egg-info/

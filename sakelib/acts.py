@@ -675,3 +675,14 @@ def visualize(G, settings, filename="dependencies", no_graphviz=False):
     return 0
 
 
+#####################
+##  CUSTOM ERRORS  ##
+#####################
+
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
+
+class InvalidMacroError(Error):
+    def __init__(self, message):
+        self.message = message

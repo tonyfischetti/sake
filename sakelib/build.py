@@ -238,13 +238,30 @@ def run_commands(commands, settings):
     sprint = settings["sprint"]
     quiet = settings["quiet"]
     error = settings["error"]
+    enhanced_errors = True
+    the_shell = None
+    if settings["no_enhanced_errors"]:
+        enhanced_errors = False
+    if "shell" in settings:
+        the_shell = settings["shell"]
+    windows_p = sys.platform == "win32"
+
+    STDOUT = None
+    STDERR = None
+    if quiet:
+        STDOUT = PIPE
+        STDERR = PIPE
+
     commands = commands.rstrip()
     sprint("About to run commands '{}'".format(commands), level="verbose")
     if not quiet:
         sprint(commands)
-        p = Popen(commands, shell=True)
-    else:
-        p = Popen(commands, shell=True, stdout=PIPE, stderr=PIPE)
+
+    if enhanced_errors and not windows_p:
+        commands = ["-e", commands]
+
+    p = Popen(commands, shell=True, stdout=STDOUT, stderr=STDERR,
+              executable=the_shell)
     out, err = p.communicate()
     if p.returncode:
         if quiet:

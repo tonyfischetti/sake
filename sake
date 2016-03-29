@@ -75,12 +75,14 @@ parser.add_argument('-r', '--recon', action="store_true",
                          "executed, but do not execute them")
 parser.add_argument('-p', '--parallel', action="store_true",
                     help="builds targets in parallel if possible")
-parser.add_argument('-f', '--file', action="store", dest="outfile",
-                    help="filename to place visualization or " +
-                         "graphviz dotfile")
 parser.add_argument('-n', '--no-graphviz', action="store_true",
                     help="Suppress command to graphviz and just" +
                          " produce graphviz dot file (`sake visual' only)")
+parser.add_argument('-E', '--no-enhanced-errors', action="store_true",
+                    help="Turn off enhanced errors (POSIX only)")
+parser.add_argument('-f', '--file', action="store", dest="outfile",
+                    help="filename to place visualization or " +
+                         "graphviz dotfile")
 parser.add_argument('-s', '--sakefile', action="store",
                     dest="customsake",
                     help="Path to specific sakefile")
@@ -133,6 +135,9 @@ with io.open(fname, "r") as fh:
 
 
 sakefile = acts.parse(fname, sake_text, includes)
+if "shell" in sakefile:
+    settings["shell"] = sakefile["shell"]
+    sakefile.pop("shell")
 if not audit.check_integrity(sakefile, settings):
     error("Error: Sakefile isn't written to specification")
     sys.exit(1)

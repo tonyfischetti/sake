@@ -592,7 +592,7 @@ def clean_all(G, settings):
                 error(errmes.format(item))
                 retcode = 1
     if not retcode and not recon:
-        sprint("All clean")
+        sprint("All clean", color=True)
     return retcode
 
 

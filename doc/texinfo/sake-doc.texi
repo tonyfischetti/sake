@@ -7,7 +7,7 @@
 
 @c --------------------------------------------------------------------
 @copying
-This manual is for sake, version 0.9.5.1
+This manual is for sake, version 0.9.7
 
 Copyright @copyright{} 2013, 2014, 2015, 2016, Tony Fischetti
 @quotation
@@ -32,7 +32,7 @@ except that this permission notice be translated properly.
 @sp 5
 @title Sake
 @subtitle A self-documenting build automation tool
-@subtitle Version 0.9.5.1 (2015-01-02)
+@subtitle Version 0.9.7 (2016-03-29)
 @author Tony Fischetti
 @page
 @vskip 0pt plus 1filll
@@ -256,12 +256,6 @@ repository thusly: (assuming you have git installed)
 @example
     git clone https://github.com/tonyfischetti/sake.git
 @end example
-You can check which branches are available with the command
-@code{git branch}. Usually, a branch called @code{dev} is the most recent
-(and potentially buggy) version of the sake source. (On occasion, though, the
-@code{dev} branch will lag behind @code{master} if @code{dev} wasn't recently
-been rebased.) This option is most suitable to potential contributors to the
-project.
 @end itemize
 For the vast majority of cases, the best way to obtain sake is during the
 installation step, with the python package manager @code{pip}.
@@ -274,7 +268,7 @@ ensure the proper functioning of sake:
 @itemize @bullet
 @item
 Python. Sake is Python3 compatible and is tested using Python 2.7, 3.2,
-3.3, and 3.4
+3.3, 3.4, and 3.5
 @item
 The python module @code{NetworkX}
 @item
@@ -1238,7 +1232,7 @@ change any output files that are dependencies of other targets, sake cannot
 know that and recon mode will not detect it.
 @c ----------
 
-@c ----------
+@c ---------
 @subsection Forcing building
 If @code{sake} doesn't build a target, it is because none of its dependencies
 have changed. However, if you want @code{sake} to rebuild the target anyway,
@@ -1247,6 +1241,63 @@ the best way to do this is to use @code{force} mode by supplying the
 meta-target) or the whole project. If @code{force} mode is used to rebuild
 the whole project, it is roughly equivalent to running @code{sake clean}
 and then @code{sake} again.
+@c ----------
+
+@c ---------
+@subsection Colored output
+You can get @code{sake} to output success messages in green, warnings in
+yellow, and errors in red by supplying @code{sake} with the @code{-c} flag:
+
+@example
+# sake -c
+@end example 
+@c ----------
+
+@c ---------
+@subsection Enhanced formula error handling
+
+A potential Sake "gotcha" in previous versions: if you had several commands
+in your @code{formula} separated by semicolons or literal new-lines,
+it was possible for one of the earlier commands to fail and for Sake to
+still think the command succeeded.  Specifically, if the last command in a
+formula was successful, it'd appear to Sake as if the whole formula succeeded.
+This (usually) unsavory behavior could be thwarted (in some shells) by 
+separating the commands not by semicolons (or literal new-lines) but with
+@code{&&}s:
+
+@example
+command_1 && command_2
+@end example
+
+Doing this, the shell will only execute the second command if the first one
+returned a non-zero exit status.
+
+Because terminating a series of commands in a formula at the first sign of
+error is such a common need--and because having Sake recognize any failed
+command as an "unsuccessful" formula build is usually very important--recent
+versions (starting at version 0.9.7) by default use a mode called
+"enhanced errors" (which, unfortunately, only works for POSIX (non-windows)
+systems. What this does is add the @code{-e} option to the shell that
+@code{sake} executes it's formulas in.
+
+This behavior can be turned off by using the @code{-E} option:
+
+@example
+# sake -E
+@end example
+@c ----------
+
+@c ---------
+@subsection Custom shells
+By default, Python chooses the shell that will run your formulas. On Windows,
+it will chose @code{cmd.exe} and on POSIX systems, it will run the POSIX shell
+(@code{/bin/sh}. If you have constructs in your formulas (named pipes,
+subprocess redirection, etc...) that requires another shell, you can specify
+the alternative shell to use in your Sakefile:
+
+@example
+shell: bash
+@end example
 @c ----------
 @c -----------------------
 
@@ -1334,7 +1385,7 @@ C files in a directory into object files (which then get linked together).
 If there are four such .c files (file1.c, file2.c file3.c, and file4.c)
 in a directory that all need to be object-compiled, you certainly
 @emph{can} create four different targets to perform this, but you can
-also leverage formula patterns here.
+also employ formula patterns here.
 
 If the original Sakefile snippet looked like this:
 @example
@@ -1428,7 +1479,7 @@ legitimate usage of formula patterns that will violate any of the rules above.
 
 @c -----------------------
 @section Using Includes
-Sake's second advanced feature is called "includes".
+Another one of Sake's advanced features is called "includes".
 
 Includes are a lot like storing macros in a different file and then
 importing those macro definitions into your Sakefile.
@@ -1485,8 +1536,60 @@ where one is in a subdirectory of the project's root--if the one in the
 subdirectory includes a file "config.yaml", it will look for that
 file relative to the project's root, @strong{not} in the subdirectory
 that houses the Sakefile that actually included the file.
+@c -----------------------
 
+@c -----------------------
+@section Advanced Use of Macros
+Similar to how having macro include files is useful in some settings,
+so too is it helpful to be able to supply macro definitions on the
+command-line. For example consider the following @emph{complete} Sakefile:
 
+@example
+compile hello:
+    help: compiles "hello"
+    dependencies:
+        - hello.c
+    formula:
+        $CC -o hello $CFLAGS hello.c
+    output:
+        - hello
+@end example
+
+Note how the macros @code{CC} and @code{CFLAGS} are not specified by the
+Sakefile. If you use Sake to build this, the @code{$CC} and @code{CFLAGS}
+will not be replaced and will go into the formula, verbatim. If CC and
+CFLAGS are not environment variables in your shell, then the formula will
+fail.
+
+To specify values for these macros (so that Sake can expand them
+appropriately) run @code{sake} using one or more @code{-D} key/values.
+
+@example
+# sake -D CC=gcc -D CFLAGS="-Wall -Werror"
+@end example
+
+You can provide default values for these macros by putting this at the
+top of the Sakefile displayed above:
+
+@example
+#! CC?=clang
+#! CFLAGS?=-Wall -Werror
+@end example
+
+The @code{?=} construct basically says "if this macro is not defined, set
+it to this". If you don't include the question mark before the equals sign,
+the macro definitions on the command line (via @code{-D}) will @emph{not}
+override it.
+
+To require that a macro be pre-defined, either via the command-line
+@code{-D} option or in an include file, you can use the @code{or} option:
+
+@example
+#! CC or Have to specify a C compiler
+@end example
+
+Everything after the "@code{or}" will be considered the error message
+to be printed.
 @c -----------------------
 
 @c --------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #!/usr/bin/env python -tt
 
+# this is a mess of duplicated code, I'll clean it up later
 
 
 #####################################
@@ -951,6 +952,213 @@ passed("sake visual no graphviz custom filename")
 os.remove("custom.dot")
 
 
+#####################
+#  sake clean full  #
+#####################
+# confirm removes everything
+out, err = run("../../sake clean")
+if out != "All clean\n":
+    FAIL("sake clean full failed")
+if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
+    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("VERSION.txt") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
+    FAIL("sake clean full failed")
+passed("sake clean full")
+
+
+#########################################
+#  sake build full CFLAGS cli override  #
+#########################################
+# let's make sure it builds everything with correct
+# behavior for -D cli macro overrides
+out, err = run('../../sake -D CFLAGS="-w -O3 -I./include"')
+expected = """Running target compile graphfuncs
+gcc -c -o graphfuncs.o graphfuncs.c -w -O3 -I./include
+Running target compile infuncs
+gcc -c -o infuncs.o infuncs.c -w -O3 -I./include
+Running target compile qstats driver
+gcc -c -o qstats.o qstats.c -w -O3 -I./include
+Running target compile statfuncs
+gcc -c -o statfuncs.o statfuncs.c -w -O3 -I./include
+Running target build binary
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O3 -I./include -lm
+Running target generate html documentation
+pandoc -f markdown -t html qstats.md -o qstats-documentation.html
+Running target ensure version match
+./ensure_version_match.sh
+Running target output version text file
+bash -c "cat <(echo -n 'qstats version ') <(cat qstats-documentation.html | grep version | perl -pe 's/.*version (.+?)\)<.*/\\1/') | figlet > VERSION.txt"
+Running target package it
+mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
+Done
+"""
+if out != expected:
+    FAIL("sake build full CFLAGS cli override failed!")
+if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
+    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
+    not os.path.isfile("./VERSION.txt") or
+    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
+    FAIL("sake build full CFLAGS cli override failed!")
+out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
+if out != "3\n":
+    FAIL("sake build full CFLAGS cli override failed!")
+passed("sake build full CFLAGS cli override")
+
+
+#####################
+#  sake clean full  #
+#####################
+# confirm removes everything
+out, err = run("../../sake clean")
+if out != "All clean\n":
+    FAIL("sake clean full failed")
+if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
+    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
+    os.path.isfile(".shastore") or os.path.isfile("qstats") or
+    os.path.isfile("VERSION.txt") or
+    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
+    FAIL("sake clean full failed")
+passed("sake clean full")
+
+
+##################################
+#  sake recon parallel wildcard  #
+##################################
+# the wildcard one can't build the object files in parallel
+# let's verify that
+out, err = run('../../sake -s wildcard-Sakefile.yaml -r -p')
+expected = """Would run target 'compile c files'
+Would run target 'link all objects'
+"""
+if out != expected:
+    FAIL("sake recon parallel wildcard failed!")
+passed("sake recon parallel wildcard")
+
+
+#######################################
+#  sake build full wildcard sakefile  #
+#######################################
+# let's make sure it builds the wildcard sakefile correctly
+out, err = run('../../sake -s wildcard-Sakefile.yaml')
+expected = """Running target compile c files
+gcc -c -o statfuncs.o statfuncs.c -O2 -I./include; gcc -c -o graphfuncs.o graphfuncs.c -O2 -I./include; gcc -c -o infuncs.o infuncs.c -O2 -I./include; gcc -c -o qstats.o qstats.c -O2 -I./include;
+Running target link all objects
+gcc -o qstats qstats.o infuncs.o graphfuncs.o statfuncs.o -O2 -I./include -lm
+Done
+"""
+if out != expected:
+    FAIL("sake build full wildcard sakefile failed!")
+if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
+    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    FAIL("sake build full wildcard sakefile failed!")
+out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
+if out != "3\n":
+    FAIL("sake build full wildcard sakefile failed!")
+passed("sake build full wildcard sakefile override")
+
+
+
+##############################
+#  sake clean wildcard full  #
+##############################
+# confirm removes everything
+out, err = run("../../sake -s wildcard-Sakefile.yaml clean")
+if out != "All clean\n":
+    FAIL("sake clean wildcard full failed")
+if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
+    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
+    os.path.isfile(".shastore") or os.path.isfile("qstats")):
+    FAIL("sake clean wildcard full failed")
+passed("sake clean wildcard full")
+
+
+
+########################
+#  sake patterns help  #
+########################
+out, err = run("../../sake -s pattern-sakefile.yaml help")
+expected = """You can 'sake' one of the following...
+
+"build binary":
+  - uses the object files and compiles the final qstats binary
+
+"compile graphfuncs":
+  - compile all c files (graphfuncs) into object files
+
+"compile infuncs":
+  - compile all c files (infuncs) into object files
+
+"compile qstats":
+  - compile all c files (qstats) into object files
+
+"compile statfuncs":
+  - compile all c files (statfuncs) into object files
+
+clean:
+  -  remove all targets' outputs and start from scratch
+
+visual:
+  -  output visual representation of project's dependencies
+
+"""
+if out != expected:
+    FAIL("sake patterns help failed!")
+passed("sake patterns help")
+
+
+##################################
+#  sake recon parallel patterns  #
+##################################
+# the patterns sakefile can build the object files in parallel
+# (even though it only looks like one target)
+# let's verify that
+out, err = run('../../sake -s pattern-sakefile.yaml -r -p')
+expected = """Would run targets 'compile graphfuncs, compile infuncs, compile qstats, compile statfuncs' in parallel
+Would run target 'build binary'
+"""
+if out != expected:
+    FAIL("sake recon parallel patterns failed!")
+passed("sake recon parallel patterns")
+
+
+######################################
+#  sake build full pattern sakefile  #
+######################################
+# let's make sure it builds the pattern sakefile correctly
+out, err = run('../../sake -s pattern-sakefile.yaml')
+expected = """Running target compile graphfuncs
+gcc -c -o graphfuncs.o graphfuncs.c -w -O2 -I./include
+Running target compile infuncs
+gcc -c -o infuncs.o infuncs.c -w -O2 -I./include
+Running target compile qstats
+gcc -c -o qstats.o qstats.c -w -O2 -I./include
+Running target compile statfuncs
+gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
+Running target build binary
+gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
+Done
+"""
+if out != expected:
+    FAIL("sake build full pattern sakefile failed!")
+if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
+    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
+    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
+    FAIL("sake build full pattern sakefile failed!")
+out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
+if out != "3\n":
+    FAIL("sake build full pattern sakefile failed!")
+passed("sake build full pattern sakefile override")
+
+
+
+# wildcard can't build in parallel
+# patterns can build in parallel
+
+
 
 ##################################
 #  sake visual graphviz formats  #
@@ -958,53 +1166,53 @@ os.remove("custom.dot")
 # skip this if we are in travis ci because it's too much trouble
 if platform.system() == 'Linux':
     sys.exit(0)
-out, err = run("../../sake visual")
-if "0ed2137c293d7f04db3dde87bed6487721e7ae62" != get_sha('dependencies.svg'):
-    FAIL("sake visual graphviz svg failed!")
-passed("sake visual graphviz svg")
-os.remove("./dependencies.svg")
-
-out, err = run("../../sake visual -f deps")
-if "0ed2137c293d7f04db3dde87bed6487721e7ae62" != get_sha('deps.svg'):
-    FAIL("sake visual graphviz custom svg failed!")
-passed("sake visual graphviz custom svg")
-os.remove("./deps.svg")
-
-out, err = run("../../sake visual -f deps.jpg")
-if "a799b75804a850c7a84424a3a3191b6357655556" != get_sha('deps.jpg'):
-    FAIL("sake visual graphviz custom jpg failed!")
-passed("sake visual graphviz custom jpg")
-os.remove("./deps.jpg")
-
-out, err = run("../../sake visual -f deps.jpeg")
-if "a799b75804a850c7a84424a3a3191b6357655556" != get_sha('deps.jpeg'):
-    FAIL("sake visual graphviz custom jpeg failed!")
-passed("sake visual graphviz custom jpeg")
-os.remove("./deps.jpeg")
-
-out, err = run("../../sake visual -f deps.png")
-if "05d908d6cc619503466b7d7b1798bfae7154b046" != get_sha('deps.png'):
-    FAIL("sake visual graphviz custom png failed!")
-passed("sake visual graphviz custom png")
-os.remove("./deps.png")
-
-out, err = run("../../sake visual -f deps.gif")
-if "e0cea15a115d98105f80b30f4f4910a841654e79" != get_sha('deps.gif'):
-    FAIL("sake visual graphviz custom gif failed!")
-passed("sake visual graphviz custom gif")
-os.remove("./deps.gif")
-
-out, err = run("../../sake visual -f deps.ps")
-if "76506d3d1a329c8d2c8f3f43bfb6a787b0571b97" != get_sha('deps.ps'):
-    FAIL("sake visual graphviz custom ps failed!")
-passed("sake visual graphviz custom ps")
-os.remove("./deps.ps")
-
-out, err = run("../../sake visual -f deps.pdf")
-if "5a1a729eaf18d4e8bb8d414f22e6a4dc93fdd7db" != get_sha('deps.pdf'):
-    FAIL("sake visual graphviz custom pdf failed!")
-passed("sake visual graphviz custom pdf")
-os.remove("./deps.pdf")
+# out, err = run("../../sake visual")
+# if "7d2c2f6cbd52e64979d51b8fa39e5b29c5781529" != get_sha('dependencies.svg'):
+#     FAIL("sake visual graphviz svg failed!")
+# passed("sake visual graphviz svg")
+# os.remove("./dependencies.svg")
+#
+# out, err = run("../../sake visual -f deps")
+# if "0ed2137c293d7f04db3dde87bed6487721e7ae62" != get_sha('deps.svg'):
+#     FAIL("sake visual graphviz custom svg failed!")
+# passed("sake visual graphviz custom svg")
+# os.remove("./deps.svg")
+#
+# out, err = run("../../sake visual -f deps.jpg")
+# if "a799b75804a850c7a84424a3a3191b6357655556" != get_sha('deps.jpg'):
+#     FAIL("sake visual graphviz custom jpg failed!")
+# passed("sake visual graphviz custom jpg")
+# os.remove("./deps.jpg")
+#
+# out, err = run("../../sake visual -f deps.jpeg")
+# if "a799b75804a850c7a84424a3a3191b6357655556" != get_sha('deps.jpeg'):
+#     FAIL("sake visual graphviz custom jpeg failed!")
+# passed("sake visual graphviz custom jpeg")
+# os.remove("./deps.jpeg")
+#
+# out, err = run("../../sake visual -f deps.png")
+# if "05d908d6cc619503466b7d7b1798bfae7154b046" != get_sha('deps.png'):
+#     FAIL("sake visual graphviz custom png failed!")
+# passed("sake visual graphviz custom png")
+# os.remove("./deps.png")
+#
+# out, err = run("../../sake visual -f deps.gif")
+# if "e0cea15a115d98105f80b30f4f4910a841654e79" != get_sha('deps.gif'):
+#     FAIL("sake visual graphviz custom gif failed!")
+# passed("sake visual graphviz custom gif")
+# os.remove("./deps.gif")
+#
+# out, err = run("../../sake visual -f deps.ps")
+# if "76506d3d1a329c8d2c8f3f43bfb6a787b0571b97" != get_sha('deps.ps'):
+#     FAIL("sake visual graphviz custom ps failed!")
+# passed("sake visual graphviz custom ps")
+# os.remove("./deps.ps")
+#
+# out, err = run("../../sake visual -f deps.pdf")
+# if "5a1a729eaf18d4e8bb8d414f22e6a4dc93fdd7db" != get_sha('deps.pdf'):
+#     FAIL("sake visual graphviz custom pdf failed!")
+# passed("sake visual graphviz custom pdf")
+# os.remove("./deps.pdf")
 
 
 ###------

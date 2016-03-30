@@ -1,13 +1,13 @@
 
 ##
-## This is to test the import/include funcionality
+## This is to test the entire API
 ##
 
 #< config.yaml
 ######< optional.yaml or this was optional anyways
 #< optional.yaml optional
 
-#! CFLAGS=-w -O2 -I./include
+#! CFLAGS?=-w -O2 -I./include
 #! LDFLAGS=-lm
 #! CAT=cat
 #! CAT?=test-failure

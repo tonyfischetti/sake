@@ -50,6 +50,14 @@ from sakelib import build
 from sakelib import constants
 
 
+# if the user installed the `setproctitle` module,
+# change the name of the process from "python" to "sake"
+try:
+    from setproctitle import setproctitle
+    setproctitle("sake {}".format(''.join(sys.argv[1:])))
+except:
+    pass
+
 
 parser = argparse.ArgumentParser(description='Build from a Sakefile')
 

@@ -1,6 +1,8 @@
-v0.9.7    03-29-16 -- - new features like patterns, includes, colored output,
-                        custom shells, command-line macro specification,
-                        enhanced formula errors, and bug fixes
+x0.9.71   08-30-16 -- changes name of process to "sake" if
+                      `setprocftitle` module is available
+v0.9.7    03-29-16 -- new features like patterns, includes, colored output,
+                      custom shells, command-line macro specification,
+                      enhanced formula errors, and bug fixes
 v0.9.4.4  11-26-14 -- added support for other image formats for sake visual
 v0.9.4.2  06-03-14 -- safer hashing, performance improvements
 v0.9.4    05-14-14 -- fixed issue with --force building more targets

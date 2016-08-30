@@ -46,6 +46,7 @@ import glob
 import hashlib
 import io
 import locale
+from multiprocessing import Pool
 import networkx as nx
 import os.path
 from subprocess import Popen, PIPE
@@ -55,6 +56,12 @@ import yaml
 from . import acts
 from . import constants
 
+
+# regrettably, we need a global here in order to get
+# parallel get_sha to work... multiprocessing.Pool needs
+# to pickle the mapped function and cannot map closures
+# or partially applied functions
+ERROR_FN = sys.stderr.write
 
 
 def check_shastore_version(from_store, settings):
@@ -76,11 +83,14 @@ def check_shastore_version(from_store, settings):
         sys.exit(1)
 
 
-def get_sha(a_file, settings):
+def get_sha(a_file, settings=None):
     """
     Returns sha1 hash of the file supplied as an argument
     """
-    error = settings["error"]
+    if settings:
+        error = settings["error"]
+    else:
+        error = ERROR_FN
     try:
         BLOCKSIZE = 65536
         hasher = hashlib.sha1()
@@ -130,7 +140,10 @@ def take_shas_of_all_files(G, settings):
         A dictionary where the keys are the filenames and the
         value is the sha1 hash
     """
+    global ERROR_FN
     sprint = settings["sprint"]
+    error = settings["error"]
+    ERROR_FN = error
     sha_dict = {}
     all_files = []
     for target in G.nodes(data=True):
@@ -157,9 +170,17 @@ def take_shas_of_all_files(G, settings):
                 all_files.append(out)
     if len(all_files):
         sha_dict['files'] = {}
+        # check if files exist and de-dupe
+        extant_files = []
         for item in all_files:
-            if os.path.isfile(item):
-                sha_dict['files'][item] = {'sha': get_sha(item, settings)}
+            if item not in extant_files and os.path.isfile(item):
+                extant_files.append(item)
+        pool = Pool()
+        results = pool.map(get_sha, extant_files)
+        pool.close()
+        pool.join()
+        for fn, sha in zip(extant_files, results):
+            sha_dict['files'][fn] = {'sha': sha}
         return sha_dict
     sprint("No dependencies", level="verbose")
 

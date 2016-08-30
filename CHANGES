@@ -1,4 +1,6 @@
-x0.9.71   08-30-16 -- changes name of process to "sake" if
+v0.9.8    08-30-16 -- hashing functionality is sped up if more than one
+                      core is available
+v0.9.71   08-30-16 -- changes name of process to "sake" if
                       `setprocftitle` module is available
 v0.9.7    03-29-16 -- new features like patterns, includes, colored output,
                       custom shells, command-line macro specification,

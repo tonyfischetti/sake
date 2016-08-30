@@ -397,7 +397,7 @@ def parallel_run_these(G, list_of_targets, in_mem_shas, from_store,
     The parallel equivalent of "run_this_target()"
     It receives a list of targets to execute in parallel.
     Unlike "run_this_target()" it has to update the shas
-    (in memory and in the store) withing the function.
+    (in memory and in the store) within the function.
     This is because one of the targets may fail but many can
     succeed, and those outputs need to be updated
 

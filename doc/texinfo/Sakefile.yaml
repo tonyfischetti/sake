@@ -1,6 +1,6 @@
-all:
-    - pdf
-    - html
+# all:
+#     - pdf
+#     - html
 
 pdf:
     help: builds the pdf from the texinfo
@@ -23,12 +23,11 @@ html:
 real clean:
     help: cleans useless intermediate files
     formula: >
-        rm sake-doc.aux;
-        rm sake-doc.cp;
-        rm sake-doc.fn;
-        rm sake-doc.ky;
-        rm sake-doc.log;
-        rm sake-doc.pg;
-        rm sake-doc.toc;
-        rm sake-doc.tp;
-        rm sake-doc.vr;
+        rm -f sake-doc.aux;
+        rm -f sake-doc.fn;
+        rm -f sake-doc.ky;
+        rm -f sake-doc.log;
+        rm -f sake-doc.pg;
+        rm -f sake-doc.toc;
+        rm -f sake-doc.tp;
+        rm -f sake-doc.vr;

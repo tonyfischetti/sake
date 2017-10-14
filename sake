@@ -207,7 +207,7 @@ def all_preds(preds):
             else:
                 return preds
         car, cdr = preds[0], preds[1:]
-        return all_preds(G.predecessors(car)) + all_preds(car) + all_preds(cdr)
+        return all_preds(list(G.predecessors(car))) + list(all_preds(car)) + list(all_preds(cdr))
     else:
         return [preds]
 

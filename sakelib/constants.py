@@ -11,7 +11,7 @@
 #
 ##############################################################################
 #                                                                            #
-# Copyright (c) 2013, 2014, 2015, 2016, Tony Fischetti                       #
+# Copyright (c) 2013, 2014, 2015, 2016, 2017, Tony Fischetti                 #
 #                                                                            #
 # MIT License, http://www.opensource.org/licenses/mit-license.php            #
 #                                                                            #
@@ -39,7 +39,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 # Version number
-VERSION = "0.9.8"
+VERSION = "0.9.8.1"
 
 # Name of application
 NAME = 'master-sake'

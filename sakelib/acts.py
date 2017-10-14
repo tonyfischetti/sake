@@ -11,7 +11,7 @@
 #
 ##############################################################################
 #                                                                            #
-# Copyright (c) 2013, 2014, 2015, 2016, Tony Fischetti                       #
+# Copyright (c) 2013, 2014, 2015, 2016, 2017 Tony Fischetti                  #
 #                                                                            #
 # MIT License, http://www.opensource.org/licenses/mit-license.php            #
 #                                                                            #
@@ -480,10 +480,10 @@ def construct_graph(sakefile, settings):
                 sprint("Adding '{}'".format(atomtarget), level="verbose")
                 data_dict = sakefile[target][atomtarget]
                 data_dict["parent"] = target
-                G.add_node(atomtarget, data_dict)
+                G.add_node(atomtarget, **data_dict)
         else:
             sprint("Adding '{}'".format(target), level="verbose")
-            G.add_node(target, sakefile[target])
+            G.add_node(target, **sakefile[target])
     sprint("Nodes are built\nBuilding connections", level="verbose")
     for node in G.nodes(data=True):
         sprint("checking node {} for dependencies".format(node[0]),

@@ -11,7 +11,7 @@
 #
 ##############################################################################
 #                                                                            #
-# Copyright (c) 2013, 2014, 2015, 2016, Tony Fischetti                       #
+# Copyright (c) 2013, 2014, 2015, 2016, 2017, Tony Fischetti                 #
 #                                                                            #
 # MIT License, http://www.opensource.org/licenses/mit-license.php            #
 #                                                                            #
@@ -339,8 +339,8 @@ def get_sinks(G):
     returns a list of all sinks in a graph
     """
     sinks = []
-    for node in G.nodes():
-        if not G.successors(node):
+    for node in G:
+        if not len(list(G.successors(node))):
             sinks.append(node)
     return sinks
 

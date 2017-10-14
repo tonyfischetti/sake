@@ -7,7 +7,7 @@
 
 @c --------------------------------------------------------------------
 @copying
-This manual is for sake, version 0.9.8.1
+This manual is for sake, version 1.0
 
 Copyright @copyright{} 2013, 2014, 2015, 2016, 2017, Tony Fischetti
 @quotation
@@ -32,7 +32,7 @@ except that this permission notice be translated properly.
 @sp 5
 @title Sake
 @subtitle A self-documenting build automation tool
-@subtitle Version 0.9.8.1 (2017-10-14)
+@subtitle Version 1.0 (2017-10-14)
 @author Tony Fischetti
 @page
 @vskip 0pt plus 1filll
@@ -267,8 +267,8 @@ There are four pieces of open source software that must be installed to
 ensure the proper functioning of sake:
 @itemize @bullet
 @item
-Python. Sake is Python3 compatible and is tested using Python 2.7, 3.2,
-3.3, 3.4, 3.5, and 3.6
+Python. Sake is Python3 compatible and is tested using Python 2.7,
+3.3, 3.4, 3.5, and 3.6 (not python 3.2)
 @item
 The python module @code{NetworkX}
 @item

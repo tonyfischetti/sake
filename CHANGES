@@ -1,4 +1,4 @@
-v0.9.8.1  10-13-17 -- fixed bug introduced by networkx2.0 API change
+v1.0      10-14-17 -- fixed bug introduced by networkx2.0 API change
 v0.9.8    08-30-16 -- hashing functionality is sped up if more than one
                       core is available
 v0.9.71   08-30-16 -- changes name of process to "sake" if

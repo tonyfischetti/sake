@@ -3,7 +3,6 @@
 ![sake logo](http://statethatiamin.onlythisrose.com/sakelogo.png)
 
 [![Build Status](https://travis-ci.org/tonyfischetti/sake.svg?branch=master)](https://travis-ci.org/tonyfischetti/sake)
-[![Downloads](https://img.shields.io/pypi/dm/master-sake.svg)](https://pypi.python.org/pypi/master-sake/)
 [![License](https://img.shields.io/pypi/l/master-sake.svg)](https://pypi.python.org/pypi/master-sake/)
 
 ### What is it?

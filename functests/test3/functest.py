@@ -719,7 +719,14 @@ expected3 = """statfuncs.c:30:26: fatal error: deadcandance.h: No such file or d
 compilation terminated.
 Command failed to run
 """
-if err != expected and err != expected2 and err != expected3:
+expected4 = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
+#include <deadcandance.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+Command failed to run
+"""
+
+if err != expected and err != expected2 and err != expected3 and err != expected4:
     FAIL("break target with no ancestors sake failed!")
 out, err = run("../../sake -r")
 expected = """Would run target: compile statfuncs
@@ -759,7 +766,14 @@ compilation terminated.
 Target 'compile statfuncs' failed!
 A command failed to run
 """
-if err != expected and err != expected2 and err != expected3:
+expected4 = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
+#include <deadcandance.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+Target 'compile statfuncs' failed!
+A command failed to run
+"""
+if err != expected and err != expected2 and err != expected3 and err != expected4:
     FAIL("break target with no ancestors sake parallel failed!")
 expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
 if out != expected:
@@ -866,7 +880,14 @@ compilation terminated.
 
 Command failed to run
 """
-if err != expected and err != expected2 and err != expected3:
+expected4 = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
+#include <deadcandance.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+
+Command failed to run
+"""
+if err != expected and err != expected2 and err != expected3 and err != expected4:
     FAIL("quiet error failed!")
 passed("quiet error")
 

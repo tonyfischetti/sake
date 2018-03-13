@@ -7,9 +7,9 @@
 
 @c --------------------------------------------------------------------
 @copying
-This manual is for sake, version 1.0
+This manual is for sake, version 1.1
 
-Copyright @copyright{} 2013, 2014, 2015, 2016, 2017, Tony Fischetti
+Copyright @copyright{} 2013, 2014, 2015, 2016, 2017, 2018, Tony Fischetti
 @quotation
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -32,7 +32,7 @@ except that this permission notice be translated properly.
 @sp 5
 @title Sake
 @subtitle A self-documenting build automation tool
-@subtitle Version 1.0 (2017-10-14)
+@subtitle Version 1.1 (2018-03-13)
 @author Tony Fischetti
 @page
 @vskip 0pt plus 1filll

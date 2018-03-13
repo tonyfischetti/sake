@@ -11,7 +11,7 @@
 #
 ##############################################################################
 #                                                                            #
-# Copyright (c) 2013, 2014, 2015, 2016, Tony Fischetti                       #
+# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, Tony Fischetti           #
 #                                                                            #
 # MIT License, http://www.opensource.org/licenses/mit-license.php            #
 #                                                                            #
@@ -195,6 +195,12 @@ if args.target == 'visual':
     sys.exit(ret_val)
 
 
+def anythinginthere(dictkeyiterator):
+    try:
+        return len(list(dictkeyiterator))
+    except:
+        return False
+
 # recursive function to get all predecessors
 # must be called with a list (even if its one element
 def all_preds(preds):
@@ -202,8 +208,8 @@ def all_preds(preds):
         if len(preds) == 0:
             return []
         if len(preds) == 1:
-            if G.predecessors(preds[0]):
-                all_preds(G.predecessors(preds[0]))
+            if anythinginthere(G.predecessors(preds[0])):
+                all_preds(list(G.predecessors(preds[0])))
             else:
                 return preds
         car, cdr = preds[0], preds[1:]
@@ -247,6 +253,8 @@ ties = acts.get_ties(G)
 # for other target specified
 # it's easier to ask for forgiveness that permission
 try:
+    if args.target not in G.nodes():
+        raise AssertionError
     predecessors = G.predecessors(args.target)
     # if a specific target is given, it's outputs need to be protected
     # from sha updates
@@ -275,7 +283,10 @@ except:
                     nodes_in_subgraph = list(set(nodes_in_subgraph))
                     subgraph = G.subgraph(nodes_in_subgraph)
         my_ties, ties_message = acts.get_tied_targets(nodes_in_subgraph, ties)
-        for tie in my_ties:
+        lenofties = len(my_ties)
+        # for ind, tie in enumerate(my_ties):
+        for ind in range(0, lenofties):
+            tie = my_ties[ind]
             if not args.force:
                 preds = list(set(all_preds([tie])))
                 for pred in preds:

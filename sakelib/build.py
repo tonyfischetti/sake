@@ -49,6 +49,7 @@ import locale
 from multiprocessing import Pool
 import networkx as nx
 import os.path
+import shlex
 from subprocess import Popen, PIPE
 import sys
 import yaml
@@ -278,8 +279,17 @@ def run_commands(commands, settings):
     if not quiet:
         sprint(commands)
 
-    if enhanced_errors and not windows_p:
-        commands = ["-e", commands]
+    if the_shell:
+        tmp = shlex.split(the_shell)
+        the_shell = tmp[0]
+        tmp = tmp[1:]
+        if enhanced_errors and not windows_p:
+            tmp.append("-e")
+        tmp.append(commands)
+        commands = tmp
+    else:
+        if enhanced_errors and not windows_p:
+            commands = ["-e", commands]
 
     p = Popen(commands, shell=True, stdout=STDOUT, stderr=STDERR,
               executable=the_shell)

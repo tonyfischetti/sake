@@ -134,7 +134,7 @@ def find_standard_sakefile(settings):
 
 def parse(file, text, includes):
     try:
-        sakefile = yaml.load(text) or {}
+        sakefile = yaml.safe_load(text) or {}
     except yaml.YAMLError as exc:
         sys.stderr.write("Error: {} failed to parse as valid YAML\n".format(file))
         if hasattr(exc, 'problem_mark'):

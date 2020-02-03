@@ -538,7 +538,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
         in_mem_shas['files'] = {}
     with io.open(".shastore", "r") as fh:
         shas_on_disk = fh.read()
-    from_store = yaml.load(shas_on_disk)
+    from_store = yaml.safe_load(shas_on_disk)
     check_shastore_version(from_store, settings)
     if not from_store:
         write_shas_to_shastore(in_mem_shas)
@@ -546,7 +546,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
         in_mem_shas['files'] = {}
         with io.open(".shastore", "r") as fh:
             shas_on_disk = fh.read()
-        from_store = yaml.load(shas_on_disk)
+        from_store = yaml.safe_load(shas_on_disk)
     # parallel
     if parallel:
         for line in parallel_sort(G):

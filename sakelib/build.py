@@ -11,7 +11,8 @@
 #
 ##############################################################################
 #                                                                            #
-# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, Tony Fischetti           #
+# Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018,                          #
+#               2019, 2020,                         Tony Fischetti           #
 #                                                                            #
 # MIT License, http://www.opensource.org/licenses/mit-license.php            #
 #                                                                            #
@@ -538,7 +539,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
         in_mem_shas['files'] = {}
     with io.open(".shastore", "r") as fh:
         shas_on_disk = fh.read()
-    from_store = yaml.safe_load(shas_on_disk)
+    from_store = yaml.load(shas_on_disk, Loader=yaml.Loader)
     check_shastore_version(from_store, settings)
     if not from_store:
         write_shas_to_shastore(in_mem_shas)
@@ -546,7 +547,7 @@ def build_this_graph(G, settings, dont_update_shas_of=None):
         in_mem_shas['files'] = {}
         with io.open(".shastore", "r") as fh:
             shas_on_disk = fh.read()
-        from_store = yaml.safe_load(shas_on_disk)
+        from_store = yaml.load(shas_on_disk, Loader=yaml.Loader)
     # parallel
     if parallel:
         for line in parallel_sort(G):

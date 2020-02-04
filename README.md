@@ -17,8 +17,7 @@ re-building and lets the user concentrate on their work rather than memorizing
 the order in which commands have to be run.
 
 Sake is free, open source cross-platform software under a very permissive
-license (MIT Expat) and is written in Python. Sake is in the beta stage of
-development.
+license (MIT Expat) and is written in Python. Sake is stable.
 
 ### 
 
@@ -27,7 +26,7 @@ To see an example, check out [this project's webpage](http://tonyfischetti.githu
 
 ### Installation
 This projects depends on
- - Python 2.7, or above 3.2 (including 3.6!)
+ - Python 2.7, or 3.5 and above (including 3.8!)
  - The networkx python module
  - the PyYAML python module
  - [Graphviz](http://www.graphviz.org)

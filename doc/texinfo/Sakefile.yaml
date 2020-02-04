@@ -7,7 +7,7 @@ pdf:
     dependencies:
         - sake-doc.texi
     formula: >
-        texi2pdf sake-doc.texi && open sake-doc.pdf
+        texi2pdf sake-doc.texi && exo-open sake-doc.pdf
     output:
         - sake-doc.pdf
 
@@ -16,7 +16,7 @@ html:
     dependencies:
         - sake-doc.texi
     formula: >
-        makeinfo --html --no-split sake-doc.texi && open sake-doc.html
+        makeinfo --html --no-split sake-doc.texi && exo-open sake-doc.html
     output:
         - sake-doc.html
 

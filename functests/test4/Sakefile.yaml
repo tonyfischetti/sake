@@ -1,0 +1,31 @@
+---
+# Simple cross-platform functional test for sake
+
+step1:
+    help: create a simple output file from input
+    dependencies:
+        - input.txt
+    formula: >
+        python -c "with open('input.txt') as f: content = f.read(); open('output1.txt', 'w').write(content.upper())"
+    output:
+        - output1.txt
+
+step2:
+    help: process the first output to create second output
+    dependencies:
+        - output1.txt
+    formula: >
+        python -c "with open('output1.txt') as f: lines = f.readlines(); open('output2.txt', 'w').write('Lines: ' + str(len(lines)) + '\n')"
+    output:
+        - output2.txt
+
+step3:
+    help: combine both outputs
+    dependencies:
+        - output1.txt
+        - output2.txt
+    formula: >
+        python -c "with open('output1.txt') as f1, open('output2.txt') as f2, open('final.txt', 'w') as out: out.write(f2.read() + f1.read())"
+    output:
+        - final.txt
+...

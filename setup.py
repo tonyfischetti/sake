@@ -40,7 +40,14 @@ depends = ['networkx (>=1.0)', 'PyYAML (>=3.0)']
 
 try:
     from setuptools import setup
-    kw = {'install_requires': [s.replace('(','').replace(')','') for s in depends]}
+    kw = {
+        'install_requires': [s.replace('(','').replace(')','') for s in depends],
+        'entry_points': {
+            'console_scripts': [
+                'sake=sakelib.main:main',
+            ],
+        },
+    }
 except ImportError:
     from distutils.core import setup
     kw = {'requires': depends}
@@ -87,7 +94,6 @@ setup(name=constants.NAME,
                    'Programming Language :: Python :: 3.7',
                    'Programming Language :: Python :: 3.8'],
       packages=['sakelib'],
-      scripts=['sake'],
       **kw
      )
 

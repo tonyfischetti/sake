@@ -327,6 +327,8 @@ def main():
 
 
 if __name__ == '__main__':
+    # This script is kept for backward compatibility
+    # The main entry point is now in sakelib.main
     from multiprocessing import freeze_support
     freeze_support()
     main()

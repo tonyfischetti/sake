@@ -141,7 +141,16 @@ python functest.py
   - Added path normalization helper for cross-platform compatibility
   - Normalized all path assertions to use forward slashes
 
-### 2. Created test5 (Parallel Build Testing)
+### 2. Fixed pkg_resources Deprecation Warning
+- **Files**: `setup.py`, `sakelib/main.py`, `sake`
+- **Changes**:
+  - Migrated from `scripts` to `entry_points` in setup.py
+  - Created sakelib/main.py as the proper entry point module
+  - Modern setuptools now generates scripts without deprecated pkg_resources
+  - Maintained backward compatibility with the sake script
+- **Issue**: Fixed `DeprecationWarning: pkg_resources is deprecated as an API`
+
+### 3. Created test5 (Parallel Build Testing)
 - **Files**: `functests/test5/`
   - `Sakefile.yaml` - 4 parallel targets + combine step
   - `functest.py` - Test runner with timing
@@ -149,7 +158,7 @@ python functest.py
 - **Purpose**: Cross-platform replacement for test2's parallel build testing
 - **Implementation**: Uses Python instead of Unix commands
 
-### 3. Created test6 (Advanced Features)
+### 4. Created test6 (Advanced Features)
 - **Files**: `functests/test6/`
   - `Sakefile.yaml` - Macro-heavy build with meta-targets
   - `functest.py` - Test runner
@@ -158,7 +167,7 @@ python functest.py
 - **Purpose**: Cross-platform testing of advanced sake features
 - **Implementation**: Pure Python, tests macros, force rebuild, wildcards
 
-### 4. Created Test Runner
+### 5. Created Test Runner
 - **File**: `functests/run_cross_platform_tests.py`
 - **Purpose**: Run all OS-independent tests with summary report
 - **Features**: Colored output, platform detection, failure reporting

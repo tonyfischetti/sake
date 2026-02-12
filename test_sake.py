@@ -80,29 +80,35 @@ class TestActsFunction(unittest.TestCase):
         self.assertEqual(acts.expand_macros(temp, {})[0], solution)
 
     def test_get_help(self):
-        self.assertEqual(acts.get_help(yaml.load(self.mock_sakefile_for_help)),
+        self.assertEqual(acts.get_help(yaml.load(self.mock_sakefile_for_help, Loader=yaml.Loader)),
                          self.expected_help)
 
+
     def test_get_all_outputs(self):
-        self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/*']})),
+        # Helper function to normalize paths for cross-platform testing
+        def normalize_paths(paths):
+            return sorted([p.replace('\\', '/') for p in paths])
+        
+        self.assertEqual(normalize_paths(acts.get_all_outputs({'output': ['./tmp/*']})),
                          sorted(['./tmp/file1.txt',
                                  './tmp/file2.txt',
                                  './tmp/file1.json']))
-        self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/file1.*']})),
+        self.assertEqual(normalize_paths(acts.get_all_outputs({'output': ['./tmp/file1.*']})),
                          sorted(['./tmp/file1.txt',
                                  './tmp/file1.json']))
-        self.assertEqual(sorted(acts.get_all_outputs({'output': ['./tmp/*.txt']})),
+        self.assertEqual(normalize_paths(acts.get_all_outputs({'output': ['./tmp/*.txt']})),
                          sorted(['./tmp/file1.txt',
                                  './tmp/file2.txt']))
-        self.assertEqual(acts.get_all_outputs({'output': ['./tmp/*.json']}),
+        self.assertEqual([p.replace('\\', '/') for p in acts.get_all_outputs({'output': ['./tmp/*.json']})],
                          ['./tmp/file1.json'])
-        self.assertEqual(acts.get_all_outputs({'output': ['./tmp/file2.txt']}),
+        self.assertEqual([p.replace('\\', '/') for p in acts.get_all_outputs({'output': ['./tmp/file2.txt']})],
                          ['./tmp/file2.txt'])
         # these are not proper globs so they just return the thing
         self.assertEqual(acts.get_all_outputs({'output': ['./tmp/sile123']}),
                          ['./tmp/sile123'])
         self.assertEqual(acts.get_all_outputs({'output': ['./tmp/sile1.*']}),
                          ['./tmp/sile1.*'])
+
 
 
 

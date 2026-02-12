@@ -1,6 +1,6 @@
 # Sake
 
-![sake logo](http://statethatiamin.com/media/sakelogo.png)
+![sake logo](https://thepolygram.com/sakelogo.png)
 
 [![Build Status](https://travis-ci.org/tonyfischetti/sake.svg?branch=master)](https://travis-ci.org/tonyfischetti/sake)
 [![License](https://img.shields.io/pypi/l/master-sake.svg)](https://pypi.python.org/pypi/master-sake/)

@@ -186,42 +186,137 @@ def check_version_updated():
     return True
 
 
+def discover_python_versions():
+    """Discover all installed Python versions"""
+    python_versions = []
+    
+    # Check for Python 2.x versions (legacy support)
+    for minor in range(4, 8):  # 2.4 to 2.7
+        for cmd in ['python2.' + str(minor), 'python2' + str(minor)]:
+            if shutil.which(cmd):
+                python_versions.append(cmd)
+                break
+    
+    # Check for Python 3.x versions
+    for minor in range(4, 20):  # 3.4 to 3.19 (future-proof)
+        for cmd in ['python3.' + str(minor), 'python3' + str(minor)]:
+            if shutil.which(cmd):
+                python_versions.append(cmd)
+                break
+    
+    # Also check simple 'python', 'python2', 'python3'
+    for cmd in ['python', 'python2', 'python3']:
+        if shutil.which(cmd) and cmd not in python_versions:
+            python_versions.append(cmd)
+    
+    # Remove duplicates by checking actual executable paths
+    unique_versions = []
+    seen_paths = set()
+    
+    for cmd in python_versions:
+        try:
+            result = subprocess.run(
+                [cmd, '-c', 'import sys; print(sys.executable)'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0:
+                exe_path = result.stdout.strip()
+                if exe_path not in seen_paths:
+                    seen_paths.add(exe_path)
+                    # Get version string
+                    ver_result = subprocess.run(
+                        [cmd, '--version'],
+                        capture_output=True,
+                        text=True,
+                        timeout=5
+                    )
+                    version_str = ver_result.stdout.strip() or ver_result.stderr.strip()
+                    unique_versions.append((cmd, version_str, exe_path))
+        except (subprocess.TimeoutExpired, Exception):
+            continue
+    
+    return unique_versions
+
+
+def save_tested_versions(tested_versions):
+    """Save tested Python versions to a file for reference"""
+    with open('TESTED_PYTHON_VERSIONS.txt', 'w') as f:
+        f.write("# Python versions tested by release.py --test\n")
+        f.write("# Generated on: " + subprocess.run(['date'], capture_output=True, text=True, shell=True).stdout.strip() + "\n")
+        f.write("# This serves as the single source of truth for supported Python versions\n")
+        f.write("#\n")
+        f.write("# Format: command | version string | executable path | test result\n")
+        f.write("#\n\n")
+        
+        for cmd, version_str, status in tested_versions:
+            f.write(cmd + " | " + version_str + " | " + status + "\n")
+    
+    print_success("Tested versions saved to TESTED_PYTHON_VERSIONS.txt")
+
+
 def run_unit_tests():
-    """Run unit tests"""
+    """Run unit tests on all discovered Python versions"""
     print_step("Running Unit Tests")
     
     if not os.path.exists('test_sake.py'):
         print_error("test_sake.py not found")
         return False
     
-    python_versions = []
+    print_step("Discovering Python Versions")
+    discovered = discover_python_versions()
     
-    # Try to find multiple Python versions
-    for version in ['3.12', '3.11', '3.10', '3.9', '3.8']:
-        if shutil.which('python' + version):
-            python_versions.append('python' + version)
+    if not discovered:
+        print_warning("No Python versions found in PATH, using current interpreter")
+        discovered = [(sys.executable, sys.version, sys.executable)]
     
-    # Fallback to current Python
-    if not python_versions:
-        python_versions = [sys.executable]
-    
-    print("Testing with Python versions: " + ", ".join(python_versions))
+    print("\nDiscovered Python installations:")
+    for cmd, version_str, exe_path in discovered:
+        print("  " + cmd + " -> " + version_str)
+    print()
     
     all_passed = True
-    for python_cmd in python_versions:
+    tested_versions = []
+    
+    for cmd, version_str, exe_path in discovered:
         result = subprocess.run(
-            [python_cmd, 'test_sake.py'],
+            [cmd, 'test_sake.py'],
             capture_output=True,
             text=True
         )
         
         if result.returncode == 0:
-            print_success("Unit tests passed with " + python_cmd)
+            print_success("Unit tests passed with " + cmd + " (" + version_str + ")")
+            tested_versions.append((cmd, version_str, "PASSED"))
         else:
-            print_error("Unit tests failed with " + python_cmd)
+            print_error("Unit tests failed with " + cmd + " (" + version_str + ")")
             print(result.stdout)
             print(result.stderr)
+            tested_versions.append((cmd, version_str, "FAILED"))
             all_passed = False
+    
+    # Save tested versions to file
+    save_tested_versions(tested_versions)
+    
+    # Print summary
+    print_step("Python Version Test Summary")
+    passed = sum(1 for _, _, status in tested_versions if status == "PASSED")
+    failed = sum(1 for _, _, status in tested_versions if status == "FAILED")
+    
+    print("Total tested: " + str(len(tested_versions)))
+    print("Passed: " + str(passed))
+    print("Failed: " + str(failed))
+    print()
+    print("Supported versions (PASSED):")
+    for cmd, version_str, status in tested_versions:
+        if status == "PASSED":
+            # Extract version number for setup.py format
+            import re
+            match = re.search(r'(\d+)\.(\d+)', version_str)
+            if match:
+                major, minor = match.groups()
+                print("  Python " + major + "." + minor)
     
     return all_passed
 

@@ -36,6 +36,9 @@ CHECK = 'OK'
 CROSS = 'FAIL'
 WARNING = 'WARN'
 
+# PyPI package URL
+PYPI_URL = 'https://pypi.org/project/master-sake/'
+
 
 def print_step(message):
     """Print a step message"""
@@ -149,6 +152,38 @@ def get_version():
     """Get the current version from constants.py"""
     from sakelib import constants
     return constants.VERSION
+
+
+def check_version_updated():
+    """Check if version-related files have been updated"""
+    version = get_version()
+    
+    # Check if CHANGES file contains the current version
+    if os.path.exists('CHANGES'):
+        with open('CHANGES', 'r') as f:
+            changes_content = f.read()
+            if version not in changes_content:
+                print_warning("Current version " + version + " not found in CHANGES file")
+                return False
+            else:
+                print_success("CHANGES file contains version " + version)
+    else:
+        print_warning("CHANGES file not found")
+        return False
+    
+    # Check if there are uncommitted changes to important files
+    result = subprocess.run(
+        ['git', 'diff', '--name-only', 'sakelib/constants.py', 'CHANGES'],
+        capture_output=True,
+        text=True
+    )
+    
+    if result.returncode == 0 and result.stdout.strip():
+        print_warning("Uncommitted changes to: " + result.stdout.strip())
+        return False
+    
+    print_success("Version files appear to be committed")
+    return True
 
 
 def run_unit_tests():
@@ -313,18 +348,61 @@ def upload_to_test_pypi():
 
 def upload_to_pypi():
     """Upload to PyPI"""
-    print_step("Uploading to PyPI")
+    print_step("Uploading to PyPI (" + PYPI_URL + ")")
     
     version = get_version()
     
+    # Automated pre-release checks
+    print_step("Pre-Release Verification")
+    
+    checks_passed = True
+    
+    # Check if version files are updated
+    if not check_version_updated():
+        checks_passed = False
+    
+    # Check git status
+    result = subprocess.run(
+        ['git', 'status', '--porcelain'],
+        capture_output=True,
+        text=True
+    )
+    
+    if result.stdout.strip():
+        print_warning("There are uncommitted changes in the repository")
+        checks_passed = False
+    else:
+        print_success("No uncommitted changes")
+    
+    # Check if packages exist and have been checked
+    if not os.path.exists('dist'):
+        print_error("No dist/ directory found. Run --build first.")
+        return False
+    
+    dist_files = os.listdir('dist')
+    if not dist_files:
+        print_error("No packages found in dist/. Run --build first.")
+        return False
+    
+    print_success("Packages found: " + ", ".join(dist_files))
+    
+    if not checks_passed:
+        print()
+        print_warning("Some pre-release checks failed!")
+        try:
+            response = input("Continue anyway? [y/N]: ")
+            if response.lower() != 'y':
+                print_error("Aborted by user")
+                return False
+        except (EOFError, KeyboardInterrupt):
+            print_error("\nAborted by user")
+            return False
+    
+    # Final confirmation
     print(RED + "\n*** WARNING ***" + RESET)
-    print("This will upload version " + version + " to PyPI (pypi.org)")
+    print("This will upload version " + version + " to PyPI")
+    print("URL: " + PYPI_URL)
     print("This action CANNOT be undone!")
-    print("Make sure you have:")
-    print("  1. Updated the version in sakelib/constants.py")
-    print("  2. Updated CHANGES file")
-    print("  3. Committed and tagged the release")
-    print("  4. Tested the packages")
     print()
     
     response = input("Type the version number to confirm: ")

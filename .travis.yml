@@ -1,11 +1,11 @@
 sudo: false
 language: python
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
-  - "3.7"
   - "3.8"
+  - "3.9"
+  - "3.10"
+  - "3.11"
+  - "3.12"
 addons:
   apt:
     sources:
@@ -20,5 +20,9 @@ install:
   - pip install -r ./testlib/test_reqs.txt
 # command to run tests
 script:
+    # Run unit tests
     - python ./test_sake.py
-    - cd functests/test3/ && python ./functest.py
+    # Run cross-platform functional tests (works on all platforms)
+    - cd functests && python run_cross_platform_tests.py && cd ..
+    # Run Unix-specific tests only on Linux
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cd functests/test3 && python ./functest.py && cd ../..; fi

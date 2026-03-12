@@ -242,9 +242,10 @@ def discover_python_versions():
 
 def save_tested_versions(tested_versions):
     """Save tested Python versions to a file for reference"""
+    import datetime
     with open('TESTED_PYTHON_VERSIONS.txt', 'w') as f:
         f.write("# Python versions tested by release.py --test\n")
-        f.write("# Generated on: " + subprocess.run(['date'], capture_output=True, text=True, shell=True).stdout.strip() + "\n")
+        f.write("# Generated on: " + datetime.datetime.now().isoformat() + "\n")
         f.write("# This serves as the single source of truth for supported Python versions\n")
         f.write("#\n")
         f.write("# Format: command | version string | executable path | test result\n")
@@ -332,9 +333,9 @@ def run_functional_tests():
         return True
     
     return run_command(
-        sys.executable + ' ' + test_script,
+        sys.executable + ' run_cross_platform_tests.py',
         "Functional tests",
-        cwd='functests'
+        cwd=os.path.abspath('functests')
     )
 
 

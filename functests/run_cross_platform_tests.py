@@ -25,7 +25,7 @@ def run_test(test_dir, description):
     print("Running: {} - {}".format(test_dir, description))
     print("="*70)
     
-    test_path = os.path.join(os.path.dirname(__file__), test_dir)
+    test_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), test_dir)
     functest = os.path.join(test_path, 'functest.py')
     
     if not os.path.exists(functest):

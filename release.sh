@@ -3,14 +3,26 @@
 set -e
 
 VENV_DIR=".release-venv"
+PYTHON="${PYTHON:-python}"
 
-if [ ! -d "$VENV_DIR" ]; then
+# Determine activate script path (Windows uses Scripts/, Unix uses bin/)
+ACTIVATE="$VENV_DIR/bin/activate"
+[ -f "$VENV_DIR/Scripts/activate" ] && ACTIVATE="$VENV_DIR/Scripts/activate"
+
+if [ ! -f "$ACTIVATE" ]; then
     echo "Creating release venv in $VENV_DIR ..."
-    python3 -m venv "$VENV_DIR"
+    rm -rf "$VENV_DIR"
+    "$PYTHON" -m venv --without-pip --system-site-packages "$VENV_DIR"
+    # Refresh activate path after creation
+    ACTIVATE="$VENV_DIR/bin/activate"
+    [ -f "$VENV_DIR/Scripts/activate" ] && ACTIVATE="$VENV_DIR/Scripts/activate"
+    # shellcheck disable=SC1090
+    source "$ACTIVATE"
+    python -m ensurepip --upgrade
+else
+    # shellcheck disable=SC1090
+    source "$ACTIVATE"
 fi
-
-# shellcheck disable=SC1091
-source "$VENV_DIR/bin/activate" 2>/dev/null || source "$VENV_DIR/Scripts/activate"
 
 pip install --quiet --upgrade pip setuptools wheel twine
 

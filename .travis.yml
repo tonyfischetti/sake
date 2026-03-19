@@ -21,7 +21,7 @@ addons:
 # command to install dependencies
 install:
   - pip install .
-  - pip install -r ./testlib/test_reqs.txt
+  - pip install -r ./requirements.txt
 # command to run tests
 script:
     # Run unit tests

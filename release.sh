@@ -25,5 +25,6 @@ else
 fi
 
 pip install --quiet --upgrade pip setuptools wheel twine
+pip install --quiet -r requirements.txt
 
 python release.py "$@"

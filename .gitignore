@@ -25,3 +25,5 @@ sake-doc.tp
 sake-doc.vr
 *.o
 qstats
+TESTED_PYTHON_VERSIONS.txt
+.release-venv/

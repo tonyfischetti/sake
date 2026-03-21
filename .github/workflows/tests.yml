@@ -1,11 +1,10 @@
 name: Tests
 
 on:
-  push:
-    branches: [ main, master, develop ]
+  workflow_dispatch:  # Manual trigger for any branch
   pull_request:
-    branches: [ main, master, develop ]
-  workflow_dispatch:
+    branches:
+      - master  # Run on pull requests targeting the master branch
 
 jobs:
   test:

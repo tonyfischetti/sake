@@ -1,14 +1,14 @@
 name: Tests
 
 on:
-  push:
-    branches: [ main, master, develop ]
+  workflow_dispatch:  # Manual trigger for any branch
   pull_request:
-    branches: [ main, master, develop ]
+    branches:
+      - master  # Run on pull requests targeting the master branch
 
 jobs:
   test:
-    name: Test on Python ${{ matrix.python-version }}
+    name: Test ${{ replace(matrix.os, '-latest', '') }} python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     
     strategy:

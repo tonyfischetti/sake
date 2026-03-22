@@ -83,7 +83,7 @@ Edit `CHANGES` file to document what's new.
 
 ```bash
 git add sakelib/constants.py CHANGES
-git commit -m "Bump version to 1.3"
+git commit -m "Ready for release 1.3"
 ```
 
 ### 4. Run Tests

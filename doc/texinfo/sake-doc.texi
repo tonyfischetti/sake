@@ -269,7 +269,7 @@ ensure the proper functioning of sake:
 @itemize @bullet
 @item
 Python. Sake is dually compatible with Python 2 and 3 and is
-tested using Python 2.7,  3.5, 3.6, 3.7, and 3.8
+tested using Python 3.9, 3.10, 3.11, and 3.12
 @item
 The python module @code{NetworkX}
 @item

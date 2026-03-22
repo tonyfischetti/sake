@@ -22,8 +22,7 @@ from subprocess import Popen, PIPE
 import sys
 import time
 
-
-here = os.path.dirname(__file__)
+here = os.path.dirname(os.path.abspath(__file__))
 os.chdir(here)
 
 ## !!!!!!!!!!! change directory later

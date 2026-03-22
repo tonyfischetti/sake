@@ -26,7 +26,7 @@ To see an example, check out [this project's webpage](http://tonyfischetti.githu
 
 ### Installation
 This projects depends on
- - Python 3.9, 3.10, 3.11, 3.12
+ - Python 3.8, 3.9, 3.10, 3.11, 3.12
  - The networkx python module
  - the PyYAML python module
  - [Graphviz](http://www.graphviz.org)

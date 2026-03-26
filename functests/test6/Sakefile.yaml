@@ -1,0 +1,45 @@
+---
+
+#! MESSAGE=Hello World
+#! CUSTOM?=default
+#! SUFFIX?=.txt
+#! TOOL=python
+
+process files:
+    help: process all input files
+    
+    uppercase:
+        help: convert input to uppercase
+        dependencies:
+            - input.txt
+        formula: >
+            $TOOL -c "open('output1$SUFFIX', 'w').write(open('input.txt').read().upper())"
+        output:
+            - output1$SUFFIX
+    
+    reverse:
+        help: reverse the input
+        dependencies:
+            - input.txt
+        formula: >
+            $TOOL -c "open('output2$SUFFIX', 'w').write(open('input.txt').read()[::-1])"
+        output:
+            - output2$SUFFIX
+    
+    add message:
+        help: add a message to the input
+        dependencies:
+            - input.txt
+        formula: >
+            $TOOL -c "open('output3$SUFFIX', 'w').write('$MESSAGE\\n' + '$CUSTOM\\n' + open('input.txt').read())"
+        output:
+            - output3$SUFFIX
+
+combine:
+    help: combine all processed files
+    dependencies:
+        - output*.txt
+    formula: >
+        python -c "import glob; open('final.txt', 'w').write('\\n---\\n'.join(open(f).read() for f in sorted(glob.glob('output*.txt'))))"
+    output:
+        - final.txt

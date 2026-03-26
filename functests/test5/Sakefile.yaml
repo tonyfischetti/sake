@@ -1,0 +1,44 @@
+---
+
+line by line:
+    help: print each line of the poem to a file
+    first line:
+        help: prints the first line (no dependencies so always runs)
+        dependencies:
+        formula: >
+            python -c "import time; time.sleep(2); open('first.txt', 'w').write('Twinkle twinkle little bat\n')"
+        output:
+            - first.txt
+
+    second line:
+        help: prints the second line
+        formula: >
+            python -c "import time; time.sleep(2); open('second.txt', 'w').write('How I wonder what youre at\n')"
+        output:
+            - second.txt
+
+    third line:
+        help: prints the third line
+        formula: >
+            python -c "import time; time.sleep(2); open('third.txt', 'w').write('Up above the world you fly\n')"
+        output:
+            - third.txt
+
+    fourth line:
+        help: prints the fourth line
+        formula: >
+            python -c "import time; time.sleep(2); open('fourth.txt', 'w').write('Like a tea tray in the sky\n')"
+        output:
+            - fourth.txt
+
+combine them:
+    help: combine all the lines
+    dependencies: 
+        - first.txt
+        - second.txt
+        - third.txt
+        - fourth.txt
+    formula: >
+        python -c "with open('poem.txt', 'w') as out: [out.write(open(f).read()) for f in ['first.txt', 'second.txt', 'third.txt', 'fourth.txt']]"
+    output:
+        - poem.txt

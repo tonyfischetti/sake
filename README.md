@@ -1,6 +1,6 @@
 # Sake
 
-![sake logo](http://statethatiamin.com/media/sakelogo.png)
+![sake logo](https://thepolygram.com/sakelogo.png)
 
 [![Build Status](https://travis-ci.org/tonyfischetti/sake.svg?branch=master)](https://travis-ci.org/tonyfischetti/sake)
 [![License](https://img.shields.io/pypi/l/master-sake.svg)](https://pypi.python.org/pypi/master-sake/)
@@ -26,7 +26,7 @@ To see an example, check out [this project's webpage](http://tonyfischetti.githu
 
 ### Installation
 This projects depends on
- - Python 2.7, or 3.5 and above (including 3.8!)
+ - Python 3.8, 3.9, 3.10, 3.11, 3.12
  - The networkx python module
  - the PyYAML python module
  - [Graphviz](http://www.graphviz.org)

@@ -83,7 +83,7 @@ Edit `CHANGES` file to document what's new.
 
 ```bash
 git add sakelib/constants.py CHANGES
-git commit -m "Bump version to 1.3"
+git commit -m "Ready for release 1.3"
 ```
 
 ### 4. Run Tests
@@ -248,7 +248,7 @@ The workflow will automatically build and publish to PyPI.
 ### Travis CI
 
 The `.travis.yml` file is configured for Travis CI (legacy system).
-It tests on Python 3.8-3.12 on Linux.
+It tests on Python 3.9-3.12 on Linux.
 
 ## Testing Multiple Python Versions Locally
 
@@ -259,17 +259,15 @@ It tests on Python 3.8-3.12 on Linux.
 curl https://pyenv.run | bash
 
 # Install multiple Python versions
-pyenv install 3.8.18
 pyenv install 3.9.18
 pyenv install 3.10.13
 pyenv install 3.11.7
 pyenv install 3.12.1
 
 # Set local versions
-pyenv local 3.8.18 3.9.18 3.10.13 3.11.7 3.12.1
+pyenv local 3.9.18 3.10.13 3.11.7 3.12.1
 
 # Run tests
-python3.8 test_sake.py
 python3.9 test_sake.py
 python3.10 test_sake.py
 python3.11 test_sake.py
@@ -281,7 +279,7 @@ python3.12 test_sake.py
 Create a `tox.ini` file:
 ```ini
 [tox]
-envlist = py38,py39,py310,py311,py312
+envlist = py39,py310,py311,py312
 
 [testenv]
 deps =

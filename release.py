@@ -541,9 +541,13 @@ def create_git_tag():
         'git tag -a ' + tag + ' -m "Release version ' + version + '"',
         "Creating tag " + tag
     ):
-        print()
-        print("To push the tag, run:")
-        print("  git push origin " + tag)
+        if not run_command(
+            'git push origin ' + tag,
+            "Pushing tag " + tag + " to origin"
+        ):
+            print_warning("Tag was created locally but could not be pushed.")
+            print("To push manually, run:")
+            print("  git push origin " + tag)
         return True
     
     return False

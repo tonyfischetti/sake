@@ -33,6 +33,16 @@ if platform.system() == 'Windows':
 else:
     SAKE_CMD = '../../sake'
 
+# File lists used by ASSERT_FILES
+FULL_BUILD_FILES = [
+    "./graphfuncs.o", "./infuncs.o", "./VERSION.txt", "./qstats.o", "./statfuncs.o",
+    ".shastore", "qstats", "qstats-documentation.html", "qstats.tar.gz"
+]
+WILDCARD_BUILD_FILES = [
+    "./graphfuncs.o", "./infuncs.o", "./qstats.o", "./statfuncs.o",
+    ".shastore", "qstats"
+]
+
 
 def get_sha(a_file):
     """
@@ -80,6 +90,22 @@ def run(command, spit_output=False):
 def passed(whichtest):
     print("{:>45} {:>15}".format(whichtest, "\033[92mpassed\033[0m"))
 
+def ASSERT(testmessage, observed, expected):
+    if observed != expected:
+        sys.stderr.write("\033[91m[FAILED]  " + testmessage + "\n")
+        sys.stderr.write("OBSERVED: " + str(observed) + "\n")
+        sys.stderr.write("EXPECTED: " + str(expected) + "\n")
+        sys.exit(1)
+    else:
+        sys.stderr.write("\033[92m[PASSED]  " + testmessage + "\033[0m\n")
+
+def ASSERT_FILES(testmessage, expected, files=None):
+    if files is None:
+        files = FULL_BUILD_FILES
+    observed = ' '.join(f + '=' + str(os.path.isfile(f)) for f in files)
+    exp_str = ' '.join(f + '=' + str(expected) for f in files)
+    ASSERT(testmessage + " / file check", observed, exp_str)
+
 ##################
 #  start clean  ##
 ##################
@@ -87,13 +113,7 @@ def passed(whichtest):
 out, err = run(SAKE_CMD + "  clean")
 # not relying on it being clean or not
 ### check for any file
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./VERSION.txt") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("start clean failed!")
-passed("start clean")
+ASSERT_FILES("start clean", False)
 
 
 ######################
@@ -112,14 +132,8 @@ Would run target: ensure version match
 Would run target: output version text file
 Would run target: package it
 """
-if out != expected:
-    FAIL("sake recon full failed!")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile("qstats") or os.path.isfile("./VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake recon full failed!")
-passed("sake recon full")
+ASSERT("sake recon full", out, expected)
+ASSERT_FILES("sake recon full", False)
 
 
 #####################
@@ -147,18 +161,10 @@ Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
-if out != expected:
-    FAIL("sake build full failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
-    not os.path.isfile("./VERSION.txt") or
-    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
-    FAIL("sake build full failed!")
+ASSERT("sake build full", out, expected)
+ASSERT_FILES("sake build full", True)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake build full failed!")
-passed("sake build full")
+ASSERT("sake build full / qstats output", out, "3\n")
 
 
 #####################
@@ -166,9 +172,7 @@ passed("sake build full")
 #####################
 # confirm it says nothing should be built
 out, err = run(SAKE_CMD + "  -r")
-if out:
-    FAIL("sake recon full failed!")
-passed("sake recon full")
+ASSERT("sake recon full (no rebuild)", out, "")
 
 
 ######################
@@ -176,9 +180,7 @@ passed("sake recon full")
 ######################
 # confirm nothing happens
 out, err = run(SAKE_CMD + " ")
-if out != "Done\n":
-    FAIL("sake build full failed!")
-passed("sake build full")
+ASSERT("sake build full (no rebuild)", out, "Done\n")
 
 
 ###########################
@@ -196,15 +198,8 @@ Would remove file: qstats.o
 Would remove file: qstats.tar.gz
 Would remove file: statfuncs.o
 """
-if out != expected:
-    FAIL("sake recon clean full failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
-    not os.path.isfile("VERSION.txt") or 
-    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
-    FAIL("sake recon clean full failed!")
-passed("sake recon clean full")
+ASSERT("sake recon clean full", out, expected)
+ASSERT_FILES("sake recon clean full", True)
 
 
 
@@ -213,15 +208,8 @@ passed("sake recon clean full")
 #####################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  clean")
-if out != "All clean\n":
-    FAIL("sake clean full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake clean full failed")
-passed("sake clean full")
+ASSERT("sake clean full", out, "All clean\n")
+ASSERT_FILES("sake clean full", False)
 
 
 ##############################
@@ -234,15 +222,8 @@ expected = """Would run targets 'compile graphfuncs, compile infuncs, compile qs
 Would run targets 'build binary, generate html documentation' in parallel
 Would run targets 'ensure version match, output version text file, package it' in parallel
 """
-if out != expected:
-    FAIL("sake recon parallel full failed!")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile("qstats") or
-    os.path.isfile("./VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake recon parallel full failed!")
-passed("sake recon parallel full")
+ASSERT("sake recon parallel full", out, expected)
+ASSERT_FILES("sake recon parallel full", False)
 
 
 ########################
@@ -255,18 +236,10 @@ Going to run these targets 'build binary, generate html documentation' in parall
 Going to run these targets 'ensure version match, output version text file, package it' in parallel
 Done
 """
-if out != expected:
-    FAIL("sake parallel full failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
-    not os.path.isfile("./VERSION.txt") or
-    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
-    FAIL("sake parallel full failed!")
+ASSERT("sake parallel full", out, expected)
+ASSERT_FILES("sake parallel full", True)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake parallel full failed!")
-passed("sake parallel full")
+ASSERT("sake parallel full / qstats output", out, "3\n")
 
 
 ##########################
@@ -274,9 +247,7 @@ passed("sake parallel full")
 ##########################
 # confirm that it errors and says there is no such target
 out, err = run(SAKE_CMD + '  "build twinary"')
-if err != "Error: Couldn't find target 'build twinary' in Sakefile\n":
-    FAIL('sake "build twinary"')
-passed('sake "build twinary"')
+ASSERT('sake "build twinary"', err, "Error: Couldn't find target 'build twinary' in Sakefile\n")
 
 
 #########################
@@ -289,9 +260,7 @@ expected = """The following targets share dependencies and must be run together:
   - ensure version match
 Done
 """
-if out != expected:
-    FAIL('sake "build binary" failed!')
-passed('sake "build binary"')
+ASSERT('sake "build binary"', out, expected)
 
 
 ###############################
@@ -303,9 +272,7 @@ expected = """Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Done
 """
-if out != expected:
-    FAIL('sake force "build binary" failed!')
-passed('sake force "build binary"')
+ASSERT('sake force "build binary"', out, expected)
 
 
 ##################################
@@ -323,9 +290,7 @@ expected = """The following targets share dependencies and must be run together:
   - compile qstats driver
   - ensure version match
 """
-if out != expected:
-    FAIL('sake recon "compile objects" failed!')
-passed('sake recon "compile objects"')
+ASSERT('sake recon "compile objects"', out, expected)
 
 
 ########################################
@@ -341,9 +306,7 @@ Would run target: compile qstats driver
 Would run target: compile statfuncs
 Would run target: ensure version match
 """
-if out != expected:
-    FAIL('sake force recon "compile objects" failed!')
-passed('sake force recon "compile objects"')
+ASSERT('sake force recon "compile objects"', out, expected)
 
 
 ##################################
@@ -366,9 +329,7 @@ Running target ensure version match
 ./ensure_version_match.sh
 Done
 """
-if out != expected:
-    FAIL('sake force "compile objects" failed!')
-passed('sake force "compile objects"')
+ASSERT('sake force "compile objects"', out, expected)
 
 
 #####################
@@ -376,14 +337,8 @@ passed('sake force "compile objects"')
 #####################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  clean")
-if out != "All clean\n":
-    FAIL("sake clean full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake clean full failed")
-passed("sake clean full")
+ASSERT("sake clean full", out, "All clean\n")
+ASSERT_FILES("sake clean full", False)
 
 
 ########################################
@@ -399,9 +354,7 @@ Would run target: compile qstats driver
 Would run target: compile statfuncs
 Would run target: ensure version match
 """
-if out != expected:
-    FAIL('sake force recon "compile objects" failed!')
-passed('sake force recon "compile objects"')
+ASSERT('sake force recon "compile objects"', out, expected)
 
 
 ##################################
@@ -429,7 +382,6 @@ File 'qstats-documentation.html' could not be read! Exiting!
 """
 if out != expected and err != experr:
     FAIL('sake force "compile objects" failed!')
-passed('sake force "compile objects"')
 
 
 #####################
@@ -437,15 +389,8 @@ passed('sake force "compile objects"')
 #####################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  clean")
-if out != "All clean\n":
-    FAIL("sake clean full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("./VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake clean full failed")
-passed("sake clean full")
+ASSERT("sake clean full", out, "All clean\n")
+ASSERT_FILES("sake clean full", False)
 
 
 #####################
@@ -473,18 +418,10 @@ Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
-if out != expected:
-    FAIL("sake build full failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
-    not os.path.isfile("./VERSION.txt") or
-    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
-    FAIL("sake build full failed!")
+ASSERT("sake build full", out, expected)
+ASSERT_FILES("sake build full", True)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake build full failed!")
-passed("sake build full")
+ASSERT("sake build full / qstats output", out, "3\n")
 
 ##!!!!   also just tar
 ##################################
@@ -493,9 +430,7 @@ passed("sake build full")
 # confirm that only "build binary" and "package it" is to be rerun
 os.remove("qstats")
 out, err = run(SAKE_CMD + "  -r")
-if out != "Would run target: build binary\nWould run target: package it\n":
-    FAIL("delete binary and sake recon failed!")
-passed("delete binary and sake recon")
+ASSERT("delete binary and sake recon", out, "Would run target: build binary\nWould run target: package it\n")
 
 
 ############################
@@ -508,12 +443,9 @@ expected = """Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Done
 """
-if out != expected:
-    FAIL("delete binary and sake failed!")
+ASSERT("delete binary and sake", out, expected)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("delete binary and sake failed!")
-passed("delete binary and sake")
+ASSERT("delete binary and sake / qstats output", out, "3\n")
 
 
 ####################################
@@ -522,9 +454,7 @@ passed("delete binary and sake")
 # confirm that nothing will be rerun
 os.utime("./statfuncs.c", None)
 out, err = run(SAKE_CMD + "  -r")
-if out:
-    FAIL("touch statfuncs and sake recon failed!")
-passed("touch statfuncs and sake recon")
+ASSERT("touch statfuncs and sake recon", out, "")
 
 
 ###################################
@@ -539,9 +469,7 @@ os.remove("./statfuncs.c")
 with io.open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run(SAKE_CMD + "  -r")
-if out != "Would run target: compile statfuncs\n":
-    FAIL("edit statfuncs and sake recon failed!")
-passed("edit statfuncs and sake recon")
+ASSERT("edit statfuncs and sake recon", out, "Would run target: compile statfuncs\n")
 
 
 #############################
@@ -552,9 +480,7 @@ expected = """Running target compile statfuncs
 gcc -c -o statfuncs.o statfuncs.c -w -O2 -I./include
 Done
 """
-if out != expected:
-    FAIL("edit statfuncs and sake failed!")
-passed("edit statfuncs and sake")
+ASSERT("edit statfuncs and sake", out, expected)
 
 
 #######################################
@@ -569,9 +495,7 @@ statfuncs = statfuncs.replace("return(mean);", "return(1);")
 with io.open("./statfuncs.c", "w") as fh:
     fh.write(statfuncs)
 out, err = run(SAKE_CMD + "  -r")
-if out != "Would run target: compile statfuncs\n":
-    FAIL("big edit statfuncs and sake recon failed!")
-passed("big edit statfuncs and sake recon")
+ASSERT("big edit statfuncs and sake recon", out, "Would run target: compile statfuncs\n")
 
 
 ################################
@@ -588,12 +512,9 @@ Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
-if out != expected:
-    FAIL("big edit statfuncs and sake failed!")
+ASSERT("big edit statfuncs and sake", out, expected)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "1\n":
-    FAIL("big edit statfuncs and sake failed!")
-passed("big edit statfuncs and sake")
+ASSERT("big edit statfuncs and sake / qstats output", out, "1\n")
 
 ## MOVE BACK GOOD STATFUNCS.c
 shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
@@ -604,15 +525,8 @@ shutil.move("./BACKUPstatfuncs.c", "./statfuncs.c")
 #####################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  clean")
-if out != "All clean\n":
-    FAIL("sake clean full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("./VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake clean full failed")
-passed("sake clean full")
+ASSERT("sake clean full", out, "All clean\n")
+ASSERT_FILES("sake clean full", False)
 
 
 ###########################
@@ -631,18 +545,10 @@ Running target output version text file
 Running target package it
 Done
 """
-if out != expected:
-    FAIL("sake quiet build full failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
-    not os.path.isfile("./VERSION.txt") or
-    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
-    FAIL("sake quiet build full failed!")
+ASSERT("sake quiet build full", out, expected)
+ASSERT_FILES("sake quiet build full", True)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake quiet build full failed!")
-passed("sake quiet build full")
+ASSERT("sake quiet build full / qstats output", out, "3\n")
 
 
 ###############
@@ -691,9 +597,7 @@ visual:
   -  output visual representation of project's dependencies
 
 """
-if out != expected:
-    FAIL("sake help failed!")
-passed("sake help")
+ASSERT("sake help", out, expected)
 
 
 #########################################
@@ -814,8 +718,7 @@ with io.open("./qstats.md", "w") as fh:
     fh.write(themd)
 
 out, err = run(SAKE_CMD + "  -r")
-if out != "Would run target: generate html documentation\n":
-    FAIL("edit documentation and sake failed!")
+ASSERT("edit documentation and sake recon", out, "Would run target: generate html documentation\n")
 out, err = run(SAKE_CMD + " ")
 expected = """Running target generate html documentation
 pandoc -f markdown -t html qstats.md -o qstats-documentation.html
@@ -827,9 +730,7 @@ Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
-if out != expected:
-    FAIL("edit documentation and sake failed!")
-passed("edit documentation and sake")
+ASSERT("edit documentation and sake", out, expected)
 
 ## MOVE BACK GOOD qstats.md
 shutil.move("./BACKUPqstats.md", "./qstats.md")
@@ -845,9 +746,7 @@ Going to run these targets 'build binary, generate html documentation' in parall
 Going to run these targets 'ensure version match, output version text file, package it' in parallel
 Done
 """
-if out != expected:
-    FAIL("quiet parallel failed")
-passed("quiet parallel")
+ASSERT("quiet parallel", out, expected)
 
 
 #################
@@ -867,8 +766,7 @@ Running target compile infuncs
 Running target compile qstats driver
 Running target compile statfuncs
 """
-if out != expected:
-    FAIL("quiet error failed!")
+ASSERT("quiet error stdout", out, expected)
 expected = """statfuncs.c:30:10: fatal error: 'deadcandance.h' file not found
 #include <deadcandance.h>
          ^
@@ -906,8 +804,7 @@ Command failed to run
 out, err = run(SAKE_CMD + "  clean")
 out, err = run(SAKE_CMD + "  -q -p")
 expected = "Going to run these targets 'compile graphfuncs, compile infuncs, compile qstats driver, compile statfuncs' in parallel\n"
-if out != expected:
-    FAIL("quiet error parallel failed!")
+ASSERT("quiet error parallel", out, expected)
 expected = """Target 'compile statfuncs' failed!
 A command failed to run
 """
@@ -944,9 +841,7 @@ expected = """strict digraph DependencyDiagram {
 }"""
 with io.open("dependencies", "r") as fh:
     dotfile = fh.read()
-if dotfile != expected:
-    FAIL("sake visual no graphviz failed!")
-passed("sake visual no graphviz")
+ASSERT("sake visual no graphviz", dotfile, expected)
 os.remove("dependencies")
 
 
@@ -975,9 +870,7 @@ expected = """strict digraph DependencyDiagram {
 }"""
 with io.open("custom.dot", "r") as fh:
     dotfile = fh.read()
-if dotfile != expected:
-    FAIL("sake visual no graphviz custom filename failed!")
-passed("sake visual no graphviz custom filename")
+ASSERT("sake visual no graphviz custom filename", dotfile, expected)
 os.remove("custom.dot")
 
 
@@ -986,15 +879,8 @@ os.remove("custom.dot")
 #####################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  clean")
-if out != "All clean\n":
-    FAIL("sake clean full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake clean full failed")
-passed("sake clean full")
+ASSERT("sake clean full", out, "All clean\n")
+ASSERT_FILES("sake clean full", False)
 
 
 #########################################
@@ -1023,18 +909,10 @@ Running target package it
 mkdir qstats-v1.0; cp qstats qstats-v1.0; cp qstats-documentation.html qstats-v1.0; tar cvfz qstats.tar.gz qstats-v1.0 > /dev/null 2>&1; rm -rf qstats-v1.0;
 Done
 """
-if out != expected:
-    FAIL("sake build full CFLAGS cli override failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats") or
-    not os.path.isfile("./VERSION.txt") or
-    not os.path.isfile("qstats-documentation.html") or not os.path.isfile("qstats.tar.gz")):
-    FAIL("sake build full CFLAGS cli override failed!")
+ASSERT("sake build full CFLAGS cli override", out, expected)
+ASSERT_FILES("sake build full CFLAGS cli override", True)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake build full CFLAGS cli override failed!")
-passed("sake build full CFLAGS cli override")
+ASSERT("sake build full CFLAGS cli override / qstats output", out, "3\n")
 
 
 #####################
@@ -1042,15 +920,8 @@ passed("sake build full CFLAGS cli override")
 #####################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  clean")
-if out != "All clean\n":
-    FAIL("sake clean full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats") or
-    os.path.isfile("VERSION.txt") or
-    os.path.isfile("qstats-documentation.html") or os.path.isfile("qstats.tar.gz")):
-    FAIL("sake clean full failed")
-passed("sake clean full")
+ASSERT("sake clean full", out, "All clean\n")
+ASSERT_FILES("sake clean full", False)
 
 
 ##################################
@@ -1062,9 +933,7 @@ out, err = run(SAKE_CMD + '  -s wildcard-Sakefile.yaml -r -p')
 expected = """Would run target 'compile c files'
 Would run target 'link all objects'
 """
-if out != expected:
-    FAIL("sake recon parallel wildcard failed!")
-passed("sake recon parallel wildcard")
+ASSERT("sake recon parallel wildcard", out, expected)
 
 
 #######################################
@@ -1078,16 +947,10 @@ Running target link all objects
 gcc -o qstats qstats.o infuncs.o graphfuncs.o statfuncs.o -O2 -I./include -lm
 Done
 """
-if out != expected:
-    FAIL("sake build full wildcard sakefile failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
-    FAIL("sake build full wildcard sakefile failed!")
+ASSERT("sake build full wildcard sakefile", out, expected)
+ASSERT_FILES("sake build full wildcard sakefile", True, WILDCARD_BUILD_FILES)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake build full wildcard sakefile failed!")
-passed("sake build full wildcard sakefile override")
+ASSERT("sake build full wildcard sakefile / qstats output", out, "3\n")
 
 
 
@@ -1096,13 +959,8 @@ passed("sake build full wildcard sakefile override")
 ##############################
 # confirm removes everything
 out, err = run(SAKE_CMD + "  -s wildcard-Sakefile.yaml clean")
-if out != "All clean\n":
-    FAIL("sake clean wildcard full failed")
-if (os.path.isfile("./graphfuncs.o") or os.path.isfile("./infuncs.o") or
-    os.path.isfile("./qstats.o") or os.path.isfile("./statfuncs.o") or
-    os.path.isfile(".shastore") or os.path.isfile("qstats")):
-    FAIL("sake clean wildcard full failed")
-passed("sake clean wildcard full")
+ASSERT("sake clean wildcard full", out, "All clean\n")
+ASSERT_FILES("sake clean wildcard full", False, WILDCARD_BUILD_FILES)
 
 
 
@@ -1134,9 +992,7 @@ visual:
   -  output visual representation of project's dependencies
 
 """
-if out != expected:
-    FAIL("sake patterns help failed!")
-passed("sake patterns help")
+ASSERT("sake patterns help", out, expected)
 
 
 ##################################
@@ -1149,9 +1005,7 @@ out, err = run(SAKE_CMD + '  -s pattern-sakefile.yaml -r -p')
 expected = """Would run targets 'compile graphfuncs, compile infuncs, compile qstats, compile statfuncs' in parallel
 Would run target 'build binary'
 """
-if out != expected:
-    FAIL("sake recon parallel patterns failed!")
-passed("sake recon parallel patterns")
+ASSERT("sake recon parallel patterns", out, expected)
 
 
 ######################################
@@ -1171,16 +1025,10 @@ Running target build binary
 gcc -o qstats qstats.o statfuncs.o infuncs.o graphfuncs.o -w -O2 -I./include -lm
 Done
 """
-if out != expected:
-    FAIL("sake build full pattern sakefile failed!")
-if (not os.path.isfile("./graphfuncs.o") or not os.path.isfile("./infuncs.o") or
-    not os.path.isfile("./qstats.o") or not os.path.isfile("./statfuncs.o") or
-    not os.path.isfile(".shastore") or not os.path.isfile("qstats")):
-    FAIL("sake build full pattern sakefile failed!")
+ASSERT("sake build full pattern sakefile", out, expected)
+ASSERT_FILES("sake build full pattern sakefile", True, WILDCARD_BUILD_FILES)
 out, err = run('echo "1\n2\n3\n4\n5" | ./qstats -m')
-if out != "3\n":
-    FAIL("sake build full pattern sakefile failed!")
-passed("sake build full pattern sakefile override")
+ASSERT("sake build full pattern sakefile / qstats output", out, "3\n")
 
 
 

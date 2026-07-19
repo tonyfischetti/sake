@@ -267,7 +267,7 @@ def expand_macros(raw_text, macros):
 
             try:
                 var, opt, val, or_ = match.group(1, 2, 3, 4)
-            except:
+            except Exception:
                 raise InvalidMacroError("Failed to parse macro {}\n".format(line))
 
             if or_:
@@ -364,7 +364,7 @@ def expand_patterns(name, target, settings):
                                                  itertools.repeat("*"))))
             expanded = PatternTemplate(re.sub(r"\\(%|\{|\})", r"\1",
                                               re.escape(dep))).substitute(subs)
-        except:
+        except Exception:
             error("Error parsing dependency patterns for target '{}'".format(name))
         regex = re.compile(expanded)
         files = []

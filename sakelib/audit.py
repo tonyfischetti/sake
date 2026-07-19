@@ -142,7 +142,7 @@ def check_target_integrity(key, values, meta=False, all=False, parent=None):
     expected_fields = set(expected_fields)
     try:
         our_keys_set = set(values.keys())
-    except:
+    except Exception:
         sys.stderr.write("Error processing target '{}'\n".format(key))
         sys.stderr.write("Are you sure '{}' is a meta-target?\n".format(
                                                                      parent))

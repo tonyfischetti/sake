@@ -51,7 +51,7 @@ def get_sha(a_file):
         errmes = "File '{}' could not be read! Exiting!\n".format(a_file)
         sys.stdout.write(errmes)
         sys.exit(1)
-    except:
+    except Exception:
         errmes = "Unspecified error returning sha1 hash. Exiting!\n"
         sys.stdout.write(errmes)
         sys.exit(1)

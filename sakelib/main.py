@@ -57,7 +57,7 @@ def main():
     try:
         from setproctitle import setproctitle
         setproctitle("sake {}".format(''.join(sys.argv[1:])))
-    except:
+    except ImportError:
         pass
 
     # For Windows support
@@ -174,7 +174,7 @@ def main():
     G = nx.DiGraph()
     try:
         G = acts.construct_graph(sakefile, settings)
-    except:
+    except Exception:
         error("Unspecified error constructing dependency graph")
         sys.exit(1)
 
@@ -203,7 +203,7 @@ def main():
     def anythinginthere(dictkeyiterator):
         try:
             return len(list(dictkeyiterator))
-        except:
+        except Exception:
             return False
 
     # recursive function to get all predecessors
@@ -269,7 +269,7 @@ def main():
                 if 'output' in node[1]:
                     for item in node[1]['output']:
                         no_sha_update.append(item)
-    except:
+    except Exception:
         # maybe its a meta-target?
         if args.target in sakefile:
             nodes_in_subgraph = []
